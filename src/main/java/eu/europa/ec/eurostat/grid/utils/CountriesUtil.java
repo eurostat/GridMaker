@@ -18,7 +18,7 @@ public class CountriesUtil {
 
 	public static Feature getCountry(String countryCode) {
 		try {
-			ArrayList<Feature> fs = SHPUtil.loadSHP("./resources/CNTR/2016/1M/LAEA/CNTR_RG_01M_2016.shp", CQL.toFilter("CNTR_ID = '"+countryCode+"'")).fs;
+			ArrayList<Feature> fs = SHPUtil.loadSHP("./src/main/resources/CNTR/CNTR_RG_01M_2016.shp", CQL.toFilter("CNTR_ID = '"+countryCode+"'")).fs;
 			if(fs.size() != 1) throw new Exception("Problem finding country with code: "+countryCode+". nb found="+fs.size());
 			return fs.iterator().next();
 		} catch (Exception e) { e.printStackTrace(); }
@@ -26,11 +26,11 @@ public class CountriesUtil {
 	}
 
 	public static Geometry getEuropeMask() {
-		return SHPUtil.loadSHP("./resources/CNTR/2016/1M/LAEA/Europe_RG_01M_2016_10km.shp").fs.iterator().next().getDefaultGeometry();
+		return SHPUtil.loadSHP("./src/main/resources/CNTR/Europe_RG_01M_2016_10km.shp").fs.iterator().next().getDefaultGeometry();
 	}
 
 	public static ArrayList<Feature> getEuropeanCountries() {
-		return SHPUtil.loadSHP("./resources/CNTR/2016/1M/LAEA/CNTR_RG_01M_2016.shp").fs;
+		return SHPUtil.loadSHP("./src/main/resources/CNTR/CNTR_RG_01M_2016.shp").fs;
 	}
 
 }

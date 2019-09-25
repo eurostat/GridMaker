@@ -213,6 +213,7 @@ public class EuroGridBuilder {
 		Geometry area = CountriesUtil.getEuropeMask();
 		ArrayList<Feature> cnts = CountriesUtil.getEuropeanCountries();
 
+		//build pan-European grids
 		for(int res : new int[] {100,50,10,5}) {
 			logger.info("Make "+res+"km grid...");
 			Collection<Feature> cells = EuroGridBuilder.proceed(area, res*1000, 3035, "CNTR_ID", cnts, 1000, "CNTR_ID");
@@ -220,6 +221,7 @@ public class EuroGridBuilder {
 			SHPUtil.saveSHP(cells, path+res+"km/grid_"+res+"km.shp", CRS.decode("EPSG:3035"));
 		}
 
+		//build country 1km grids by country
 		for(String countryCode : CountriesUtil.EUcountryCodes) {
 			logger.info("Make 1km grid for "+countryCode+"...");
 			Collection<Feature> cells = buildGridCellsByCountry(countryCode, 1000, 500);
