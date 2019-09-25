@@ -222,7 +222,7 @@ public class EuroGridBuilder {
 		}
 
 		//build country 1km grids by country
-		for(String countryCode : CountriesUtil.EUcountryCodes) {
+		for(String countryCode : CountriesUtil.EuropeanCountryCodes) {
 			logger.info("Make 1km grid for "+countryCode+"...");
 			Collection<Feature> cells = buildGridCellsByCountry(countryCode, 1000, 500);
 			logger.info("Save " + cells.size() + " cells...");
