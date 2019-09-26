@@ -40,7 +40,7 @@ public class EurostatGridsProduction {
 		for(int resKM : new int[] {100,50,10,5}) {
 
 			logger.info("Make " + resKM + "km grid...");
-			Collection<Feature> cells = StatGridCountryUtil.proceed(resKM*1000.0, 3035, europeGeom, 1000, "CNTR_ID", cnts, "CNTR_ID");
+			Collection<Feature> cells = StatGridCountryUtil.proceed(resKM*1000.0, "3035", europeGeom, 1000, "CNTR_ID", cnts, "CNTR_ID");
 
 			logger.info("Save " + cells.size() + " cells...");
 			SHPUtil.saveSHP(cells, path+resKM+"km/grid_"+resKM+"km.shp", CRS.decode("EPSG:3035"));
@@ -78,7 +78,7 @@ public class EurostatGridsProduction {
 		//build cells
 		StatGrid grid = new StatGrid()
 				.setResolution(gridResolutionM)
-				.setEPSGCode(3035)
+				.setEPSGCode("3035")
 				.setGeometryToCover(cntGeom)
 				.setToleranceDistance(toleranceDistance)
 				;

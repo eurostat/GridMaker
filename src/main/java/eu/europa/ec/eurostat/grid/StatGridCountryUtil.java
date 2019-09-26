@@ -95,7 +95,7 @@ public class StatGridCountryUtil {
 
 
 	//sequencing
-	public static Collection<Feature> proceed(double res, int epsgCode, Geometry geometryToCover, double toleranceDistance, String cellCountryAttribute, Collection<Feature> countries, String cntIdAtt) {
+	public static Collection<Feature> proceed(double res, String epsgCode, Geometry geometryToCover, double toleranceDistance, String cellCountryAttribute, Collection<Feature> countries, String cntIdAtt) {
 		StatGrid grid = new StatGrid()
 				.setResolution(res)
 				.setEPSGCode(epsgCode)

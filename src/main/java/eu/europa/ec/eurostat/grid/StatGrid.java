@@ -27,7 +27,7 @@ public class StatGrid {
 	static Logger logger = Logger.getLogger(StatGrid.class.getName());
 
 	/**
-	 * The grid resolution.
+	 * The grid resolution (pixel size).
 	 * NB: The unit of measure should be the same as the one of the Coordinate Reference System.
 	 */
 	private double resolution = 100000.0;
@@ -42,9 +42,9 @@ public class StatGrid {
 	 * The EPSG code of the Coordinate Reference System of the grid.
 	 * @see https://spatialreference.org/ref/epsg/
 	 */
-	private int epsgCode = 3035;
-	public int getEPSGCode() { return epsgCode; }
-	public StatGrid setEPSGCode(int epsgCode) {
+	private String epsgCode = "3035";
+	public String getEPSGCode() { return epsgCode; }
+	public StatGrid setEPSGCode(String epsgCode) {
 		this.epsgCode = epsgCode;
 		cells = null;
 		return this;
@@ -170,9 +170,9 @@ public class StatGrid {
 	 * @param lowerLeftCornerPosition
 	 * @return
 	 */
-	public static String getGridCellId(int epsgCode, double gridResolutionM, Coordinate lowerLeftCornerPosition) {
+	public static String getGridCellId(String epsgCode, double gridResolutionM, Coordinate lowerLeftCornerPosition) {
 		return 
-				"CRS"+Integer.toString((int)epsgCode)
+				"CRS"+epsgCode
 				+"RES"+Integer.toString((int)gridResolutionM)+"m"
 				+"N"+Integer.toString((int)lowerLeftCornerPosition.getX())
 				+"E"+Integer.toString((int)lowerLeftCornerPosition.getY())

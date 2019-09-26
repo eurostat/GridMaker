@@ -22,7 +22,7 @@ public class StatGridTest extends TestCase {
 
 		//SHPUtil.saveSHP(sg.getCells(), "C:/Users/gaffuju/Desktop/test.shp", CRS.decode("EPSG:3035"));
 
-		assertEquals(3035, sg.getEPSGCode());
+		assertEquals("3035", sg.getEPSGCode());
 		assertEquals(100000.0, sg.getResolution());
 		assertEquals(0.0, sg.getToleranceDistance());
 		assertEquals(StatGrid.GridCellGeometryType.SURFACE, sg.getGridCellGeometryType());
@@ -31,14 +31,14 @@ public class StatGridTest extends TestCase {
 
 	public void test2() throws Exception {
 		StatGrid sg = new StatGrid();
-		sg.setEPSGCode(1464412);
+		sg.setEPSGCode("1464412");
 		sg.setResolution(50000);
 		sg.setToleranceDistance(500000.0);
 		sg.setGridCellGeometryType(StatGrid.GridCellGeometryType.CENTER_POINT);
 
 		//SHPUtil.saveSHP(sg.getCells(), "C:/Users/gaffuju/Desktop/test.shp", CRS.decode("EPSG:3035"));
 
-		assertEquals(1464412, sg.getEPSGCode());
+		assertEquals("1464412", sg.getEPSGCode());
 		assertEquals(50000.0, sg.getResolution());
 		assertEquals(500000.0, sg.getToleranceDistance());
 		assertEquals(StatGrid.GridCellGeometryType.CENTER_POINT, sg.getGridCellGeometryType());
@@ -47,9 +47,9 @@ public class StatGridTest extends TestCase {
 
 	public void test3() throws Exception {
 		String id;
-		id = StatGrid.getGridCellId(5248, 1000.0, new Coordinate(14645, 165184));
+		id = StatGrid.getGridCellId("5248", 1000.0, new Coordinate(14645, 165184));
 		assertEquals("CRS5248RES1000mN14645E165184", id);
-		id = StatGrid.getGridCellId(481, 1547.0, new Coordinate(5215214, 1512124));
+		id = StatGrid.getGridCellId("481", 1547.0, new Coordinate(5215214, 1512124));
 		assertEquals("CRS481RES1547mN5215214E1512124", id);
 	}
 
