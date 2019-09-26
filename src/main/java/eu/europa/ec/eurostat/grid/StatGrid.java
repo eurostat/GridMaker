@@ -56,7 +56,7 @@ public class StatGrid {
 	private Geometry geometryToCover;
 	public Geometry getGeometryToCover() {
 		if(geometryToCover == null)
-			geometryToCover = getGeometry(new Envelope(0, 10000000, 0, 10000000));
+			geometryToCover = getGeometry(new Envelope(0.0, 10000000.0, 0.0, 10000000.0));
 		return geometryToCover;
 	}
 	public StatGrid setGeometryToCover(Geometry geometryToCover) {
@@ -200,8 +200,5 @@ public class StatGrid {
 		Coordinate[] cs = new Coordinate[]{new Coordinate(env.getMinX(),env.getMinY()), new Coordinate(env.getMaxX(),env.getMinY()), new Coordinate(env.getMaxX(),env.getMaxY()), new Coordinate(env.getMinX(),env.getMaxY()), new Coordinate(env.getMinX(),env.getMinY())};
 		return new GeometryFactory().createPolygon(cs);
 	}
-
-
-
 
 }
