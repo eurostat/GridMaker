@@ -29,7 +29,7 @@ public class StatGrid {
 	 * The grid resolution.
 	 * NB: The unit of measure should be the same as the one of the Coordinate Reference System.
 	 */
-	private double resolution = 100000;
+	private double resolution = 100000.0;
 	public double getResolution() { return resolution; }
 	public StatGrid setResolution(double resolution) {
 		this.resolution = resolution;
@@ -72,7 +72,7 @@ public class StatGrid {
 	 * All cells within this tolerance distance to 'geometryToCover' will be included in the grid.
 	 * NB: The unit of measure should be the same as the one of the Coordinate Reference System.
 	 */
-	private double toleranceDistance = 0;
+	private double toleranceDistance = 0.0;
 	public double getToleranceDistance() { return toleranceDistance; }
 	public StatGrid setToleranceDistance(double toleranceDistance) {
 		this.toleranceDistance = toleranceDistance;
@@ -118,16 +118,14 @@ public class StatGrid {
 	private StatGrid buildCells() {
 		if(logger.isDebugEnabled()) logger.debug("Build grid cells...");
 
-		//get grid envelope
-		Envelope env = ensureGrid(getGeometryToCover().getEnvelopeInternal(), resolution);
-
 		//get envelop to cover
-		Envelope envCover = geometryToCover.getEnvelopeInternal();
-		envCover.expandBy(toleranceDistance*1.0001);
+		Envelope envCover = getGeometryToCover().getEnvelopeInternal();
+		envCover.expandBy(toleranceDistance*1.00001);
+		envCover = ensureGrid(envCover, resolution);
 
 		cells = new ArrayList<Feature>();
-		for(double x=env.getMinX(); x<env.getMaxX(); x += resolution)
-			for(double y=env.getMinY(); y<env.getMaxY(); y += resolution) {
+		for(double x=envCover.getMinX(); x<envCover.getMaxX(); x += resolution)
+			for(double y=envCover.getMinY(); y<envCover.getMaxY(); y += resolution) {
 
 				//build cell polygon geometry
 				Geometry gridCellGeom = createPolygon( x,y, x+resolution,y, x+resolution,y+resolution, x,y+resolution, x,y );
