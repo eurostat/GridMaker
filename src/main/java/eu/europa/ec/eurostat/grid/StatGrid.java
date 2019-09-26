@@ -24,24 +24,82 @@ import eu.europa.ec.eurostat.grid.utils.Feature;
 public class StatGrid {
 	static Logger logger = Logger.getLogger(StatGrid.class.getName());
 
+	/**
+	 * The grid resolution in meter.
+	 */
 	private double resolutionM = 100000;
 	public double getResolutionM() { return resolutionM; }
-	public StatGrid setResolutionM(double resolutionM) { this.resolutionM = resolutionM; cells=null; return this; }
+	public StatGrid setResolutionM(double resolutionM) {
+		this.resolutionM = resolutionM;
+		cells = null;
+		return this;
+	}
 
+	/**
+	 * The EPSG code of the Coordinate Reference System of the grid.
+	 * @see https://spatialreference.org/ref/epsg/
+	 */
 	private int epsgCode = 3035;
-	public int getEpsgCode() { return epsgCode; }
-	public StatGrid setEpsgCode(int epsgCode) { this.epsgCode = epsgCode; cells=null; return this; }
+	public int getEPSGCode() { return epsgCode; }
+	public StatGrid setEPSGCode(int epsgCode) {
+		this.epsgCode = epsgCode;
+		cells = null;
+		return this;
+	}
 
+	/**
+	 * The geometry the grid should cover, taking into account also the 'toleranceDistance' parameter.
+	 */
 	private Geometry geometryToCover;
-	public Geometry getGeometryToCover() { return geometryToCover; }
-	public StatGrid setGeometryToCover(Geometry geometryToCover) { this.geometryToCover = geometryToCover; cells=null; return this; }
-	public StatGrid setGeometryToCover(Envelope envelopeToCover) { return setGeometryToCover(getGeometry(envelopeToCover)); }
+	public Geometry getGeometryToCover() {
+		if(geometryToCover == null) {
+			geometryToCover = getGeometry(new Envelope(0, 10000000, 0, 10000000));
+		}
+		return geometryToCover;
+	}
+	public StatGrid setGeometryToCover(Geometry geometryToCover) {
+		this.geometryToCover = geometryToCover;
+		cells = null;
+		return this;
+	}
+	public StatGrid setGeometryToCover(Envelope envelopeToCover) {
+		return setGeometryToCover(getGeometry(envelopeToCover));
+	}
 
+	/**
+	 * All cells within this tolerence distance to 'geometryToCover' will be included in the grid.
+	 */
+	private double toleranceDistance = 0;
+	public double getToleranceDistance() { return toleranceDistance; }
+	public StatGrid setToleranceDistance(double toleranceDistance) {
+		this.toleranceDistance = toleranceDistance;
+		cells = null;
+		return this;
+	}
+
+	/**
+	 * The type of grid cell geometry: The surface representation (a square) or a center point.
+	 * 
+	 * @author Julien Gaffuri
+	 *
+	 */
 	public static enum GridCellGeometryType {SURFACE, CENTER_POINT};
+
+	/**
+	 * The grid cell geometry type.
+	 * @see GridCellGeometryType
+	 */
 	private GridCellGeometryType gridCellGeometryType = GridCellGeometryType.SURFACE;
 	public GridCellGeometryType getGridCellGeometryType() { return gridCellGeometryType; }
-	public StatGrid setGridCellGeometryType(GridCellGeometryType geomType) { this.gridCellGeometryType = geomType; cells=null; return this; }
+	public StatGrid setGridCellGeometryType(GridCellGeometryType geomType) {
+		this.gridCellGeometryType = geomType;
+		cells = null;
+		return this;
+	}
 
+	/**
+	 * The cells of the grid. Call 'buildCells()' method to buld them.
+	 */
 	private Collection<Feature> cells = null;
 	public Collection<Feature> getCells() {
 		if(cells == null) buildCells();
@@ -50,22 +108,31 @@ public class StatGrid {
 
 
 
-	public void buildCells() {
+	/**
+	 * Build the grid cells, to be accessed with 'getCells()' method.
+	 * 
+	 * @return this object
+	 */
+	public StatGrid buildCells() {
 		if(logger.isDebugEnabled()) logger.debug("Build grid cells...");
 
 		//get grid envelope
 		Envelope env = ensureGrid(geometryToCover.getEnvelopeInternal(), getResolutionM());
 
+		//get envelop to cover
+		Envelope envCover = geometryToCover.getEnvelopeInternal();
+		envCover.expandBy(toleranceDistance*1.0001);
+
 		cells = new ArrayList<Feature>();
 		for(double x=env.getMinX(); x<env.getMaxX(); x+=getResolutionM())
 			for(double y=env.getMinY(); y<env.getMaxY(); y+=getResolutionM()) {
 
-				//build cell geometry
+				//build cell polygon geometry
 				Polygon gridCellGeom = createPolygon( x,y, x+getResolutionM(),y, x+getResolutionM(),y+getResolutionM(), x,y+getResolutionM(), x,y );
 
-				//check intersection with geometryToCover
-				if(!gridCellGeom.getEnvelopeInternal().intersects(geometryToCover.getEnvelopeInternal())) continue;
-				if(!gridCellGeom.intersects(geometryToCover)) continue;
+				//check distance to geometryToCover
+				if(!gridCellGeom.getEnvelopeInternal().intersects(envCover)) continue;
+				if(gridCellGeom.distance(geometryToCover) > toleranceDistance) continue;
 
 				//build and keep the cell
 				Feature cell = new Feature();
@@ -75,23 +142,11 @@ public class StatGrid {
 				cells.add(cell);
 			}
 		if(logger.isDebugEnabled()) logger.debug(cells.size() + " cells built");
+		return this;
 	}
 
 
 
-
-
-
-
-
-
-	private static Envelope ensureGrid(Envelope env, double res) {
-		double xMin = env.getMinX() - env.getMinX()%res;
-		double xMax = (1+(int)(env.getMaxX()/res))*res;
-		double yMin = env.getMinY() - env.getMinY()%res;
-		double yMax = (1+(int)(env.getMaxY()/res))*res;
-		return new Envelope(xMin, xMax, yMin, yMax);
-	}
 
 
 	/**
@@ -113,6 +168,14 @@ public class StatGrid {
 				+"N"+Integer.toString((int)lowerLeftCornerPosition.getX())
 				+"E"+Integer.toString((int)lowerLeftCornerPosition.getY())
 				;
+	}
+
+	private static Envelope ensureGrid(Envelope env, double res) {
+		double xMin = env.getMinX() - env.getMinX()%res;
+		double xMax = (1+(int)(env.getMaxX()/res))*res;
+		double yMin = env.getMinY() - env.getMinY()%res;
+		double yMax = (1+(int)(env.getMaxY()/res))*res;
+		return new Envelope(xMin, xMax, yMin, yMax);
 	}
 
 	private static Coordinate[] createCoordinates(double... cs) {
