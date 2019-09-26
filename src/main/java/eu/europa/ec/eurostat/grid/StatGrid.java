@@ -17,6 +17,7 @@ import eu.europa.ec.eurostat.grid.utils.Feature;
 
 /**
  * Build a statistical grid.
+ * The resolution, coordinate reference system,
  * 
  * @author julien Gaffuri
  *
@@ -25,12 +26,13 @@ public class StatGrid {
 	static Logger logger = Logger.getLogger(StatGrid.class.getName());
 
 	/**
-	 * The grid resolution in meter.
+	 * The grid resolution.
+	 * NB: The unit of measure should be the same as the one of the Coordinate Reference System.
 	 */
-	private double resolutionM = 100000;
-	public double getResolutionM() { return resolutionM; }
-	public StatGrid setResolutionM(double resolutionM) {
-		this.resolutionM = resolutionM;
+	private double resolution = 100000;
+	public double getResolution() { return resolution; }
+	public StatGrid setResolution(double resolution) {
+		this.resolution = resolution;
 		cells = null;
 		return this;
 	}
@@ -49,6 +51,7 @@ public class StatGrid {
 
 	/**
 	 * The geometry the grid should cover, taking into account also the 'toleranceDistance' parameter.
+	 * NB: Of course, the geometry should be defined in the Coordinate Reference System of the grid.
 	 */
 	private Geometry geometryToCover;
 	public Geometry getGeometryToCover() {
@@ -67,7 +70,8 @@ public class StatGrid {
 	}
 
 	/**
-	 * All cells within this tolerence distance to 'geometryToCover' will be included in the grid.
+	 * All cells within this tolerance distance to 'geometryToCover' will be included in the grid.
+	 * NB: The unit of measure should be the same as the one of the Coordinate Reference System.
 	 */
 	private double toleranceDistance = 0;
 	public double getToleranceDistance() { return toleranceDistance; }
@@ -78,7 +82,7 @@ public class StatGrid {
 	}
 
 	/**
-	 * The type of grid cell geometry: The surface representation (a square) or a center point.
+	 * The type of grid cell geometry: The surface representation (a square) or its center point.
 	 * 
 	 * @author Julien Gaffuri
 	 *
@@ -98,7 +102,7 @@ public class StatGrid {
 	}
 
 	/**
-	 * The cells of the grid. Call 'buildCells()' method to buld them.
+	 * The grid cells.
 	 */
 	private Collection<Feature> cells = null;
 	public Collection<Feature> getCells() {
@@ -113,32 +117,40 @@ public class StatGrid {
 	 * 
 	 * @return this object
 	 */
-	public StatGrid buildCells() {
+	private StatGrid buildCells() {
 		if(logger.isDebugEnabled()) logger.debug("Build grid cells...");
 
 		//get grid envelope
-		Envelope env = ensureGrid(geometryToCover.getEnvelopeInternal(), getResolutionM());
+		Envelope env = ensureGrid(geometryToCover.getEnvelopeInternal(), resolution);
 
 		//get envelop to cover
 		Envelope envCover = geometryToCover.getEnvelopeInternal();
 		envCover.expandBy(toleranceDistance*1.0001);
 
 		cells = new ArrayList<Feature>();
-		for(double x=env.getMinX(); x<env.getMaxX(); x+=getResolutionM())
-			for(double y=env.getMinY(); y<env.getMaxY(); y+=getResolutionM()) {
+		for(double x=env.getMinX(); x<env.getMaxX(); x+=resolution)
+			for(double y=env.getMinY(); y<env.getMaxY(); y+=resolution) {
 
 				//build cell polygon geometry
-				Polygon gridCellGeom = createPolygon( x,y, x+getResolutionM(),y, x+getResolutionM(),y+getResolutionM(), x,y+getResolutionM(), x,y );
+				Geometry gridCellGeom = createPolygon( x,y, x+resolution,y, x+resolution,y+resolution, x,y+resolution, x,y );
 
 				//check distance to geometryToCover
 				if(!gridCellGeom.getEnvelopeInternal().intersects(envCover)) continue;
 				if(gridCellGeom.distance(geometryToCover) > toleranceDistance) continue;
 
-				//build and keep the cell
+				//build the cell
 				Feature cell = new Feature();
-				cell.setDefaultGeometry(gridCellGeom); //TODO depends on geomType
-				cell.setID( getGridCellId(epsgCode, getResolutionM(), new Coordinate(x,y)) );
-				cell.setAttribute("cellId", cell.getID());
+
+				//set geometry
+				if(gridCellGeometryType == GridCellGeometryType.CENTER_POINT)
+					gridCellGeom = gridCellGeom.getCentroid();
+				cell.setDefaultGeometry(gridCellGeom);
+
+				//set id
+				String id = getGridCellId(epsgCode, resolution, new Coordinate(x,y));
+				cell.setID(id);
+				cell.setAttribute("cellId", id);
+
 				cells.add(cell);
 			}
 		if(logger.isDebugEnabled()) logger.debug(cells.size() + " cells built");
