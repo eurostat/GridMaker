@@ -23,8 +23,8 @@ public class CountriesUtil {
 	public static ArrayList<Feature> getEuropeanCountries(String filePath) {
 		return SHPUtil.loadSHP(filePath).fs;
 	}
-	public static ArrayList<Feature> getEuropeanCountries() {
-		return getEuropeanCountries("./src/main/resources/CNTR/CNTR_RG_01M_2016.shp");
+	public static ArrayList<Feature> getEuropeanCountries(boolean withOST) {
+		return getEuropeanCountries("./src/main/resources/CNTR/CNTR_RG_01M_2016"+(withOST?"":"_no_ost")+".shp");
 	}
 
 	public static Feature getEuropeanCountry(String countryCode, String filePath) {
@@ -35,28 +35,33 @@ public class CountriesUtil {
 		} catch (Exception e) { e.printStackTrace(); }
 		return null;
 	}
-	public static Feature getEuropeanCountry(String countryCode) {
-		return getEuropeanCountry(countryCode, "./src/main/resources/CNTR/CNTR_RG_01M_2016.shp");
+	public static Feature getEuropeanCountry(String countryCode, boolean withOST) {
+		return getEuropeanCountry(countryCode, "./src/main/resources/CNTR/CNTR_RG_01M_2016"+(withOST?"":"_no_ost")+".shp");
 	}
 
 
-	
-	
-	public static Geometry getEurope() {
-		return SHPUtil.loadSHP("./src/main/resources/CNTR/Europe_RG_01M_2016.shp").fs.iterator().next().getDefaultGeometry();
+
+
+	public static Geometry getEurope(boolean withOST) {
+		return SHPUtil.loadSHP("./src/main/resources/CNTR/Europe_RG_01M_2016"+(withOST?"":"_no_ost")+".shp").fs.iterator().next().getDefaultGeometry();
 	}
 
 	//build Europe geometry as a union of the country geometries
-	public static void makeEuropeGeometry() throws Exception {
+	public static void makeEuropeGeometry(boolean withOST) throws Exception {
 		//generate europe geometry as union of country geometries
 		Collection<Geometry> polys = new ArrayList<>();
-		for(Feature f : CountriesUtil.getEuropeanCountries())
+		for(Feature f : CountriesUtil.getEuropeanCountries(withOST))
 			polys.add( f.getDefaultGeometry().buffer(0) );
 		Geometry mask = CascadedPolygonUnion.union(polys);
 
 		Feature f = new Feature(); f.setDefaultGeometry(mask);
 		ArrayList<Feature> fs = new ArrayList<Feature>(); fs.add(f);
-		SHPUtil.saveSHP(fs, "./src/main/resources/CNTR/Europe_RG_01M_2016.shp", CRS.decode("EPSG:3035"));
+		SHPUtil.saveSHP(fs, "./src/main/resources/CNTR/Europe_RG_01M_2016"+(withOST?"":"_no_ost")+".shp", CRS.decode("EPSG:3035"));
 	}
+
+	/*public static void main(String[] args) throws Exception {
+		makeEuropeGeometry(false);
+		makeEuropeGeometry(true);
+	}*/
 
 }

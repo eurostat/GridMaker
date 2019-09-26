@@ -31,8 +31,8 @@ public class EurostatGridsProduction {
 		StatGridCountryUtil.logger.setLevel(Level.ALL);
 
 		String path = "C:/Users/gaffuju/Desktop/grid/";
-		Geometry europeGeom = CountriesUtil.getEurope();
-		ArrayList<Feature> cnts = CountriesUtil.getEuropeanCountries();
+		Geometry europeGeom = CountriesUtil.getEurope(false);
+		ArrayList<Feature> cnts = CountriesUtil.getEuropeanCountries(false);
 
 		//build pan-European grids for various resolutions
 		for(int resKM : new int[] {100,50,10,5}) {
@@ -48,7 +48,7 @@ public class EurostatGridsProduction {
 		for(String countryCode : CountriesUtil.EuropeanCountryCodes) {
 
 			logger.info("Make 1km grid for "+countryCode+"...");
-			Collection<Feature> cells = buildGridCellsByCountry(countryCode, 1000, 500);
+			Collection<Feature> cells = buildGridCellsByCountry(countryCode, false, 1000, 500);
 
 			logger.info("Save " + cells.size() + " cells...");
 			SHPUtil.saveSHP(cells, path+"1km/grid_1km_"+countryCode+".shp", CRS.decode("EPSG:3035"));
@@ -68,10 +68,10 @@ public class EurostatGridsProduction {
 	 * @param toleranceDistance
 	 * @return
 	 */
-	public static Collection<Feature> buildGridCellsByCountry(String countryCode, double gridResolutionM, double toleranceDistance) {
+	public static Collection<Feature> buildGridCellsByCountry(String countryCode, boolean withOST, double gridResolutionM, double toleranceDistance) {
 
 		//get country geometry
-		Geometry cntGeom = CountriesUtil.getEuropeanCountry(countryCode).getDefaultGeometry();
+		Geometry cntGeom = CountriesUtil.getEuropeanCountry(countryCode, withOST).getDefaultGeometry();
 
 		//build cells
 		StatGrid grid = new StatGrid()
