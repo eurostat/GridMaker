@@ -22,6 +22,8 @@ import eu.europa.ec.eurostat.grid.utils.SHPUtil;
 public class EurostatGridsProduction {
 	static Logger logger = Logger.getLogger(EurostatGridsProduction.class.getName());
 
+
+
 	public static void main(String[] args) throws Exception {
 		logger.info("Start");
 
