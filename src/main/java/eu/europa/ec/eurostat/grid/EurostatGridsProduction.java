@@ -34,10 +34,10 @@ public class EurostatGridsProduction {
 		Geometry europeGeom = CountriesUtil.getEurope();
 		ArrayList<Feature> cnts = CountriesUtil.getEuropeanCountries();
 
-		//build pan-European grids
+		//build pan-European grids for various resolutions
 		for(int resKM : new int[] {100,50,10,5}) {
 
-			logger.info("Make "+resKM+"km grid...");
+			logger.info("Make " + resKM + "km grid...");
 			Collection<Feature> cells = StatGridCountryUtil.proceed(resKM*1000.0, 3035, europeGeom, 1000, "CNTR_ID", cnts, "CNTR_ID");
 
 			logger.info("Save " + cells.size() + " cells...");

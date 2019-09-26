@@ -82,7 +82,7 @@ public class StatGridCountryUtil {
 	 * @param cellCountryAttribute
 	 */
 	public static void filterCellsWithoutCountry(Collection<Feature> cells, String cellCountryAttribute) {
-		if(logger.isDebugEnabled()) logger.debug("Filtering...");
+		if(logger.isDebugEnabled()) logger.debug("Filtering " + cells.size() + " cells...");
 		Collection<Feature> cellsToRemove = new ArrayList<Feature>();
 		for(Feature cell : cells) {
 			Object cellCnt = cell.getAttribute(cellCountryAttribute);
