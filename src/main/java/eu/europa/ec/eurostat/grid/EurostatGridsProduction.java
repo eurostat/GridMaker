@@ -16,12 +16,14 @@ import eu.europa.ec.eurostat.grid.utils.Feature;
 import eu.europa.ec.eurostat.grid.utils.SHPUtil;
 
 /**
+ * Functions to produce European grids based on ETRS89-LAEA coordinate reference system (EPSG:3035)
+ * for various resolutions. The cells are tagged by country and identified with their standard code.
+ * 
  * @author julien Gaffuri
  *
  */
 public class EurostatGridsProduction {
 	static Logger logger = Logger.getLogger(EurostatGridsProduction.class.getName());
-
 
 
 	public static void main(String[] args) throws Exception {
