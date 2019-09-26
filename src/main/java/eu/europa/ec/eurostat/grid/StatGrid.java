@@ -17,7 +17,8 @@ import eu.europa.ec.eurostat.grid.utils.Feature;
 
 /**
  * Build a statistical grid.
- * The resolution, coordinate reference system,
+ * The resolution, coordinate reference system, extent and cell geometry types can be defined by th users.
+ * Both cartographic and geographical grids are supported.
  * 
  * @author julien Gaffuri
  *

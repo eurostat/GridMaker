@@ -4,9 +4,12 @@
 package eu.europa.ec.eurostat.grid.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.geotools.filter.text.cql2.CQL;
+import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.operation.union.CascadedPolygonUnion;
 
 /**
  * @author julien Gaffuri
@@ -16,7 +19,15 @@ public class CountriesUtil {
 
 	public static final String[] EuropeanCountryCodes = new String[] {"BE","BG","CZ","DK","DE","EE","IE","EL","ES","FR","HR","IT","CY","LV","LT","LU","HU","MT","NL","AT","PL","PT","RO","SI","SK","FI","SE","UK","IS","LI","NO","CH","ME","MK","AL","RS","TR"};
 
-	public static Feature getCountry(String countryCode, String filePath) {
+
+	public static ArrayList<Feature> getEuropeanCountries(String filePath) {
+		return SHPUtil.loadSHP(filePath).fs;
+	}
+	public static ArrayList<Feature> getEuropeanCountries() {
+		return getEuropeanCountries("./src/main/resources/CNTR/CNTR_RG_01M_2016.shp");
+	}
+
+	public static Feature getEuropeanCountry(String countryCode, String filePath) {
 		try {
 			ArrayList<Feature> fs = SHPUtil.loadSHP(filePath, CQL.toFilter("CNTR_ID = '"+countryCode+"'")).fs;
 			if(fs.size() != 1) throw new Exception("Problem finding country with code: "+countryCode+". nb found="+fs.size());
@@ -24,17 +35,28 @@ public class CountriesUtil {
 		} catch (Exception e) { e.printStackTrace(); }
 		return null;
 	}
-
-	public static Feature getCountry(String countryCode) {
-		return getCountry(countryCode, "./src/main/resources/CNTR/CNTR_RG_01M_2016.shp");
+	public static Feature getEuropeanCountry(String countryCode) {
+		return getEuropeanCountry(countryCode, "./src/main/resources/CNTR/CNTR_RG_01M_2016.shp");
 	}
 
-	public static Geometry getEuropeMask() {
-		return SHPUtil.loadSHP("./src/main/resources/CNTR/Europe_RG_01M_2016_10km.shp").fs.iterator().next().getDefaultGeometry();
+
+	
+	
+	public static Geometry getEurope() {
+		return SHPUtil.loadSHP("./src/main/resources/CNTR/Europe_RG_01M_2016.shp").fs.iterator().next().getDefaultGeometry();
 	}
 
-	public static ArrayList<Feature> getEuropeanCountries() {
-		return SHPUtil.loadSHP("./src/main/resources/CNTR/CNTR_RG_01M_2016.shp").fs;
+	//build Europe geometry as a union of the country geometries
+	public static void makeEuropeGeometry() throws Exception {
+		//generate europe geometry as union of country geometries
+		Collection<Geometry> polys = new ArrayList<>();
+		for(Feature f : CountriesUtil.getEuropeanCountries())
+			polys.add( f.getDefaultGeometry().buffer(0) );
+		Geometry mask = CascadedPolygonUnion.union(polys);
+
+		Feature f = new Feature(); f.setDefaultGeometry(mask);
+		ArrayList<Feature> fs = new ArrayList<Feature>(); fs.add(f);
+		SHPUtil.saveSHP(fs, "./src/main/resources/CNTR/Europe_RG_01M_2016.shp", CRS.decode("EPSG:3035"));
 	}
 
 }

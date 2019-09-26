@@ -11,20 +11,20 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.index.strtree.STRtree;
 
-import eu.europa.ec.eurostat.grid.utils.CountriesUtil;
 import eu.europa.ec.eurostat.grid.utils.Feature;
 
 /**
+ * A number of functions to assign country codes to grid cells.
+ * 
  * @author julien Gaffuri
  *
  */
-public class EuroGridBuilder {
-	static Logger logger = Logger.getLogger(EuroGridBuilder.class.getName());
-
+public class StatGridCountryUtil {
+	static Logger logger = Logger.getLogger(StatGridCountryUtil.class.getName());
 
 
 	/**
-	 * Assign grid cells to countries.
+	 * Assign country codes to grid cells.
 	 * If a grid cell intersects or is nearby the geometry of a country, then an attribute of the cell is assigned with this country code.
 	 * For cells that are to be assigned to several countries, several country codes are assigned.
 	 * 
@@ -47,15 +47,15 @@ public class EuroGridBuilder {
 			index.insert(cell.getDefaultGeometry().getEnvelopeInternal(), cell);
 
 		for(Feature cnt : countries) {
-			//get cnt geometry and code
+			//get country geometry and code
 			Geometry cntGeom = cnt.getDefaultGeometry();
 			String cntCode = cnt.getAttribute(countryIdAttribute).toString();
 
-			//get country envelope
+			//get country envelope, expanded by toleranceDistance
 			Envelope cntEnv = cntGeom.getEnvelopeInternal();
 			cntEnv.expandBy(toleranceDistance);
 
-			//get grid cells intersecting
+			//get grid cells around country envelope
 			for(Object cell_ : index.query(cntEnv)) {
 				Feature cell = (Feature)cell_;
 				Geometry cellGeom = cell.getDefaultGeometry();
@@ -63,11 +63,11 @@ public class EuroGridBuilder {
 				if(!cellGeom.getEnvelopeInternal().intersects(cntEnv)) continue;
 				if(cellGeom.distance(cntGeom) > toleranceDistance) continue;
 
-				String csa = cell.getAttribute(cellCountryAttribute).toString();
-				if("".equals(csa))
+				String att = cell.getAttribute(cellCountryAttribute).toString();
+				if("".equals(att))
 					cell.setAttribute(cellCountryAttribute, cntCode);
 				else
-					cell.setAttribute(cellCountryAttribute, csa+"-"+cntCode);
+					cell.setAttribute(cellCountryAttribute, att+"-"+cntCode);
 			}
 		}
 
@@ -83,59 +83,29 @@ public class EuroGridBuilder {
 	 */
 	public static void filterCellsWithoutCountry(Collection<Feature> cells, String cellCountryAttribute) {
 		if(logger.isDebugEnabled()) logger.debug("Filtering...");
-		Collection<Feature> toRemove = new ArrayList<Feature>();
+		Collection<Feature> cellsToRemove = new ArrayList<Feature>();
 		for(Feature cell : cells) {
 			Object cellCnt = cell.getAttribute(cellCountryAttribute);
-			if(cellCnt==null || cellCnt.toString().equals("")) toRemove.add(cell);
+			if(cellCnt==null || "".equals(cellCnt.toString())) cellsToRemove.add(cell);
 		}
-		cells.removeAll(toRemove);
-		if(logger.isDebugEnabled()) logger.debug(toRemove.size() + " cells to remove. " + cells.size() + " cells left");
+		cells.removeAll(cellsToRemove);
+		if(logger.isDebugEnabled()) logger.debug(cellsToRemove.size() + " cells to remove. " + cells.size() + " cells left");
 	}
 
 
 
 	//sequencing
-	public static Collection<Feature> proceed(Geometry geometryToCover, double res, int epsgCode, String cellCountryAttribute, Collection<Feature> countries, double toleranceDistance, String cntIdAtt) {
+	public static Collection<Feature> proceed(double res, int epsgCode, Geometry geometryToCover, double toleranceDistance, String cellCountryAttribute, Collection<Feature> countries, String cntIdAtt) {
 		StatGrid grid = new StatGrid()
-				.setGeometryToCover(geometryToCover)
 				.setResolution(res)
 				.setEPSGCode(epsgCode)
+				.setGeometryToCover(geometryToCover)
+				.setToleranceDistance(toleranceDistance)
 				;
 		Collection<Feature> cells = grid.getCells();
 
-		EuroGridBuilder.assignCountries(cells, cellCountryAttribute, countries, toleranceDistance, cntIdAtt);
-		EuroGridBuilder.filterCellsWithoutCountry(cells, cellCountryAttribute);
-		return cells;
-	}
-
-
-	/**
-	 * Build grid covering a single country.
-	 * In EPSG 3035 only.
-	 * 
-	 * @param countryCode
-	 * @param gridResolutionM
-	 * @param toleranceDistance
-	 * @return
-	 */
-	public static Collection<Feature> buildGridCellsByCountry(String countryCode, double gridResolutionM, double toleranceDistance) {
-
-		//get country geometry
-		Geometry cntGeom = CountriesUtil.getCountry(countryCode).getDefaultGeometry();
-		if(toleranceDistance >= 0)
-			cntGeom = cntGeom.buffer(toleranceDistance);
-
-		//build cells
-		StatGrid grid = new StatGrid()
-				.setGeometryToCover(cntGeom)
-				.setResolution(gridResolutionM)
-				.setEPSGCode(3035)
-				;
-		Collection<Feature> cells = grid.getCells();
-
-		//set cnt code to cells
-		for(Feature cell : cells) cell.setAttribute("CNTR_ID", countryCode);
-
+		StatGridCountryUtil.assignCountries(cells, cellCountryAttribute, countries, toleranceDistance, cntIdAtt);
+		StatGridCountryUtil.filterCellsWithoutCountry(cells, cellCountryAttribute);
 		return cells;
 	}
 
