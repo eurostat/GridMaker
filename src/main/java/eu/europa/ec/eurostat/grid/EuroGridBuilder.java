@@ -9,11 +9,8 @@ import java.util.Collection;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.geotools.referencing.CRS;
-import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.index.strtree.STRtree;
 
 import eu.europa.ec.eurostat.grid.utils.CountriesUtil;
@@ -26,42 +23,6 @@ import eu.europa.ec.eurostat.grid.utils.SHPUtil;
  */
 public class EuroGridBuilder {
 	static Logger logger = Logger.getLogger(EuroGridBuilder.class.getName());
-
-	/**
-	 * Build grid cells covering a geometry.
-	 * 
-	 * @param geometryToCover
-	 * @param gridResolutionM
-	 * @param epsgCode
-	 * @return
-	 */
-	public static Collection<Feature> buildGridCells(Geometry geometryToCover, double gridResolutionM, int epsgCode) {
-		if(logger.isDebugEnabled()) logger.debug("Build grid cells...");
-
-		//get grid envelope
-		Envelope env = ensureGrid(geometryToCover.getEnvelopeInternal(), gridResolutionM);
-
-		Collection<Feature> cells = new ArrayList<Feature>();
-		for(double x=env.getMinX(); x<env.getMaxX(); x+=gridResolutionM)
-			for(double y=env.getMinY(); y<env.getMaxY(); y+=gridResolutionM) {
-
-				//build cell geometry
-				Polygon gridCellGeom = createPolygon( x,y, x+gridResolutionM,y, x+gridResolutionM,y+gridResolutionM, x,y+gridResolutionM, x,y );
-
-				//check intersection with geometryToCover
-				if(!gridCellGeom.getEnvelopeInternal().intersects(geometryToCover.getEnvelopeInternal())) continue;
-				if(!gridCellGeom.intersects(geometryToCover)) continue;
-
-				//build and keep the cell
-				Feature cell = new Feature();
-				cell.setDefaultGeometry(gridCellGeom);
-				cell.setID( getGridCellId(epsgCode, gridResolutionM, new Coordinate(x,y)) );
-				cell.setAttribute("cellId", cell.getID());
-				cells.add(cell);
-			}
-		if(logger.isDebugEnabled()) logger.debug(cells.size() + " cells built");
-		return cells;
-	}
 
 
 
@@ -76,7 +37,7 @@ public class EuroGridBuilder {
 	 * @param cntBufferDist
 	 * @param cntIdAtt
 	 */
-	public static void addCountryStamp(Collection<Feature> cells, String cntStampAtt, Collection<Feature> countries, double cntBufferDist, String cntIdAtt) {
+	public static void assignCountries(Collection<Feature> cells, String cntStampAtt, Collection<Feature> countries, double cntBufferDist, String cntIdAtt) {
 		if(logger.isDebugEnabled()) logger.debug("Stamp country...");
 
 		//initialise cell country stamp
@@ -113,6 +74,7 @@ public class EuroGridBuilder {
 
 	}
 
+
 	/**
 	 * Remove cells which are not assigned to any country,
 	 * that is the ones with attribute 'cntStampAtt' null or set to "".
@@ -134,9 +96,15 @@ public class EuroGridBuilder {
 
 
 	//sequencing
-	public static Collection<Feature> proceed(Geometry geometryToCover, double res, int epsg, String cntStampAtt, Collection<Feature> countries, double cntBufferDist, String cntIdAtt) {
-		Collection<Feature> cells = EuroGridBuilder.buildGridCells(geometryToCover, res, epsg);
-		EuroGridBuilder.addCountryStamp(cells, cntStampAtt, countries, cntBufferDist, cntIdAtt);
+	public static Collection<Feature> proceed(Geometry geometryToCover, double res, int epsgCode, String cntStampAtt, Collection<Feature> countries, double cntBufferDist, String cntIdAtt) {
+		StatGrid grid = new StatGrid()
+				.setGeometryToCover(geometryToCover)
+				.setResolution(res)
+				.setEPSGCode(epsgCode)
+				;
+		Collection<Feature> cells = grid.getCells();
+
+		EuroGridBuilder.assignCountries(cells, cntStampAtt, countries, cntBufferDist, cntIdAtt);
 		EuroGridBuilder.filterCountryStamp(cells, cntStampAtt);
 		return cells;
 	}
@@ -152,55 +120,26 @@ public class EuroGridBuilder {
 	 * @return
 	 */
 	public static Collection<Feature> buildGridCellsByCountry(String countryCode, double gridResolutionM, double cntBufferDist) {
+
 		//get country geometry
 		Geometry cntGeom = CountriesUtil.getCountry(countryCode).getDefaultGeometry();
 		if(cntBufferDist >= 0)
 			cntGeom = cntGeom.buffer(cntBufferDist);
+
 		//build cells
-		Collection<Feature> cells = buildGridCells(cntGeom, gridResolutionM, 3035);
+		StatGrid grid = new StatGrid()
+				.setGeometryToCover(cntGeom)
+				.setResolution(gridResolutionM)
+				.setEPSGCode(3035)
+				;
+		Collection<Feature> cells = grid.getCells();
+
 		//set cnt code to cells
 		for(Feature cell : cells) cell.setAttribute("CNTR_ID", countryCode);
+
 		return cells;
 	}
 
-
-	private static Envelope ensureGrid(Envelope env, double res) {
-		double xMin = env.getMinX() - env.getMinX()%res;
-		double xMax = (1+(int)(env.getMaxX()/res))*res;
-		double yMin = env.getMinY() - env.getMinY()%res;
-		double yMax = (1+(int)(env.getMaxY()/res))*res;
-		return new Envelope(xMin, xMax, yMin, yMax);
-	}
-
-
-	/**
-	 * Build a cell code (according to INSPIRE coding system, @see https://inspire.ec.europa.eu/id/document/tg/su).
-	 * This is valid only for a grids in a cartographic projection.
-	 * Examples:
-	 * - CRS3035RES200mN1453400E1452800
-	 * - CRS3035RES100000mN5400000E1200000
-	 * 
-	 * @param epsgCode
-	 * @param gridResolutionM
-	 * @param lowerLeftCornerPosition
-	 * @return
-	 */
-	public static String getGridCellId(int epsgCode, double gridResolutionM, Coordinate lowerLeftCornerPosition) {
-		return 
-				"CRS"+Integer.toString((int)epsgCode)
-				+"RES"+Integer.toString((int)gridResolutionM)+"m"
-				+"N"+Integer.toString((int)lowerLeftCornerPosition.getX())
-				+"E"+Integer.toString((int)lowerLeftCornerPosition.getY())
-				;
-	}
-
-
-	private static Coordinate[] createCoordinates(double... cs) {
-		Coordinate[] cs_ = new Coordinate[cs.length/2];
-		for(int i=0; i<cs_.length; i++) cs_[i] = new Coordinate(cs[2*i],cs[2*i+1]);
-		return cs_;
-	}
-	private static Polygon createPolygon(double... cs) { return new GeometryFactory().createPolygon(createCoordinates(cs)); }
 
 
 	public static void main(String[] args) throws Exception {
