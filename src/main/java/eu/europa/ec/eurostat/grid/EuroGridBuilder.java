@@ -28,21 +28,21 @@ public class EuroGridBuilder {
 
 	/**
 	 * Assign grid cells to countries.
-	 * If a grid cell intersects the bufferred geometry of a country, then an attribute of the cell is assigned with this country code.
+	 * If a grid cell intersects or is nearby the geometry of a country, then an attribute of the cell is assigned with this country code.
 	 * For cells that are to be assigned to several countries, several country codes are assigned.
 	 * 
 	 * @param cells
-	 * @param cntStampAtt
+	 * @param cellCountryAttribute
 	 * @param countries
-	 * @param cntBufferDist
-	 * @param cntIdAtt
+	 * @param toleranceDistance
+	 * @param countryIdAttribute
 	 */
-	public static void assignCountries(Collection<Feature> cells, String cntStampAtt, Collection<Feature> countries, double cntBufferDist, String cntIdAtt) {
-		if(logger.isDebugEnabled()) logger.debug("Stamp country...");
+	public static void assignCountries(Collection<Feature> cells, String cellCountryAttribute, Collection<Feature> countries, double toleranceDistance, String countryIdAttribute) {
+		if(logger.isDebugEnabled()) logger.debug("Assign country...");
 
-		//initialise cell country stamp
+		//initialise cell country attribute
 		for(Feature cell : cells)
-			cell.setAttribute(cntStampAtt, "");
+			cell.setAttribute(cellCountryAttribute, "");
 
 		//index cells
 		STRtree index = new STRtree();
@@ -52,23 +52,25 @@ public class EuroGridBuilder {
 		for(Feature cnt : countries) {
 			//get cnt geometry and code
 			Geometry cntGeom = cnt.getDefaultGeometry();
-			String cntCode = cnt.getAttribute(cntIdAtt).toString();
+			String cntCode = cnt.getAttribute(countryIdAttribute).toString();
 
-			//apply buffer
-			if(cntBufferDist >= 0)
-				cntGeom = cntGeom.buffer(cntBufferDist);
+			//get country envelope
+			Envelope cntEnv = cntGeom.getEnvelopeInternal();
+			cntEnv.expandBy(toleranceDistance);
 
 			//get grid cells intersecting
-			Envelope cntEnv = cntGeom.getEnvelopeInternal();
 			for(Object cell_ : index.query(cntEnv)) {
 				Feature cell = (Feature)cell_;
-				if(!cntEnv.intersects(cell.getDefaultGeometry().getEnvelopeInternal())) continue;
-				if(!cntGeom.intersects(cell.getDefaultGeometry())) continue;
-				String csa = cell.getAttribute(cntStampAtt).toString();
+				Geometry cellGeom = cell.getDefaultGeometry();
+
+				if(!cellGeom.getEnvelopeInternal().intersects(cntEnv)) continue;
+				if(cellGeom.distance(cntGeom) > toleranceDistance) continue;
+
+				String csa = cell.getAttribute(cellCountryAttribute).toString();
 				if("".equals(csa))
-					cell.setAttribute(cntStampAtt, cntCode);
+					cell.setAttribute(cellCountryAttribute, cntCode);
 				else
-					cell.setAttribute(cntStampAtt, csa+"-"+cntCode);
+					cell.setAttribute(cellCountryAttribute, csa+"-"+cntCode);
 			}
 		}
 
@@ -77,16 +79,16 @@ public class EuroGridBuilder {
 
 	/**
 	 * Remove cells which are not assigned to any country,
-	 * that is the ones with attribute 'cntStampAtt' null or set to "".
+	 * that is the ones with attribute 'cellCountryAttribute' null or set to "".
 	 * 
 	 * @param cells
-	 * @param cntStampAtt
+	 * @param cellCountryAttribute
 	 */
-	public static void filterCountryStamp(Collection<Feature> cells, String cntStampAtt) {
+	public static void filterCellsWithoutCountry(Collection<Feature> cells, String cellCountryAttribute) {
 		if(logger.isDebugEnabled()) logger.debug("Filtering...");
 		Collection<Feature> toRemove = new ArrayList<Feature>();
 		for(Feature cell : cells) {
-			Object cellCnt = cell.getAttribute(cntStampAtt);
+			Object cellCnt = cell.getAttribute(cellCountryAttribute);
 			if(cellCnt==null || cellCnt.toString().equals("")) toRemove.add(cell);
 		}
 		cells.removeAll(toRemove);
@@ -96,7 +98,7 @@ public class EuroGridBuilder {
 
 
 	//sequencing
-	public static Collection<Feature> proceed(Geometry geometryToCover, double res, int epsgCode, String cntStampAtt, Collection<Feature> countries, double cntBufferDist, String cntIdAtt) {
+	public static Collection<Feature> proceed(Geometry geometryToCover, double res, int epsgCode, String cellCountryAttribute, Collection<Feature> countries, double toleranceDistance, String cntIdAtt) {
 		StatGrid grid = new StatGrid()
 				.setGeometryToCover(geometryToCover)
 				.setResolution(res)
@@ -104,8 +106,8 @@ public class EuroGridBuilder {
 				;
 		Collection<Feature> cells = grid.getCells();
 
-		EuroGridBuilder.assignCountries(cells, cntStampAtt, countries, cntBufferDist, cntIdAtt);
-		EuroGridBuilder.filterCountryStamp(cells, cntStampAtt);
+		EuroGridBuilder.assignCountries(cells, cellCountryAttribute, countries, toleranceDistance, cntIdAtt);
+		EuroGridBuilder.filterCellsWithoutCountry(cells, cellCountryAttribute);
 		return cells;
 	}
 
@@ -116,15 +118,15 @@ public class EuroGridBuilder {
 	 * 
 	 * @param countryCode
 	 * @param gridResolutionM
-	 * @param cntBufferDist
+	 * @param toleranceDistance
 	 * @return
 	 */
-	public static Collection<Feature> buildGridCellsByCountry(String countryCode, double gridResolutionM, double cntBufferDist) {
+	public static Collection<Feature> buildGridCellsByCountry(String countryCode, double gridResolutionM, double toleranceDistance) {
 
 		//get country geometry
 		Geometry cntGeom = CountriesUtil.getCountry(countryCode).getDefaultGeometry();
-		if(cntBufferDist >= 0)
-			cntGeom = cntGeom.buffer(cntBufferDist);
+		if(toleranceDistance >= 0)
+			cntGeom = cntGeom.buffer(toleranceDistance);
 
 		//build cells
 		StatGrid grid = new StatGrid()

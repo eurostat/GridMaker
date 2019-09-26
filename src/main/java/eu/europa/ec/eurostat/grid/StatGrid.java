@@ -55,9 +55,8 @@ public class StatGrid {
 	 */
 	private Geometry geometryToCover;
 	public Geometry getGeometryToCover() {
-		if(geometryToCover == null) {
+		if(geometryToCover == null)
 			geometryToCover = getGeometry(new Envelope(0, 10000000, 0, 10000000));
-		}
 		return geometryToCover;
 	}
 	public StatGrid setGeometryToCover(Geometry geometryToCover) {
@@ -85,7 +84,6 @@ public class StatGrid {
 	 * The type of grid cell geometry: The surface representation (a square) or its center point.
 	 * 
 	 * @author Julien Gaffuri
-	 *
 	 */
 	public static enum GridCellGeometryType {SURFACE, CENTER_POINT};
 
@@ -113,7 +111,7 @@ public class StatGrid {
 
 
 	/**
-	 * Build the grid cells, to be accessed with 'getCells()' method.
+	 * Build the grid cells.
 	 * 
 	 * @return this object
 	 */
@@ -121,7 +119,7 @@ public class StatGrid {
 		if(logger.isDebugEnabled()) logger.debug("Build grid cells...");
 
 		//get grid envelope
-		Envelope env = ensureGrid(geometryToCover.getEnvelopeInternal(), resolution);
+		Envelope env = ensureGrid(getGeometryToCover().getEnvelopeInternal(), resolution);
 
 		//get envelop to cover
 		Envelope envCover = geometryToCover.getEnvelopeInternal();
@@ -202,4 +200,8 @@ public class StatGrid {
 		Coordinate[] cs = new Coordinate[]{new Coordinate(env.getMinX(),env.getMinY()), new Coordinate(env.getMaxX(),env.getMinY()), new Coordinate(env.getMaxX(),env.getMaxY()), new Coordinate(env.getMinX(),env.getMaxY()), new Coordinate(env.getMinX(),env.getMinY())};
 		return new GeometryFactory().createPolygon(cs);
 	}
+
+
+
+
 }
