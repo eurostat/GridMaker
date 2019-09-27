@@ -133,7 +133,7 @@ public class GridMakerJarMain {
 			//TODO fix that !
 			CoordinateReferenceSystem crs = null;
 			if("3035".equals(sg.getEPSGCode()))
-				crs = CRS.decode(WKT_3035);
+				crs = CRS.parseWKT(WKT_3035);
 			else
 				crs = CRS.decode("EPSG:"+sg.getEPSGCode());
 
