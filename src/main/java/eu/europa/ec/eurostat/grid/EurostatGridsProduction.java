@@ -50,7 +50,6 @@ public class EurostatGridsProduction {
 			StatGridCountryUtil.assignCountries(cells, "CNTR_ID", cnts, 1000, "CNTR_ID");
 			StatGridCountryUtil.filterCellsWithoutCountry(cells, "CNTR_ID");
 
-
 			logger.info("Save " + cells.size() + " cells...");
 			SHPUtil.saveSHP(cells, path+resKM+"km/grid_"+resKM+"km.shp", CRS.decode("EPSG:3035"));
 		}

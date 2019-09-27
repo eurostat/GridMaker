@@ -47,21 +47,21 @@ public class StatGridCountryUtil {
 			index.insert(cell.getDefaultGeometry().getEnvelopeInternal(), cell);
 
 		for(Feature cnt : countries) {
-			//get country geometry and code
-			Geometry cntGeom = cnt.getDefaultGeometry();
+			//get country cover and code
+			Geometry cntCover = cnt.getDefaultGeometry();
+			if(toleranceDistance != 0 ) cntCover = cntCover.buffer(toleranceDistance);
 			String cntCode = cnt.getAttribute(countryIdAttribute).toString();
 
 			//get country envelope, expanded by toleranceDistance
-			Envelope cntEnv = cntGeom.getEnvelopeInternal();
-			cntEnv.expandBy(toleranceDistance);
+			Envelope cntCoverEnv = cntCover.getEnvelopeInternal();
 
 			//get grid cells around country envelope
-			for(Object cell_ : index.query(cntEnv)) {
+			for(Object cell_ : index.query(cntCoverEnv)) {
 				Feature cell = (Feature)cell_;
 				Geometry cellGeom = cell.getDefaultGeometry();
 
-				if(!cellGeom.getEnvelopeInternal().intersects(cntEnv)) continue;
-				if(cellGeom.distance(cntGeom) > toleranceDistance) continue;
+				if( ! cntCoverEnv.intersects(cellGeom.getEnvelopeInternal()) ) continue;
+				if( ! cntCover.intersects(cellGeom) ) continue;
 
 				String att = cell.getAttribute(cellCountryAttribute).toString();
 				if("".equals(att))
