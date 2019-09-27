@@ -15,6 +15,7 @@ import org.apache.commons.cli.ParseException;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.grid.StatGrid.GridCellGeometryType;
 import eu.europa.ec.eurostat.grid.utils.CountriesUtil;
@@ -127,12 +128,42 @@ public class GridMakerJarMain {
 		Collection<Feature> cells = sg.getCells();
 		System.out.println(cells.size() + " grid cells built.");
 
-
 		System.out.println("Save as " + outFile + "...");
 		try {
-			SHPUtil.saveSHP(cells, outFile, CRS.decode("EPSG:"+sg.getEPSGCode()));
+			//TODO fix that !
+			CoordinateReferenceSystem crs = null;
+			if("3035".equals(sg.getEPSGCode()))
+				crs = CRS.decode(WKT_3035);
+			else
+				crs = CRS.decode("EPSG:"+sg.getEPSGCode());
+
+			SHPUtil.saveSHP(cells, outFile, crs);
 		} catch (FactoryException e) { e.printStackTrace(); }
 
 	}
+
+
+
+	private static final String WKT_3035 = "PROJCS[\"ETRS89 / ETRS-LAEA\",\r\n" + 
+			"    GEOGCS[\"ETRS89\",\r\n" + 
+			"        DATUM[\"European_Terrestrial_Reference_System_1989\",\r\n" + 
+			"            SPHEROID[\"GRS 1980\",6378137,298.257222101,\r\n" + 
+			"                AUTHORITY[\"EPSG\",\"7019\"]],\r\n" + 
+			"            AUTHORITY[\"EPSG\",\"6258\"]],\r\n" + 
+			"        PRIMEM[\"Greenwich\",0,\r\n" + 
+			"            AUTHORITY[\"EPSG\",\"8901\"]],\r\n" + 
+			"        UNIT[\"degree\",0.01745329251994328,\r\n" + 
+			"            AUTHORITY[\"EPSG\",\"9122\"]],\r\n" + 
+			"        AUTHORITY[\"EPSG\",\"4258\"]],\r\n" + 
+			"    UNIT[\"metre\",1,\r\n" + 
+			"        AUTHORITY[\"EPSG\",\"9001\"]],\r\n" + 
+			"    PROJECTION[\"Lambert_Azimuthal_Equal_Area\"],\r\n" + 
+			"    PARAMETER[\"latitude_of_center\",52],\r\n" + 
+			"    PARAMETER[\"longitude_of_center\",10],\r\n" + 
+			"    PARAMETER[\"false_easting\",4321000],\r\n" + 
+			"    PARAMETER[\"false_northing\",3210000],\r\n" + 
+			"    AUTHORITY[\"EPSG\",\"3035\"],\r\n" + 
+			"    AXIS[\"X\",EAST],\r\n" + 
+			"    AXIS[\"Y\",NORTH]]";
 
 }
