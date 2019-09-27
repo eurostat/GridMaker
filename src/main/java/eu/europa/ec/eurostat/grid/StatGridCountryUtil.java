@@ -92,21 +92,4 @@ public class StatGridCountryUtil {
 		if(logger.isDebugEnabled()) logger.debug(cellsToRemove.size() + " cells to remove. " + cells.size() + " cells left");
 	}
 
-
-
-	//sequencing
-	public static Collection<Feature> proceed(double res, String epsgCode, Geometry geometryToCover, double toleranceDistance, String cellCountryAttribute, Collection<Feature> countries, String cntIdAtt) {
-		StatGrid grid = new StatGrid()
-				.setResolution(res)
-				.setEPSGCode(epsgCode)
-				.setGeometryToCover(geometryToCover)
-				.setToleranceDistance(toleranceDistance)
-				;
-		Collection<Feature> cells = grid.getCells();
-
-		StatGridCountryUtil.assignCountries(cells, cellCountryAttribute, countries, toleranceDistance, cntIdAtt);
-		StatGridCountryUtil.filterCellsWithoutCountry(cells, cellCountryAttribute);
-		return cells;
-	}
-
 }

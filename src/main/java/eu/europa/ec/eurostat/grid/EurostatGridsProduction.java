@@ -33,14 +33,23 @@ public class EurostatGridsProduction {
 		StatGridCountryUtil.logger.setLevel(Level.ALL);
 
 		String path = "C:/Users/gaffuju/Desktop/grid/";
-		Geometry europeGeom = CountriesUtil.getEurope(false);
+		Geometry europeCover = CountriesUtil.getEurope(false);
+		europeCover = europeCover.buffer(1000);
 		ArrayList<Feature> cnts = CountriesUtil.getEuropeanCountries(false);
 
 		//build pan-European grids for various resolutions
 		for(int resKM : new int[] {100,50,10,5}) {
 
 			logger.info("Make " + resKM + "km grid...");
-			Collection<Feature> cells = StatGridCountryUtil.proceed(resKM*1000.0, "3035", europeGeom, 1000, "CNTR_ID", cnts, "CNTR_ID");
+			StatGrid grid = new StatGrid()
+					.setResolution(resKM*1000.0)
+					.setEPSGCode("3035")
+					.setGeometryToCover(europeCover)
+					;
+			Collection<Feature> cells = grid.getCells();
+			StatGridCountryUtil.assignCountries(cells, "CNTR_ID", cnts, 1000, "CNTR_ID");
+			StatGridCountryUtil.filterCellsWithoutCountry(cells, "CNTR_ID");
+
 
 			logger.info("Save " + cells.size() + " cells...");
 			SHPUtil.saveSHP(cells, path+resKM+"km/grid_"+resKM+"km.shp", CRS.decode("EPSG:3035"));
