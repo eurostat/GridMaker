@@ -57,7 +57,7 @@ public class StatGrid {
 	private Geometry geometryToCover;
 	public Geometry getGeometryToCover() {
 		if(geometryToCover == null)
-			geometryToCover = getGeometry(new Envelope(0.0, 10000000.0, 0.0, 10000000.0));
+			geometryToCover = getGeometry(new Envelope(0.0, 10000000.0, 0.0, 10000000.0), new GeometryFactory());
 		return geometryToCover;
 	}
 	public StatGrid setGeometryToCover(Geometry geometryToCover) {
@@ -66,12 +66,13 @@ public class StatGrid {
 		return this;
 	}
 	public StatGrid setGeometryToCover(Envelope envelopeToCover) {
-		return setGeometryToCover(getGeometry(envelopeToCover));
+		return setGeometryToCover(getGeometry(envelopeToCover, new GeometryFactory()));
 	}
 
 	/**
 	 * All cells within this tolerance distance to 'geometryToCover' will be included in the grid.
-	 * NB: The unit of measure should be the same as the one of the Coordinate Reference System.
+	 * NB 1: The unit of measure should be the same as the one of the Coordinate Reference System.
+	 * NB 2: This distance can be negative.
 	 */
 	private double toleranceDistance = 0.0;
 	public double getToleranceDistance() { return toleranceDistance; }
@@ -118,22 +119,33 @@ public class StatGrid {
 	 */
 	private StatGrid buildCells() {
 		if(logger.isDebugEnabled()) logger.debug("Build grid cells...");
+		GeometryFactory gf = getGeometryToCover().getFactory();
 
-		//get envelop to cover
-		Envelope envCover = getGeometryToCover().getEnvelopeInternal();
-		envCover.expandBy(toleranceDistance*1.00001);
-		envCover = ensureGrid(envCover, resolution);
+		//get geometry to cover
+		Geometry geomCovBuff = getGeometryToCover();
+
+		if( toleranceDistance != 0 ) {
+			if(logger.isDebugEnabled()) logger.debug("   (make buffer...)");
+			geomCovBuff = getGeometryToCover().buffer(toleranceDistance);
+		}
+
+		//get envelope to cover
+		Envelope envCovBuff = geomCovBuff.getEnvelopeInternal();
+		envCovBuff = ensureGrid(envCovBuff, resolution);
 
 		cells = new ArrayList<Feature>();
-		for(double x=envCover.getMinX(); x<envCover.getMaxX(); x += resolution)
-			for(double y=envCover.getMinY(); y<envCover.getMaxY(); y += resolution) {
+		for(double x=envCovBuff.getMinX(); x<envCovBuff.getMaxX(); x += resolution)
+			for(double y=envCovBuff.getMinY(); y<envCovBuff.getMaxY(); y += resolution) {
 
-				//build cell polygon geometry
-				Geometry gridCellGeom = createPolygon( x,y, x+resolution,y, x+resolution,y+resolution, x,y+resolution, x,y );
+				//build cell envelope
+				Envelope gridCellEnv = new Envelope(x, x+resolution, y, y+resolution);
+				//check intersection with envCovBuff
+				if( ! envCovBuff.intersects(gridCellEnv) ) continue;
 
-				//check distance to geometryToCover
-				if(!gridCellGeom.getEnvelopeInternal().intersects(envCover)) continue;
-				if(gridCellGeom.distance(geometryToCover) > toleranceDistance) continue;
+				//build cell geometry
+				Geometry gridCellGeom = getGeometry(gridCellEnv, gf);
+				//check intersection with geometryToCover
+				if( ! geomCovBuff.intersects(gridCellGeom) ) continue;
 
 				//build the cell
 				Feature cell = new Feature();
@@ -187,17 +199,10 @@ public class StatGrid {
 		return new Envelope(xMin, xMax, yMin, yMax);
 	}
 
-	private static Coordinate[] createCoordinates(double... cs) {
-		Coordinate[] cs_ = new Coordinate[cs.length/2];
-		for(int i=0; i<cs_.length; i++) cs_[i] = new Coordinate(cs[2*i],cs[2*i+1]);
-		return cs_;
-	}
-	private static Polygon createPolygon(double... cs) { return new GeometryFactory().createPolygon(createCoordinates(cs)); }
-
 	//build geometry from envelope
-	private static Polygon getGeometry(Envelope env) {
+	private static Polygon getGeometry(Envelope env, GeometryFactory gf) {
 		Coordinate[] cs = new Coordinate[]{new Coordinate(env.getMinX(),env.getMinY()), new Coordinate(env.getMaxX(),env.getMinY()), new Coordinate(env.getMaxX(),env.getMaxY()), new Coordinate(env.getMinX(),env.getMaxY()), new Coordinate(env.getMinX(),env.getMinY())};
-		return new GeometryFactory().createPolygon(cs);
+		return gf.createPolygon(cs);
 	}
 
 }

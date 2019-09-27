@@ -42,7 +42,7 @@ public class StatGridTest extends TestCase {
 		assertEquals(50000.0, sg.getResolution());
 		assertEquals(500000.0, sg.getToleranceDistance());
 		assertEquals(StatGrid.GridCellGeometryType.CENTER_POINT, sg.getGridCellGeometryType());
-		assertEquals(48756, sg.getCells().size());
+		assertEquals(48748, sg.getCells().size());
 	}
 
 	public void test3() throws Exception {
