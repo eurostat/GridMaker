@@ -34,36 +34,44 @@ public class EurostatGridsProduction {
 		StatGridCountryUtil.logger.setLevel(Level.ALL);
 
 		String path = "C:/Users/gaffuju/Desktop/grid/";
-		Geometry europeCover = CountriesUtil.getEurope(false);
-		europeCover = europeCover.buffer(1000);
-		ArrayList<Feature> cnts = CountriesUtil.getEuropeanCountries(false);
 
-		//build pan-European grids for various resolutions
-		for(int resKM : new int[] {100,50,10,5}) {
+		//make pan-european grid datasets
+		{
+			logger.info("Get Europe cover (buffer)...");
+			Geometry europeCover = CountriesUtil.getEurope(true);
+			europeCover = europeCover.buffer(1000);
 
-			logger.info("Make " + resKM + "km grid...");
-			StatGrid grid = new StatGrid()
-					.setResolution(resKM*1000.0)
-					.setEPSGCode("3035")
-					.setGeometryToCover(europeCover)
-					;
-			Collection<Feature> cells = grid.getCells();
-			StatGridCountryUtil.assignCountries(cells, "CNTR_ID", cnts, 1000, "CNTR_ID");
-			StatGridCountryUtil.filterCellsWithoutCountry(cells, "CNTR_ID");
+			logger.info("Get European countries ...");
+			ArrayList<Feature> cnts = CountriesUtil.getEuropeanCountries(true);
 
-			logger.info("Save " + cells.size() + " cells...");
-			SHPUtil.saveSHP(cells, path+resKM+"km/grid_"+resKM+"km.shp", CRS.decode("EPSG:3035"));
+			//build pan-European grids for various resolutions
+			for(int resKM : new int[] {100,50,10,5}) {
+
+				logger.info("Make " + resKM + "km grid...");
+				StatGrid grid = new StatGrid()
+						.setResolution(resKM*1000.0)
+						.setEPSGCode("3035")
+						.setGeometryToCover(europeCover)
+						;
+				Collection<Feature> cells = grid.getCells();
+				StatGridCountryUtil.assignCountries(cells, "CNTR_ID", cnts, 1000, "CNTR_ID");
+				StatGridCountryUtil.filterCellsWithoutCountry(cells, "CNTR_ID");
+
+				logger.info("Save " + cells.size() + " cells...");
+				SHPUtil.saveSHP(cells, path+resKM+"km/grid_"+resKM+"km.shp", CRS.decode("EPSG:3035"));
+			}
 		}
 
 		//build country 1km grids by country
 		for(String countryCode : CountriesUtil.EuropeanCountryCodes) {
 
 			logger.info("Make 1km grid for "+countryCode+"...");
-			Collection<Feature> cells = buildGridCellsByCountry(countryCode, false, 1000, 500);
+			Collection<Feature> cells = buildGridCellsByCountry(countryCode, true, 1000, 500);
 
 			logger.info("Save " + cells.size() + " cells...");
 			SHPUtil.saveSHP(cells, path+"1km/grid_1km_"+countryCode+".shp", CRS.decode("EPSG:3035"));
 		}
+
 		logger.info("End");
 	}
 
