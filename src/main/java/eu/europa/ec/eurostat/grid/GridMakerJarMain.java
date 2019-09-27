@@ -121,7 +121,7 @@ public class GridMakerJarMain {
 
 		//output file
 		String outFile = cmd.getOptionValue("o");
-		if(outFile == null) outFile = Paths.get("").toAbsolutePath().toString() + "/out.json";
+		if(outFile == null) outFile = Paths.get("").toAbsolutePath().toString() + "/out.shp";
 
 
 		System.out.println("Build grid...");
