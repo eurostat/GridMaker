@@ -30,6 +30,7 @@ public class EurostatGridsProduction {
 		logger.info("Start");
 
 		logger.setLevel(Level.ALL);
+		StatGrid.logger.setLevel(Level.ALL);
 		StatGridCountryUtil.logger.setLevel(Level.ALL);
 
 		String path = "C:/Users/gaffuju/Desktop/grid/";
