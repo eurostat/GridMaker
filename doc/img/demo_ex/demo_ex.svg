@@ -17,9 +17,9 @@
    id="svg8"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
    sodipodi:docname="demo_ex.svg"
-   inkscape:export-filename="/home/juju/demo_ex.png"
-   inkscape:export-xdpi="96"
-   inkscape:export-ydpi="96">
+   inkscape:export-filename="/home/juju/workspace/GridMaker/doc/img/demo_ex/demo_ex.png"
+   inkscape:export-xdpi="173.59"
+   inkscape:export-ydpi="173.59">
   <defs
      id="defs2">
     <marker
@@ -73,8 +73,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
-     inkscape:cx="301.48903"
-     inkscape:cy="948.09973"
+     inkscape:cx="311.19689"
+     inkscape:cy="969.4149"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -91,7 +91,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -99,24 +99,31 @@
      inkscape:label="Calque 1"
      inkscape:groupmode="layer"
      id="layer1">
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.97302538;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect845"
+       width="136.2149"
+       height="42.726067"
+       x="17.440706"
+       y="15.788479" />
     <image
-       sodipodi:absref="/home/juju/Bureau/workspace/GridMaker/doc/demo_ex_fin.png"
+       sodipodi:absref="/home/juju/Bureau/workspace/GridMaker/doc/img/demo_ex/demo_ex_fin.png"
        xlink:href="demo_ex_fin.png"
-       width="61.215237"
-       height="42.004597"
-       preserveAspectRatio="none"
-       id="image893"
+       y="16.137346"
        x="93.108528"
-       y="16.666513" />
-    <image
-       sodipodi:absref="/home/juju/Bureau/workspace/GridMaker/doc/demo_ex_ini.png"
-       xlink:href="demo_ex_ini.png"
-       width="57.12534"
-       height="39.643841"
+       id="image893"
        preserveAspectRatio="none"
-       id="image904"
+       height="42.004597"
+       width="60.908131" />
+    <image
+       sodipodi:absref="/home/juju/Bureau/workspace/GridMaker/doc/img/demo_ex/demo_ex_ini.png"
+       xlink:href="demo_ex_ini.png"
+       y="16.790741"
        x="17.641159"
-       y="16.790741" />
+       id="image904"
+       preserveAspectRatio="none"
+       height="39.643841"
+       width="57.12534" />
     <path
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.1543895;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow2Mend)"
        d="M 76.305449,36.02205 H 87.397134"
