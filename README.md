@@ -14,7 +14,7 @@
 
 ### For coders
 
-[GridMaker](https://github.com/eurostat/GridMaker) is available as a Java library. To quickly setup a development environment for such library, [see these instructions](ADD_URL).
+[GridMaker](https://github.com/eurostat/GridMaker) is a Java library. To quickly setup a development environment, [see these instructions](ADD_URL).
 
 Download and install [GridMaker](https://github.com/eurostat/GridMaker) with:
 
@@ -47,12 +47,12 @@ StatGrid grid = new StatGrid()
 Collection<Feature> cells = grid.getCells();
 ```
 
-This other example creates and saves as a *SHP file a grid covering Luxembourg, with a 5km resolution in the European ETRS89-LAEA coordinate reference system ([EPSG:3035](https://spatialreference.org/ref/epsg/etrs89-etrs-laea/)):
+This other example creates a 5km resolution grid covering Luxembourg and a 1km margin, based on the European ETRS89-LAEA coordinate reference system ([EPSG:3035](https://spatialreference.org/ref/epsg/etrs89-etrs-laea/)). The cells are saved as a *.shp file:
 
 ```java
+String countryCode = "LU";
 
 //get country geometry
-String countryCode = "LU";
 Geometry cntGeom = CountriesUtil.getEuropeanCountry(countryCode, true).getDefaultGeometry();
 
 //build cells
@@ -62,9 +62,8 @@ StatGrid grid = new StatGrid()
 		.setGeometryToCover(cntGeom)
 		.setToleranceDistance(1000);
 
-logger.info("Save " + grid.getCells().size() + " cells...");
+//save cells as SHP file
 SHPUtil.saveSHP(grid.getCells(), "path_to_my/file.shp", CRS.decode("EPSG:3035"));
-
 ```
 
 For further overview, [see the documentation](https://eurostat.github.io/GridMaker/apidocs/).
