@@ -24,7 +24,7 @@ import eu.europa.ec.eurostat.grid.utils.Feature;
  *
  */
 public class StatGrid {
-	static Logger logger = Logger.getLogger(StatGrid.class.getName());
+	public static Logger logger = Logger.getLogger(StatGrid.class.getName());
 
 	/**
 	 * The grid resolution (pixel size).
