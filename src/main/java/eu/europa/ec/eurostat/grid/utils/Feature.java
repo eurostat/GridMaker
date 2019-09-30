@@ -12,7 +12,7 @@ import org.locationtech.jts.geom.Geometry;
  * @author julien Gaffuri
  *
  */
-public class Feature /*implements SimpleFeature*/ {
+public class Feature {
 
 	//id
 	private static int ID;

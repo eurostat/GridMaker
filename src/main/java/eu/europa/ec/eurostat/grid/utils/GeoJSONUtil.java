@@ -23,6 +23,8 @@ import org.locationtech.jts.geom.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
+ * Some functions to load/save as GeoJSON format.
+ * 
  * @author julien Gaffuri
  *
  */

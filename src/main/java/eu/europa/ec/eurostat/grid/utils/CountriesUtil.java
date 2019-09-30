@@ -12,6 +12,8 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.operation.union.CascadedPolygonUnion;
 
 /**
+ * Some base functions to get some information on specific countries.
+ * 
  * @author julien Gaffuri
  *
  */

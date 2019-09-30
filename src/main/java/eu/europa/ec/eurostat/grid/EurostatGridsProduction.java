@@ -16,7 +16,7 @@ import eu.europa.ec.eurostat.grid.utils.Feature;
 import eu.europa.ec.eurostat.grid.utils.SHPUtil;
 
 /**
- * Functions to produce European grids based on ETRS89-LAEA coordinate reference system (EPSG:3035)
+ * Examples to produce European grids based on ETRS89-LAEA coordinate reference system (EPSG:3035)
  * for various resolutions. The cells are tagged by country and identified with their standard code.
  * 
  * @author julien Gaffuri

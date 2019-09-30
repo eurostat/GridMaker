@@ -20,7 +20,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
- * Conversion functions from GT SimpleFeatures from/to OC features
+ * Conversion functions from GeoTools SimpleFeatures from/to Feature
  * 
  * @author julien Gaffuri
  *

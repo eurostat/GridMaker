@@ -24,6 +24,8 @@ import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
+ * Some functions to load/save as SHP format.
+ * 
  * @author julien Gaffuri
  *
  */
