@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.grid;
+package eu.europa.ec.eurostat.grid.examples;
 
 import java.util.ArrayList;
 import java.util.Collection;

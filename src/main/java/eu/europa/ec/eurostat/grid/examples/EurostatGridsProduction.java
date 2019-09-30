@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.grid;
+package eu.europa.ec.eurostat.grid.examples;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 
+import eu.europa.ec.eurostat.grid.StatGrid;
 import eu.europa.ec.eurostat.grid.utils.CountriesUtil;
 import eu.europa.ec.eurostat.grid.utils.Feature;
 import eu.europa.ec.eurostat.grid.utils.SHPUtil;

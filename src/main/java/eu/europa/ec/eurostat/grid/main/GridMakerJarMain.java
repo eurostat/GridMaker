@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.grid;
+package eu.europa.ec.eurostat.grid.main;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -17,6 +17,7 @@ import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import eu.europa.ec.eurostat.grid.StatGrid;
 import eu.europa.ec.eurostat.grid.StatGrid.GridCellGeometryType;
 import eu.europa.ec.eurostat.grid.utils.CountriesUtil;
 import eu.europa.ec.eurostat.grid.utils.Feature;
