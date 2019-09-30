@@ -67,7 +67,7 @@ SHPUtil.saveSHP(grid.getCells(), "path_to_my/file.shp", CRS.decode("EPSG:3035"))
 
 ```
 
-For further overview, [see the documentation](URL_TO_JAVADOC).
+For further overview, [see the documentation](https://eurostat.github.io/GridMaker/apidocs/).
 
 
 ## Support and contribution
