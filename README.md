@@ -82,7 +82,7 @@ SHPUtil.saveSHP(grid.getCells(), "path_to_my/file.shp", CRS.decode("EPSG:3035"))
 
 Input geometries can be loaded from [*Shapefile*](https://en.wikipedia.org/wiki/Shapefile) or [*GeoJSON*](https://geojson.org/) files or simply specified as rectangular extent. The grid cell geometries can be squared surfaces or points located at the center of these cells. Each grid cell is identified with a standard code such as *CRS3035RES200mN1453400E1452800*. The output grid cells can be saved as [*Shapefile*](https://en.wikipedia.org/wiki/Shapefile) or [*GeoJSON*](https://geojson.org/) files.
 
-For further overview, [see the documentation](https://eurostat.github.io/GridMaker/apidocs/).
+For further overview, see [the documentation](https://eurostat.github.io/GridMaker/apidocs/).
 
 ## Support and contribution
 
