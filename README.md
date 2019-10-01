@@ -14,7 +14,7 @@
 
 ### For coders
 
-[GridMaker](https://github.com/eurostat/GridMaker) can be used as a Java library. To quickly setup a development environment, see [these instructions](https://eurostat.github.io/README/howto/java_eclipse_maven_git_quick_guide).
+[GridMaker](https://github.com/eurostat/GridMaker) can be used as a Java library. To quickly setup a development environment, see [these instructions](https://eurostat.github.io/README/docs/howto/java_eclipse_maven_git_quick_guide).
 
 Download and install [GridMaker](https://github.com/eurostat/GridMaker) with:
 
@@ -35,19 +35,6 @@ and then use it in your Java project as a dependency by adding it to the *pom.xm
 		<version>1.0</version>
 	</dependency>
 </dependencies>
-```
-
-You should also add the [OSGeo](https://www.osgeo.org/) repository of [GeoTools](https://www.geotools.org/) :
-
-```
-<repositories>
-	...
-	<repository>
-		<id>osgeo</id>
-		<name>Open Source Geospatial Foundation Repository</name>
-		<url>http://download.osgeo.org/webdav/geotools/</url>
-	</repository>
-</repositories>
 ```
 
 You can then start using [GridMaker](https://github.com/eurostat/GridMaker) in your project. Here is an example showing how to create a 10m resolution grid over 1km² starting at point (0,0):
