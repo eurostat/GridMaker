@@ -1,6 +1,6 @@
 # Eurostat GridMaker
 
-[GridMaker](https://github.com/eurostat/GridMaker) is a tool to produce grids of various resolutions covering user-defined countries or regions:
+[GridMaker](https://github.com/eurostat/GridMaker) produces grids of various resolutions covering user-defined countries or regions:
 
 ![Eurostat Grid Maker](docs/img/demo_ex/demo_ex.png)
 
@@ -32,12 +32,10 @@ and then use it in your Java project as a dependency by adding it to the *pom.xm
 	<dependency>
 		<groupId>eu.europa.ec.eurostat</groupId>
 		<artifactId>GridMaker</artifactId>
-		<version>X.Y</version>
+		<version>1.0</version>
 	</dependency>
 </dependencies>
 ```
-
-with *X.Y* being the current version numbers.
 
 You should also add the [OSGeo](https://www.osgeo.org/) repository of [GeoTools](https://www.geotools.org/) :
 
