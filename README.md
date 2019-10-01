@@ -1,6 +1,6 @@
 # Eurostat GridMaker
 
-[GridMaker](https://github.com/eurostat/GridMaker) is a tool to produce grids of various resolutions covering user-defined countries or regions.
+[GridMaker](https://github.com/eurostat/GridMaker) is a tool to produce grids of various resolutions covering user-defined countries or regions:
 
 ![Eurostat Grid Maker](docs/img/demo_ex/demo_ex.png)
 
@@ -14,7 +14,7 @@
 
 ### For coders
 
-[GridMaker](https://github.com/eurostat/GridMaker) is a Java library. To quickly setup a development environment, [see these instructions](ADD_URL).
+[GridMaker](https://github.com/eurostat/GridMaker) can be used as a Java library. To quickly setup a development environment, see [these instructions](ADD_URL).
 
 Download and install [GridMaker](https://github.com/eurostat/GridMaker) with:
 
@@ -24,19 +24,35 @@ cd GridMaker
 mvn clean install
 ```
 
-and then use it in your Java project as a maven dependency:
+and then use it in your Java project as a dependency by adding it to the *pom.xml* file:
 
 ```
-<dependency>
-	<groupId>eu.europa.ec.eurostat</groupId>
-	<artifactId>GridMaker</artifactId>
-	<version>X.Y</version>
-</dependency>
+<dependencies>
+	...
+	<dependency>
+		<groupId>eu.europa.ec.eurostat</groupId>
+		<artifactId>GridMaker</artifactId>
+		<version>X.Y</version>
+	</dependency>
+</dependencies>
 ```
 
 with *X.Y* being the current version numbers.
 
-Here is an example to create a 10m resolution grid over starting at point (0,0):
+You should also add the [OSGeo](https://www.osgeo.org/) repository of [GeoTools](https://www.geotools.org/) :
+
+```
+<repositories>
+	...
+	<repository>
+		<id>osgeo</id>
+		<name>Open Source Geospatial Foundation Repository</name>
+		<url>http://download.osgeo.org/webdav/geotools/</url>
+	</repository>
+</repositories>
+```
+
+You can then start using [GridMaker](https://github.com/eurostat/GridMaker) in your project. Here is an example showing how to create a 10m resolution grid over 1km² starting at point (0,0):
 
 ```java
 
@@ -47,13 +63,11 @@ StatGrid grid = new StatGrid()
 Collection<Feature> cells = grid.getCells();
 ```
 
-This other example creates a 5km resolution grid covering Luxembourg and a 1km margin, based on the European ETRS89-LAEA coordinate reference system ([EPSG:3035](https://spatialreference.org/ref/epsg/etrs89-etrs-laea/)). The cells are saved as a *.shp file:
+This other example creates a 5km resolution grid covering Luxembourg (code LU) and a 1km margin, based on the European ETRS89-LAEA coordinate reference system ([EPSG:3035](https://spatialreference.org/ref/epsg/etrs89-etrs-laea/)). The cells are saved as a **.shp* file:
 
 ```java
-String countryCode = "LU";
-
 //get country geometry
-Geometry cntGeom = CountriesUtil.getEuropeanCountry(countryCode, true).getDefaultGeometry();
+Geometry cntGeom = CountriesUtil.getEuropeanCountry("LU", true).getDefaultGeometry();
 
 //build cells
 StatGrid grid = new StatGrid()
@@ -67,7 +81,6 @@ SHPUtil.saveSHP(grid.getCells(), "path_to_my/file.shp", CRS.decode("EPSG:3035"))
 ```
 
 For further overview, [see the documentation](https://eurostat.github.io/GridMaker/apidocs/).
-
 
 ## Support and contribution
 
