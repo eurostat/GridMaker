@@ -14,7 +14,7 @@
 
 ### For coders
 
-[GridMaker](https://github.com/eurostat/GridMaker) can be used as a Java library. To quickly setup a development environment, see [these instructions](https://eurostat.github.io/README/docs/howto/java_eclipse_maven_git_quick_guide).
+[GridMaker](https://github.com/eurostat/GridMaker) can be used as a Java library. To quickly setup a development environment, see [these instructions](https://eurostat.github.io/README/howto/java_eclipse_maven_git_quick_guide).
 
 Download and install [GridMaker](https://github.com/eurostat/GridMaker) with:
 
