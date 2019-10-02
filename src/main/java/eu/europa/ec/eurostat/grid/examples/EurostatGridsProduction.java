@@ -27,6 +27,9 @@ import eu.europa.ec.eurostat.grid.utils.SHPUtil;
 public class EurostatGridsProduction {
 	static Logger logger = Logger.getLogger(EurostatGridsProduction.class.getName());
 
+	//use CNTR_2010_100k or GAUL
+	//see also: https://www.efgs.info/data/
+	//https://esdac.jrc.ec.europa.eu/content/european-reference-grids
 
 	public static void main(String[] args) throws Exception {
 		logger.info("Start");
@@ -49,7 +52,7 @@ public class EurostatGridsProduction {
 		ArrayList<Feature> cnts = CountriesUtil.getEuropeanCountries(true);
 
 		//build pan-European grids for various resolutions
-		for(int resKM : new int[] {100,50,10,5}) {
+		for(int resKM : new int[] {100,50,20,10,5}) {
 			logger.info("Make " + resKM + "km grid...");
 			make(resKM, europeCover, cnts, path, crs);
 		}
@@ -68,9 +71,12 @@ public class EurostatGridsProduction {
 
 
 
+		//try to make 2km for whole Europe
+		//logger.info("Make " + 2 + "km grid...");
+		//make(2, europeCover, cnts, path, crs);
 		//try to make 1km for whole Europe
-		logger.info("Make " + 1000 + "km grid...");
-		make(1000, europeCover, cnts, path, crs);
+		logger.info("Make " + 1 + "km grid...");
+		make(1, europeCover, cnts, path, crs);
 
 		logger.info("End");
 	}
