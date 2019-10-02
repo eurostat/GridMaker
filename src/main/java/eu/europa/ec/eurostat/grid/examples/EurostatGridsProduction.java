@@ -46,7 +46,7 @@ public class EurostatGridsProduction {
 		//make pan-european grid datasets
 		logger.info("Get Europe cover (buffer)...");
 		Geometry europeCover = CountriesUtil.getEurope(true);
-		europeCover = europeCover.buffer(1500);
+		europeCover = europeCover.buffer(2000);
 
 		logger.info("Get European countries ...");
 		ArrayList<Feature> cnts = CountriesUtil.getEuropeanCountries(true);

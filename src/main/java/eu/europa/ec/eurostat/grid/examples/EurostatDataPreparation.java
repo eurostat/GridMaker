@@ -12,8 +12,8 @@ import eu.europa.ec.eurostat.grid.utils.CountriesUtil;
 import eu.europa.ec.eurostat.grid.utils.Feature;
 import eu.europa.ec.eurostat.grid.utils.SHPUtil;
 
-public class CntPreparation {
-	static Logger logger = Logger.getLogger(CntPreparation.class.getName());
+public class EurostatDataPreparation {
+	static Logger logger = Logger.getLogger(EurostatDataPreparation.class.getName());
 
 	public static void main(String[] args) throws Exception {
 		logger.info("Start");
@@ -24,7 +24,6 @@ public class CntPreparation {
 		String[] versions = new String[] {"2004","2010","2013","2016"};
 
 
-
 		//produce country union
 		Collection<Feature> cnts = new ArrayList<>();
 		for(String cntC : CountriesUtil.EuropeanCountryCodes) {
@@ -32,6 +31,7 @@ public class CntPreparation {
 			Geometry cntGeom = null;
 			for(String version : versions) {
 				logger.info(version);
+
 				Geometry cntGeomV = null;
 				try {
 					cntGeomV = CountriesUtil.getEuropeanCountry(cntC, path+"CNTR_RG_100K_"+version+"_LAEA.shp").getDefaultGeometry();
@@ -43,7 +43,12 @@ public class CntPreparation {
 				if(cntGeom == null)
 					cntGeom = cntGeomV;
 				else
-					cntGeom = cntGeom.union(cntGeomV);
+					try {
+						cntGeom = cntGeom.union(cntGeomV);
+					} catch (Exception e) {
+						logger.info("Retry...");
+						cntGeom = cntGeom.union(cntGeomV.buffer(0.01));
+					}
 			}
 			Feature cnt = new Feature();
 			cnt.setAttribute("CNTR_ID", cntC);
