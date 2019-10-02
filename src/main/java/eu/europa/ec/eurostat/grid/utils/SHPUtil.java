@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.geotools.data.DataUtilities;
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
@@ -17,8 +18,15 @@ import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureStore;
+import org.geotools.feature.DefaultFeatureCollection;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.operation.union.CascadedPolygonUnion;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -143,6 +151,39 @@ public class SHPUtil {
 		File parent = new File(filePath).getParentFile();
 		if (!parent.exists() && !parent.mkdirs())
 			throw new IllegalStateException("Couldn't create dir: " + parent);
+	}
+
+
+
+	//save the union of a shapefile into another one
+	public static void union(String inFile, String outFile){
+		try {
+			//load input shp
+			ArrayList<Feature> fs = loadSHP(inFile).fs;
+
+			//build union
+			ArrayList<Geometry> geoms = new ArrayList<Geometry>();
+			for( Feature f : fs ) {
+				Geometry geom = f.getDefaultGeometry();
+				if((geom instanceof Polygon || geom instanceof MultiPolygon) && !geom.isValid()) {
+					geom = geom.buffer(0);
+				}
+				geoms.add(geom);
+			}
+			Geometry union = new CascadedPolygonUnion(geoms).union();
+
+			//build feature
+			SimpleFeatureBuilder fb = new SimpleFeatureBuilder(DataUtilities.createType("ep", "the_geom:"+union.getGeometryType()));
+			fb.add(union);
+			SimpleFeature sf = fb.buildFeature(null);
+
+			//save shp
+			DefaultFeatureCollection outfc = new DefaultFeatureCollection(null,null);
+			outfc.add(sf);
+			saveSHP(outfc, outFile);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }
