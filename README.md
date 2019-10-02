@@ -37,19 +37,6 @@ and then use it in your Java project as a dependency by adding it to the *pom.xm
 </dependencies>
 ```
 
-You should also add the [OSGeo](https://www.osgeo.org/) repository of [GeoTools](https://www.geotools.org/) :
-
-```
-<repositories>
-	...
-	<repository>
-		<id>osgeo</id>
-		<name>Open Source Geospatial Foundation Repository</name>
-		<url>http://download.osgeo.org/webdav/geotools/</url>
-	</repository>
-</repositories>
-```
-
 You can then start using [GridMaker](https://github.com/eurostat/GridMaker) in your project. Here is an example showing how to create a 10m resolution grid over 1km² starting at point (0,0):
 
 ```java
