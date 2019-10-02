@@ -21,15 +21,13 @@ public class EurostatDataPreparation {
 		String path = "C:\\Users\\gaffuju\\Desktop\\CNTR_100k\\";
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 
-		String[] versions = new String[] {"2004","2010","2013","2016"};
-
-
-		//produce country union
+		
+		//produce country geometry as the union of different versions
 		Collection<Feature> cnts = new ArrayList<>();
 		for(String cntC : CountriesUtil.EuropeanCountryCodes) {
 			logger.info(cntC);
 			Geometry cntGeom = null;
-			for(String version : versions) {
+			for(String version : new String[] {"2004","2010","2013","2016"}) {
 				logger.info(version);
 
 				Geometry cntGeomV = null;
@@ -59,7 +57,7 @@ public class EurostatDataPreparation {
 
 
 
-		logger.info("Produce europe 100k from 100k countries");
+		logger.info("Produce Europe 100k as union of countries");
 		SHPUtil.union(path+"CNTR_RG_100K_union_LAEA.shp", path+"Europe_100K_union_LAEA.shp", 0);
 		//logger.info("Produce europe 100k buffer from 100k countries");
 		//SHPUtil.union(path+"CNTR_RG_100K_union_LAEA.shp", path+"Europe_100K_union_LAEA_2000.shp", 2000);

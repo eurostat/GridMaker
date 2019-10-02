@@ -27,8 +27,9 @@ import eu.europa.ec.eurostat.grid.utils.SHPUtil;
 public class EurostatGridsProduction {
 	static Logger logger = Logger.getLogger(EurostatGridsProduction.class.getName());
 
-	//use CNTR_2010_100k or GAUL
-	//see also: https://www.efgs.info/data/
+	//see also:
+	//https://www.eea.europa.eu/data-and-maps/data/eea-reference-grids-2
+	//https://www.efgs.info/data/
 	//https://esdac.jrc.ec.europa.eu/content/european-reference-grids
 
 	public static void main(String[] args) throws Exception {
