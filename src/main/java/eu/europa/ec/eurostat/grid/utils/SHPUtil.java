@@ -155,8 +155,8 @@ public class SHPUtil {
 
 
 
-	//save the union of a shapefile into another one
-	public static void union(String inFile, String outFile){
+	//save the union of a shapefile into another one (applying a buffer is required)
+	public static void union(String inFile, String outFile, double bufferDistance){
 		try {
 			//load input shp
 			ArrayList<Feature> fs = loadSHP(inFile).fs;
@@ -172,6 +172,9 @@ public class SHPUtil {
 			}
 			Geometry union = new CascadedPolygonUnion(geoms).union();
 
+			if(bufferDistance != 0)
+				union = union.buffer(bufferDistance);
+			
 			//build feature
 			SimpleFeatureBuilder fb = new SimpleFeatureBuilder(DataUtilities.createType("ep", "the_geom:"+union.getGeometryType()));
 			fb.add(union);

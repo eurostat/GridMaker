@@ -54,9 +54,10 @@ public class CntPreparation {
 
 
 
-
 		logger.info("Produce europe 100k from 100k countries");
-		SHPUtil.union(path+"CNTR_RG_100K_union_LAEA.shp", path+"Europe_100K_union_LAEA.shp");
+		SHPUtil.union(path+"CNTR_RG_100K_union_LAEA.shp", path+"Europe_100K_union_LAEA.shp", 0);
+		//logger.info("Produce europe 100k buffer from 100k countries");
+		//SHPUtil.union(path+"CNTR_RG_100K_union_LAEA.shp", path+"Europe_100K_union_LAEA_2000.shp", 2000);
 
 
 		logger.info("End");
