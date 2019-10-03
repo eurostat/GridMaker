@@ -2,10 +2,16 @@ package eu.europa.ec.eurostat.grid.examples;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
 import org.apache.log4j.Logger;
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.operation.buffer.BufferParameters;
+import org.locationtech.jts.operation.union.CascadedPolygonUnion;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.grid.utils.CountriesUtil;
@@ -25,18 +31,67 @@ public class EurostatDataPreparation {
 		//produceCountriesUnionVersions(path);
 
 
-		logger.info("Produce Europe 100k as union of countries");
-		SHPUtil.union(path+"CNTR_RG_100K_union_LAEA.shp", path+"Europe_100K_union_LAEA.shp", 0);
+		//logger.info("Produce Europe 100k as union of countries");
+		//SHPUtil.union(path+"CNTR_RG_100K_union_LAEA.shp", path+"Europe_100K_union_LAEA.shp", 0);
 
 		//buffering
-		//int bufferDistance = 2000;
-		//logger.info("Produce buffers (" + bufferDistance + ") of countries");
-		//SHPUtil.buffer(path+"CNTR_RG_100K_union_LAEA.shp", path+"CNTR_RG_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 2, BufferParameters.CAP_ROUND);
-		//logger.info("Produce Europe (" + bufferDistance + ") buffer");
-		//SHPUtil.buffer(path+"Europe_100K_union_LAEA.shp", path+"Europe_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 2, BufferParameters.CAP_ROUND);
+		int bufferDistance = 2000;
+		logger.info("Produce buffers (" + bufferDistance + ") of countries");
+		buffer(path+"CNTR_RG_100K_union_LAEA.shp", path+"CNTR_RG_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 2, BufferParameters.CAP_ROUND);
+		logger.info("Produce Europe (" + bufferDistance + ") buffer");
+		SHPUtil.buffer(path+"Europe_100K_union_LAEA.shp", path+"Europe_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 2, BufferParameters.CAP_ROUND);
 
 		logger.info("End");
 	}
+
+
+
+	public static void buffer(String inFile, String outFile, double bufferDistance, int quadrantSegments, int endCapStyle){
+		try {
+			SimpleFeatureCollection sfs = SHPUtil.getSimpleFeatures(inFile);
+			SimpleFeatureIterator iterator = sfs.features();
+			try {
+				while( iterator.hasNext()  ){
+					SimpleFeature f = iterator.next();
+					System.out.println(f.getAttribute("CNTR_ID"));
+					Geometry geom = (Geometry) f.getDefaultGeometry();
+					Collection<Geometry> geoms = getGeometries(geom);
+					System.out.println(geoms.size() + " components.");
+					System.out.println("Compute buffers");
+					Collection<Geometry> buffs = new ArrayList<>();
+					for(Geometry g : geoms)
+						buffs.add(g.buffer(bufferDistance, quadrantSegments, endCapStyle));
+					System.out.println("Compute union of buffers");
+					Geometry buff = new CascadedPolygonUnion(buffs ).union();
+
+					f.setDefaultGeometry(buff);
+				}
+			}
+			finally {
+				iterator.close();
+			}
+
+			SHPUtil.saveSHP(sfs, outFile);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	//return list of geometries that are not GeometryCollection
+	public static Collection<Geometry> getGeometries(Geometry geom){
+		Collection<Geometry> out = new HashSet<Geometry>();
+		int nb = geom.getNumGeometries();
+		if(nb == 0)
+			return out;
+		if(nb == 1)
+			out.add(geom.getGeometryN(0));
+		else
+			for(int i=0; i<nb; i++)
+				out.addAll( getGeometries(geom.getGeometryN(i)) );
+		return out;
+	}
+
 
 
 	//produce country geometry as the union of different versions
