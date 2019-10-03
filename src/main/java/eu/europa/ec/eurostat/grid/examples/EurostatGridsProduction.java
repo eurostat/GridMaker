@@ -46,11 +46,11 @@ public class EurostatGridsProduction {
 
 		//make pan-european grid datasets
 		logger.info("Get Europe cover (buffer)...");
-		Geometry europeCover = CountriesUtil.getEurope(true);
+		Geometry europeCover = CountriesUtil.getEurope(true); //TODO get buffered
 		europeCover = europeCover.buffer(2000);
 
 		logger.info("Get European countries ...");
-		ArrayList<Feature> cnts = CountriesUtil.getEuropeanCountries(true);
+		ArrayList<Feature> cnts = CountriesUtil.getEuropeanCountries(true); //TODO get buffered
 
 		//build pan-European grids for various resolutions
 		for(int resKM : new int[] {100,50,20,10,5}) {
@@ -92,7 +92,7 @@ public class EurostatGridsProduction {
 				.setGeometryToCover(europeCover)
 				;
 		Collection<Feature> cells = grid.getCells();
-		StatGridCountryUtil.assignCountries(cells, "CNTR_ID", cnts, 1000, "CNTR_ID");
+		StatGridCountryUtil.assignCountries(cells, "CNTR_ID", cnts, 1000, "CNTR_ID"); //TODO
 		StatGridCountryUtil.filterCellsWithoutCountry(cells, "CNTR_ID");
 
 		logger.info("Save " + cells.size() + " cells...");
@@ -114,6 +114,7 @@ public class EurostatGridsProduction {
 	public static Collection<Feature> buildGridCellsByCountry(String countryCode, boolean withOST, double gridResolutionM, double toleranceDistance) {
 
 		//get country geometry
+		//TODO get bufferred geometry
 		Geometry cntGeom = CountriesUtil.getEuropeanCountry(countryCode, withOST).getDefaultGeometry();
 
 		//build cells

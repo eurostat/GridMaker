@@ -17,6 +17,7 @@ import org.geotools.data.Transaction;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
@@ -174,7 +175,7 @@ public class SHPUtil {
 
 			if(bufferDistance != 0)
 				union = union.buffer(bufferDistance);
-			
+
 			//build feature
 			SimpleFeatureBuilder fb = new SimpleFeatureBuilder(DataUtilities.createType("ep", "the_geom:"+union.getGeometryType()));
 			fb.add(union);
@@ -184,6 +185,28 @@ public class SHPUtil {
 			DefaultFeatureCollection outfc = new DefaultFeatureCollection(null,null);
 			outfc.add(sf);
 			saveSHP(outfc, outFile);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	public static void buffer(String inFile, String outFile, double bufferDistance){
+		try {
+			SimpleFeatureCollection sfs = getSimpleFeatures(inFile);
+			SimpleFeatureIterator iterator = sfs.features();
+			try {
+				while( iterator.hasNext()  ){
+					SimpleFeature f = iterator.next();
+					f.setDefaultGeometry( ((Geometry)f.getDefaultGeometry()).buffer(bufferDistance) );
+				}
+			}
+			finally {
+				iterator.close();
+			}
+
+			saveSHP(sfs, outFile);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
