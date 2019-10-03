@@ -191,14 +191,14 @@ public class SHPUtil {
 	}
 
 
-	public static void buffer(String inFile, String outFile, double bufferDistance){
+	public static void buffer(String inFile, String outFile, double bufferDistance, int quadrantSegments, int endCapStyle){
 		try {
 			SimpleFeatureCollection sfs = getSimpleFeatures(inFile);
 			SimpleFeatureIterator iterator = sfs.features();
 			try {
 				while( iterator.hasNext()  ){
 					SimpleFeature f = iterator.next();
-					f.setDefaultGeometry( ((Geometry)f.getDefaultGeometry()).buffer(bufferDistance) );
+					f.setDefaultGeometry( ((Geometry)f.getDefaultGeometry()).buffer(bufferDistance, quadrantSegments, endCapStyle) );
 				}
 			}
 			finally {

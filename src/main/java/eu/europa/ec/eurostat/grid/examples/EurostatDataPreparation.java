@@ -6,6 +6,7 @@ import java.util.Collection;
 import org.apache.log4j.Logger;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.operation.buffer.BufferParameters;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.grid.utils.CountriesUtil;
@@ -15,6 +16,7 @@ import eu.europa.ec.eurostat.grid.utils.SHPUtil;
 public class EurostatDataPreparation {
 	static Logger logger = Logger.getLogger(EurostatDataPreparation.class.getName());
 
+	//use: -Xms2G -Xmx6G
 	public static void main(String[] args) throws Exception {
 		logger.info("Start");
 
@@ -23,14 +25,14 @@ public class EurostatDataPreparation {
 		logger.info("Produce country geometry as the union of different versions");
 		//produceCountriesUnionVersions(path);
 
-		double bufferDistance = 2000;
-		logger.info("Produce buffers ("+bufferDistance+") of countries");
-		SHPUtil.buffer(path+"CNTR_RG_100K_union_LAEA.shp", path+"CNTR_RG_100K_union_buff_"+((int)bufferDistance)+"_LAEA.shp", bufferDistance);
+		int bufferDistance = 2000;
+		logger.info("Produce buffers (" + bufferDistance + ") of countries");
+		SHPUtil.buffer(path+"CNTR_RG_100K_union_LAEA.shp", path+"CNTR_RG_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 2, BufferParameters.CAP_ROUND);
 
 		logger.info("Produce Europe 100k as union of countries");
 		SHPUtil.union(path+"CNTR_RG_100K_union_LAEA.shp", path+"Europe_100K_union_LAEA.shp", 0);
-		logger.info("Produce Europe ("+bufferDistance+") buffer");
-		SHPUtil.buffer(path+"Europe_100K_union_LAEA.shp", path+"Europe_100K_union_buff_\"+((int)bufferDistance)+\"_LAEA.shp", bufferDistance);
+		logger.info("Produce Europe (" + bufferDistance + ") buffer");
+		SHPUtil.buffer(path+"Europe_100K_union_LAEA.shp", path+"Europe_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 2, BufferParameters.CAP_ROUND);
 
 		logger.info("End");
 	}

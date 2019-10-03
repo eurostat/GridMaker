@@ -39,23 +39,24 @@ public class EurostatGridsProduction {
 		StatGrid.logger.setLevel(Level.ALL);
 		StatGridCountryUtil.logger.setLevel(Level.ALL);
 
-		String path = "C:/Users/gaffuju/Desktop/grid/";
+		String outpath = "C:/Users/gaffuju/Desktop/grid/";
+		String path = "C:\\Users\\gaffuju\\Desktop\\CNTR_100k\\";
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 
 
 
 		//make pan-european grid datasets
 		logger.info("Get Europe cover (buffer)...");
-		Geometry europeCover = CountriesUtil.getEurope(true); //TODO get buffered
-		europeCover = europeCover.buffer(2000);
+		Geometry europeCover = SHPUtil.loadSHP(path+"Europe_100K_union_buff_2000_LAEA.shp").fs.iterator().next().getDefaultGeometry();
+		//europeCover = europeCover.buffer(2000);
 
 		logger.info("Get European countries ...");
-		ArrayList<Feature> cnts = CountriesUtil.getEuropeanCountries(true); //TODO get buffered
+		ArrayList<Feature> cnts = SHPUtil.loadSHP(path+"CNTR_RG_100K_union_buff_2000_LAEA.shp").fs;
 
 		//build pan-European grids for various resolutions
 		for(int resKM : new int[] {100,50,20,10,5}) {
 			logger.info("Make " + resKM + "km grid...");
-			make(resKM, europeCover, cnts, path, crs);
+			make(resKM, europeCover, cnts, outpath, crs);
 		}
 
 
@@ -67,7 +68,7 @@ public class EurostatGridsProduction {
 			Collection<Feature> cells = buildGridCellsByCountry(countryCode, true, 1000, 1000);
 
 			logger.info("Save " + cells.size() + " cells...");
-			SHPUtil.saveSHP(cells, path+"1km/grid_1km_"+countryCode+".shp", crs);
+			SHPUtil.saveSHP(cells, outpath+"1km/grid_1km_"+countryCode+".shp", crs);
 		}
 
 
@@ -77,7 +78,7 @@ public class EurostatGridsProduction {
 		//make(2, europeCover, cnts, path, crs);
 		//try to make 1km for whole Europe
 		logger.info("Make " + 1 + "km grid...");
-		make(1, europeCover, cnts, path, crs);
+		make(1, europeCover, cnts, outpath, crs);
 
 		logger.info("End");
 	}
