@@ -7,6 +7,7 @@ import java.util.HashSet;
 import org.apache.log4j.Logger;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.operation.buffer.BufferParameters;
 import org.locationtech.jts.operation.union.CascadedPolygonUnion;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -34,9 +35,9 @@ public class EurostatDataPreparation {
 		//buffering
 		int bufferDistance = 2000;
 		logger.info("Produce buffers (" + bufferDistance + ") of countries");
-		buffer(path+"CNTR_RG_100K_union_LAEA.shp", path+"CNTR_RG_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 2, BufferParameters.CAP_ROUND);
+		buffer(path+"CNTR_RG_100K_union_LAEA.shp", path+"CNTR_RG_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 3, BufferParameters.CAP_ROUND);
 		logger.info("Produce Europe (" + bufferDistance + ") buffer");
-		buffer(path+"Europe_100K_union_LAEA.shp", path+"Europe_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 2, BufferParameters.CAP_ROUND);
+		buffer(path+"Europe_100K_union_LAEA.shp", path+"Europe_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 3, BufferParameters.CAP_ROUND);
 
 		//TODO remove country holes ?
 
@@ -62,6 +63,7 @@ public class EurostatDataPreparation {
 				buffs.add(g.buffer(bufferDistance, quadrantSegments, endCapStyle));
 			System.out.println("Compute union of buffers");
 			Geometry buff = new CascadedPolygonUnion(buffs ).union();
+			if(buff instanceof Polygon) buff = buff.getFactory().createMultiPolygon(new Polygon[] {(Polygon)buff});
 			f.setDefaultGeometry(buff);
 		}
 
@@ -89,6 +91,7 @@ public class EurostatDataPreparation {
 	private static void produceCountriesUnionVersions(String path) throws Exception {
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 
+		//NB: CascadedPolygonUnion returned noding exception - maybe it could be better tested...
 		Collection<Feature> cnts = new ArrayList<>();
 		for(String cntC : CountriesUtil.EuropeanCountryCodes) {
 			logger.info(cntC);
