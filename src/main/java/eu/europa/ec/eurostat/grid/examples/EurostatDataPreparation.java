@@ -5,13 +5,10 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.apache.log4j.Logger;
-import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.operation.buffer.BufferParameters;
 import org.locationtech.jts.operation.union.CascadedPolygonUnion;
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.grid.utils.CountriesUtil;
@@ -39,43 +36,37 @@ public class EurostatDataPreparation {
 		logger.info("Produce buffers (" + bufferDistance + ") of countries");
 		buffer(path+"CNTR_RG_100K_union_LAEA.shp", path+"CNTR_RG_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 2, BufferParameters.CAP_ROUND);
 		logger.info("Produce Europe (" + bufferDistance + ") buffer");
-		SHPUtil.buffer(path+"Europe_100K_union_LAEA.shp", path+"Europe_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 2, BufferParameters.CAP_ROUND);
+		buffer(path+"Europe_100K_union_LAEA.shp", path+"Europe_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 2, BufferParameters.CAP_ROUND);
+
+		//TODO remove country holes ?
 
 		logger.info("End");
 	}
 
 
 
+	//compute the buffers of features of a SHP file
 	public static void buffer(String inFile, String outFile, double bufferDistance, int quadrantSegments, int endCapStyle){
-		try {
-			SimpleFeatureCollection sfs = SHPUtil.getSimpleFeatures(inFile);
-			SimpleFeatureIterator iterator = sfs.features();
-			try {
-				while( iterator.hasNext()  ){
-					SimpleFeature f = iterator.next();
-					System.out.println(f.getAttribute("CNTR_ID"));
-					Geometry geom = (Geometry) f.getDefaultGeometry();
-					Collection<Geometry> geoms = getGeometries(geom);
-					System.out.println(geoms.size() + " components.");
-					System.out.println("Compute buffers");
-					Collection<Geometry> buffs = new ArrayList<>();
-					for(Geometry g : geoms)
-						buffs.add(g.buffer(bufferDistance, quadrantSegments, endCapStyle));
-					System.out.println("Compute union of buffers");
-					Geometry buff = new CascadedPolygonUnion(buffs ).union();
 
-					f.setDefaultGeometry(buff);
-				}
-			}
-			finally {
-				iterator.close();
-			}
+		//load data
+		ArrayList<Feature> fs = SHPUtil.loadSHP(inFile).fs;
 
-			SHPUtil.saveSHP(sfs, outFile);
-
-		} catch (Exception e) {
-			e.printStackTrace();
+		for(Feature f : fs) {
+			System.out.println(f.getAttribute("CNTR_ID"));
+			Geometry geom = (Geometry) f.getDefaultGeometry();
+			Collection<Geometry> geoms = getGeometries(geom);
+			System.out.println(geoms.size() + " components");
+			System.out.println("Compute buffers");
+			Collection<Geometry> buffs = new ArrayList<>();
+			for(Geometry g : geoms)
+				buffs.add(g.buffer(bufferDistance, quadrantSegments, endCapStyle));
+			System.out.println("Compute union of buffers");
+			Geometry buff = new CascadedPolygonUnion(buffs ).union();
+			f.setDefaultGeometry(buff);
 		}
+
+		System.out.println("Save");
+		SHPUtil.saveSHP(fs, outFile, SHPUtil.getCRS(inFile));
 	}
 
 	//return list of geometries that are not GeometryCollection
