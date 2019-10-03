@@ -20,7 +20,7 @@ public class EurostatDataPreparation {
 
 		String path = "C:\\Users\\gaffuju\\Desktop\\CNTR_100k\\";
 
-		//produce country geometry as the union of different versions
+		logger.info("Produce country geometry as the union of different versions");
 		//produceCountriesUnionVersions(path);
 
 		double bufferDistance = 2000;
