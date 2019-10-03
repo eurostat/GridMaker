@@ -43,12 +43,9 @@ public class EurostatGridsProduction {
 		String path = "C:\\Users\\gaffuju\\Desktop\\CNTR_100k\\";
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 
-
-
 		//make pan-european grid datasets
 		logger.info("Get Europe cover (buffer)...");
 		Geometry europeCover = SHPUtil.loadSHP(path+"Europe_100K_union_buff_2000_LAEA.shp").fs.iterator().next().getDefaultGeometry();
-		//europeCover = europeCover.buffer(2000);
 
 		logger.info("Get European countries ...");
 		ArrayList<Feature> cnts = SHPUtil.loadSHP(path+"CNTR_RG_100K_union_buff_2000_LAEA.shp").fs;
@@ -93,7 +90,7 @@ public class EurostatGridsProduction {
 				.setGeometryToCover(europeCover)
 				;
 		Collection<Feature> cells = grid.getCells();
-		StatGridCountryUtil.assignCountries(cells, "CNTR_ID", cnts, 1000, "CNTR_ID"); //TODO
+		StatGridCountryUtil.assignCountries(cells, "CNTR_ID", cnts, 2000, "CNTR_ID");
 		StatGridCountryUtil.filterCellsWithoutCountry(cells, "CNTR_ID");
 
 		logger.info("Save " + cells.size() + " cells...");
