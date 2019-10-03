@@ -198,6 +198,7 @@ public class SHPUtil {
 			try {
 				while( iterator.hasNext()  ){
 					SimpleFeature f = iterator.next();
+					//System.out.println(f.getAttribute("CNTR_ID"));
 					f.setDefaultGeometry( ((Geometry)f.getDefaultGeometry()).buffer(bufferDistance, quadrantSegments, endCapStyle) );
 				}
 			}
