@@ -23,14 +23,14 @@ public class EurostatDataPreparation {
 		//produce country geometry as the union of different versions
 		//produceCountriesUnionVersions(path);
 
-		logger.info("Produce buffers of countries");
 		double bufferDistance = 2000;
-		SHPUtil.buffer(path+"CNTR_RG_100K_union_LAEA.shp", path+"CNTR_RG_100K_union_buff_2000_LAEA.shp", bufferDistance);
+		logger.info("Produce buffers ("+bufferDistance+") of countries");
+		SHPUtil.buffer(path+"CNTR_RG_100K_union_LAEA.shp", path+"CNTR_RG_100K_union_buff_"+((int)bufferDistance)+"_LAEA.shp", bufferDistance);
 
 		logger.info("Produce Europe 100k as union of countries");
 		SHPUtil.union(path+"CNTR_RG_100K_union_LAEA.shp", path+"Europe_100K_union_LAEA.shp", 0);
-		logger.info("Produce europe 100k buffer from 100k countries");
-		SHPUtil.buffer(path+"Europe_100K_union_LAEA.shp", path+"Europe_100K_union_buff_2000_LAEA.shp", bufferDistance);
+		logger.info("Produce Europe ("+bufferDistance+") buffer");
+		SHPUtil.buffer(path+"Europe_100K_union_LAEA.shp", path+"Europe_100K_union_buff_\"+((int)bufferDistance)+\"_LAEA.shp", bufferDistance);
 
 		logger.info("End");
 	}
