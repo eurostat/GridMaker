@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
-import org.locationtech.jts.operation.buffer.BufferParameters;
 import org.locationtech.jts.operation.union.CascadedPolygonUnion;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -26,18 +25,18 @@ public class EurostatDataPreparation {
 		String path = "C:\\Users\\gaffuju\\Desktop\\CNTR_100k\\";
 
 		//logger.info("Produce country geometry as the union of different versions");
-		//produceCountriesUnionVersions(path);
+		produceCountriesUnionVersions(path);
 
 
 		//logger.info("Produce Europe 100k as union of countries");
 		//SHPUtil.union(path+"CNTR_RG_100K_union_LAEA.shp", path+"Europe_100K_union_LAEA.shp", 0);
 
 		//buffering
-		int bufferDistance = 2000; //TODO change to 1500 only?
-		logger.info("Produce buffers (" + bufferDistance + ") of countries");
-		buffer(path+"CNTR_RG_100K_union_LAEA.shp", path+"CNTR_RG_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 4, BufferParameters.CAP_ROUND);
-		logger.info("Produce Europe (" + bufferDistance + ") buffer");
-		buffer(path+"Europe_100K_union_LAEA.shp", path+"Europe_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 4, BufferParameters.CAP_ROUND);
+		//int bufferDistance = 2000; //TODO change to 1500 only?
+		//logger.info("Produce buffers (" + bufferDistance + ") of countries");
+		//buffer(path+"CNTR_RG_100K_union_LAEA.shp", path+"CNTR_RG_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 4, BufferParameters.CAP_ROUND);
+		//logger.info("Produce Europe (" + bufferDistance + ") buffer");
+		//buffer(path+"Europe_100K_union_LAEA.shp", path+"Europe_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 4, BufferParameters.CAP_ROUND);
 
 		//TODO remove country holes ?
 
