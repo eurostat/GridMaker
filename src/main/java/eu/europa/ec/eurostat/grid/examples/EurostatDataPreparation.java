@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.operation.buffer.BufferParameters;
 import org.locationtech.jts.operation.union.CascadedPolygonUnion;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -25,19 +26,19 @@ public class EurostatDataPreparation {
 
 		String path = "C:\\Users\\gaffuju\\Desktop\\CNTR_100k\\";
 
-		//logger.info("Produce country geometry as the union of different versions");
-		produceCountriesUnionVersionsWithCascadedUnion(path);
+		logger.info("Produce country geometry as the union of different versions");
+		produceCountriesUnionVersions(path);
 
 
-		//logger.info("Produce Europe 100k as union of countries");
-		//SHPUtil.union(path+"CNTR_RG_100K_union_LAEA.shp", path+"Europe_100K_union_LAEA.shp", 0);
+		logger.info("Produce Europe 100k as union of countries");
+		SHPUtil.union(path+"CNTR_RG_100K_union_LAEA.shp", path+"Europe_100K_union_LAEA.shp", 0);
 
 		//buffering
-		//int bufferDistance = 2000; //TODO change to 1500 only?
-		//logger.info("Produce buffers (" + bufferDistance + ") of countries");
-		//buffer(path+"CNTR_RG_100K_union_LAEA.shp", path+"CNTR_RG_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 4, BufferParameters.CAP_ROUND);
-		//logger.info("Produce Europe (" + bufferDistance + ") buffer");
-		//buffer(path+"Europe_100K_union_LAEA.shp", path+"Europe_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 4, BufferParameters.CAP_ROUND);
+		int bufferDistance = 2000; //TODO change to 1500 only?
+		logger.info("Produce buffers (" + bufferDistance + ") of countries");
+		buffer(path+"CNTR_RG_100K_union_LAEA.shp", path+"CNTR_RG_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 4, BufferParameters.CAP_ROUND);
+		logger.info("Produce Europe (" + bufferDistance + ") buffer");
+		buffer(path+"Europe_100K_union_LAEA.shp", path+"Europe_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 4, BufferParameters.CAP_ROUND);
 
 		//TODO remove country holes ?
 
@@ -88,7 +89,7 @@ public class EurostatDataPreparation {
 
 
 	//produce country geometry as the union of different versions
-	private static void produceCountriesUnionVersionsWithCascadedUnion(String path) throws Exception {
+	private static void produceCountriesUnionVersions(String path) throws Exception {
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 
 		Collection<Feature> cnts = new ArrayList<>();
@@ -106,28 +107,29 @@ public class EurostatDataPreparation {
 					logger.warn("Not found");
 					continue;
 				}
-				cntGeomV = cntGeomV.buffer(0);
-				polys.addAll(getGeometries(cntGeomV));
+				//cntGeomV = cntGeomV.buffer(0);
+				for(Geometry poly : getGeometries(cntGeomV))
+					polys.add( poly.buffer(0) );
 			}
 
-			logger.info("Compute union (with PolygonUnion)");
 			Geometry cntGeom = null;
 			try {
-				cntGeom = Union.getPolygonUnion(polys);
+				logger.warn("Try CascadedPolygonUnion");
+				cntGeom = CascadedPolygonUnion.union(polys);
 			} catch (Exception e) {
-				logger.warn("Failed. Try CascadedPolygonUnion.");
 				try {
-					cntGeom = CascadedPolygonUnion.union(polys);
-				} catch (Exception e1) {
-					logger.warn("Failed. Try iterative union.");
-					cntGeom = null;
+					logger.warn("Try iterative union");
 					for(Geometry poly : polys)
-						cntGeom = cntGeom==null? cntGeom : cntGeom.union(poly);
+						cntGeom = cntGeom==null? poly : cntGeom.union(poly);
+				} catch (Exception e1) {
+					logger.info("Compute union (with PolygonUnion)");
+					cntGeom = Union.getPolygonUnion(polys);
 				}
 			}
 
 			Feature cnt = new Feature();
 			cnt.setAttribute("CNTR_ID", cntC);
+			if(cntGeom instanceof Polygon) cntGeom = cntGeom.getFactory().createMultiPolygon(new Polygon[] {(Polygon)cntGeom});
 			cnt.setDefaultGeometry(cntGeom);
 			cnts.add(cnt);
 		}
