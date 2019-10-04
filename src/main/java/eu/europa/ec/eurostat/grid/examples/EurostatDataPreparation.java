@@ -107,9 +107,10 @@ public class EurostatDataPreparation {
 					logger.warn("Not found");
 					continue;
 				}
-				//cntGeomV = cntGeomV.buffer(0);
-				for(Geometry poly : getGeometries(cntGeomV))
-					polys.add( poly.buffer(0) );
+				cntGeomV = cntGeomV.buffer(0);
+				polys.add(cntGeomV);
+				//for(Geometry poly : getGeometries(cntGeomV))
+				//	polys.add( poly.buffer(0) );
 			}
 
 			Geometry cntGeom = null;
