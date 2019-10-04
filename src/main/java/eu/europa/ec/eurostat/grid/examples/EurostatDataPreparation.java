@@ -14,6 +14,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import eu.europa.ec.eurostat.grid.utils.CountriesUtil;
 import eu.europa.ec.eurostat.grid.utils.Feature;
 import eu.europa.ec.eurostat.grid.utils.SHPUtil;
+import eu.europa.ec.eurostat.grid.utils.Union;
 
 public class EurostatDataPreparation {
 	static Logger logger = Logger.getLogger(EurostatDataPreparation.class.getName());
@@ -25,7 +26,7 @@ public class EurostatDataPreparation {
 		String path = "C:\\Users\\gaffuju\\Desktop\\CNTR_100k\\";
 
 		//logger.info("Produce country geometry as the union of different versions");
-		produceCountriesUnionVersions(path);
+		produceCountriesUnionVersionsWithCascadedUnion(path);
 
 
 		//logger.info("Produce Europe 100k as union of countries");
@@ -87,41 +88,52 @@ public class EurostatDataPreparation {
 
 
 	//produce country geometry as the union of different versions
-	private static void produceCountriesUnionVersions(String path) throws Exception {
+	private static void produceCountriesUnionVersionsWithCascadedUnion(String path) throws Exception {
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 
-		//NB: CascadedPolygonUnion returned noding exception - maybe it could be better tested...
 		Collection<Feature> cnts = new ArrayList<>();
 		for(String cntC : CountriesUtil.EuropeanCountryCodes) {
 			logger.info(cntC);
-			Geometry cntGeom = null;
+
+			Collection<Geometry> polys = new ArrayList<Geometry>();
 			for(String version : new String[] {"2004","2010","2013","2016"}) {
 				logger.info(version);
 
-				Geometry cntGeomV = null;
+				Geometry cntGeomV;
 				try {
 					cntGeomV = CountriesUtil.getEuropeanCountry(cntC, path+"CNTR_RG_100K_"+version+"_LAEA.shp").getDefaultGeometry();
-					cntGeomV = cntGeomV.buffer(0);
 				} catch (Exception e) {
-					logger.info(e.getMessage());
+					logger.warn("Not found");
 					continue;
 				}
-				if(cntGeom == null)
-					cntGeom = cntGeomV;
-				else
-					try {
-						cntGeom = cntGeom.union(cntGeomV);
-					} catch (Exception e) {
-						logger.info("Retry...");
-						cntGeom = cntGeom.union(cntGeomV.buffer(0.01));
-					}
+				cntGeomV = cntGeomV.buffer(0);
+				polys.addAll(getGeometries(cntGeomV));
 			}
+
+			logger.info("Compute union (with PolygonUnion)");
+			Geometry cntGeom = null;
+			try {
+				cntGeom = Union.getPolygonUnion(polys);
+			} catch (Exception e) {
+				logger.warn("Failed. Try CascadedPolygonUnion.");
+				try {
+					cntGeom = CascadedPolygonUnion.union(polys);
+				} catch (Exception e1) {
+					logger.warn("Failed. Try iterative union.");
+					cntGeom = null;
+					for(Geometry poly : polys)
+						cntGeom = cntGeom==null? cntGeom : cntGeom.union(poly);
+				}
+			}
+
 			Feature cnt = new Feature();
 			cnt.setAttribute("CNTR_ID", cntC);
 			cnt.setDefaultGeometry(cntGeom);
 			cnts.add(cnt);
 		}
+		logger.info("Save");
 		SHPUtil.saveSHP(cnts, path+"CNTR_RG_100K_union_LAEA.shp", crs);
 	}
+
 
 }
