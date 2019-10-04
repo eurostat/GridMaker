@@ -118,12 +118,12 @@ public class EurostatDataPreparation {
 				cntGeom = CascadedPolygonUnion.union(polys);
 			} catch (Exception e) {
 				try {
+					logger.info("Compute union (with PolygonUnion)");
+					cntGeom = Union.getPolygonUnion(polys);
+				} catch (Exception e1) {
 					logger.warn("Try iterative union");
 					for(Geometry poly : polys)
 						cntGeom = cntGeom==null? poly : cntGeom.union(poly);
-				} catch (Exception e1) {
-					logger.info("Compute union (with PolygonUnion)");
-					cntGeom = Union.getPolygonUnion(polys);
 				}
 			}
 
