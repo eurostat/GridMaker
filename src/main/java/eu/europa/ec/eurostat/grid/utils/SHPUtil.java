@@ -156,7 +156,7 @@ public class SHPUtil {
 
 
 
-	//save the union of a shapefile into another one (applying a buffer is required)
+	//save the union of a shapefile into another one (applying a buffer to the result is possible)
 	public static void union(String inFile, String outFile, double bufferDistance){
 		try {
 			//load input shp
@@ -171,7 +171,8 @@ public class SHPUtil {
 				}
 				geoms.add(geom);
 			}
-			Geometry union = new CascadedPolygonUnion(geoms).union();
+
+			Geometry union = Union.polygonsUnionAll(geoms);
 
 			if(bufferDistance != 0)
 				union = union.buffer(bufferDistance);
