@@ -113,20 +113,8 @@ public class EurostatDataPreparation {
 				//	polys.add( poly.buffer(0) );
 			}
 
-			Geometry cntGeom = null;
-			try {
-				logger.warn("Try CascadedPolygonUnion");
-				cntGeom = CascadedPolygonUnion.union(polys);
-			} catch (Exception e) {
-				try {
-					logger.info("Compute union (with PolygonUnion)");
-					cntGeom = Union.getPolygonUnion(polys);
-				} catch (Exception e1) {
-					logger.warn("Try iterative union");
-					for(Geometry poly : polys)
-						cntGeom = cntGeom==null? poly : cntGeom.union(poly);
-				}
-			}
+			logger.info("Compute union");
+			Geometry cntGeom = Union.polygonsUnionAll(polys);
 
 			Feature cnt = new Feature();
 			cnt.setAttribute("CNTR_ID", cntC);
@@ -137,6 +125,5 @@ public class EurostatDataPreparation {
 		logger.info("Save");
 		SHPUtil.saveSHP(cnts, path+"CNTR_RG_100K_union_LAEA.shp", crs);
 	}
-
 
 }
