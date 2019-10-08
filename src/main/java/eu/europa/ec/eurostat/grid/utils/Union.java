@@ -96,14 +96,14 @@ public class Union {
 	public static Geometry polygonsUnionAll(Collection<Geometry> polys) {
 		Geometry union = null;
 		try {
-			LOGGER.warn("Try CascadedPolygonUnion");
+			LOGGER.info("Try union with CascadedPolygonUnion");
 			union = CascadedPolygonUnion.union(polys);
 		} catch (Exception e) {
 			try {
-				LOGGER.info("Compute union (with PolygonUnion)");
+				LOGGER.info("Try union with PolygonUnion");
 				union = Union.getPolygonUnion(polys);
 			} catch (Exception e1) {
-				LOGGER.warn("Try iterative union");
+				LOGGER.info("Try iterative union");
 				for(Geometry poly : polys)
 					union = union==null? poly : union.union(poly);
 			}
