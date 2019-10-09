@@ -32,6 +32,9 @@ public class EurostatDataPreparation {
 
 		logger.info("Produce Europe 100k as union of countries");
 		SHPUtil.union(path+"CNTR_RG_100K_union_LAEA.shp", path+"Europe_100K_union_LAEA.shp", 0);
+		//NB: try iterative union directly
+		//TODO try to used cascaded in polyunion...
+		//TODO try mp = mp.buffer(0)
 
 		//buffering
 		int bufferDistance = 2000; //TODO change to 1500 only?
