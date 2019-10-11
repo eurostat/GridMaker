@@ -3,6 +3,7 @@
  */
 package eu.europa.ec.eurostat.grid.examples;
 
+import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Polygon;
 
