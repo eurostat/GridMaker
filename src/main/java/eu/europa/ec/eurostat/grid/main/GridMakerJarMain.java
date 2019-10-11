@@ -81,7 +81,7 @@ public class GridMakerJarMain {
 
 		//res
 		param = cmd.getOptionValue("res");
-		try { if(param != null) sg.setResolution(Double.parseDouble(param));
+		try { if(param != null) sg.setResolution(Integer.parseInt(param));
 		} catch (Exception e) { System.err.println("Failed reading parameter 'res'. The default value will be used."); }
 
 		//epsg

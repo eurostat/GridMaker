@@ -30,9 +30,9 @@ public class StatGrid {
 	 * The grid resolution (pixel size).
 	 * NB: The unit of measure should be the same as the one of the Coordinate Reference System.
 	 */
-	private double resolution = 100000.0;
+	private int resolution = 100000;
 	public double getResolution() { return resolution; }
-	public StatGrid setResolution(double resolution) {
+	public StatGrid setResolution(int resolution) {
 		this.resolution = resolution;
 		cells = null;
 		return this;
@@ -156,7 +156,7 @@ public class StatGrid {
 				cell.setDefaultGeometry(gridCellGeom);
 
 				//set id
-				String id = getGridCellId(epsgCode, resolution, new Coordinate(x,y));
+				String id = GridCell.getGridCellId(epsgCode, resolution, new Coordinate(x,y));
 				cell.setID(id);
 				cell.setAttribute("cellId", id);
 

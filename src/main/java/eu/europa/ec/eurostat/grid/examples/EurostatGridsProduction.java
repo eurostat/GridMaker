@@ -101,7 +101,7 @@ public class EurostatGridsProduction {
 
 	private static void make(int resKM, Geometry europeCover, ArrayList<Feature> cnts, double bufferDistance, String path, CoordinateReferenceSystem crs) {
 		StatGrid grid = new StatGrid()
-				.setResolution(resKM*1000.0)
+				.setResolution(resKM*1000)
 				.setEPSGCode("3035")
 				.setGeometryToCover(europeCover)
 				;
