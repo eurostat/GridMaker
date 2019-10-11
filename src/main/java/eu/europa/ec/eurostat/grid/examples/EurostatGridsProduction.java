@@ -107,8 +107,8 @@ public class EurostatGridsProduction {
 				;
 		Collection<Feature> cells = grid.getCells();
 		StatGridCountryUtil.assignCountries(cells, "CNTR_ID", cnts, bufferDistance, "CNTR_ID");
+		//TODO assign also nuts code
 		StatGridCountryUtil.filterCellsWithoutCountry(cells, "CNTR_ID");
-
 		logger.info("Save " + cells.size() + " cells...");
 		SHPUtil.saveSHP(cells, path+resKM+"km/grid_"+resKM+"km.shp", crs);
 	}
