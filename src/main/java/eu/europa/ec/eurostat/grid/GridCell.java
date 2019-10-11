@@ -4,6 +4,8 @@
 package eu.europa.ec.eurostat.grid;
 
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Polygon;
 
 /**
  * @author Julien Gaffuri
@@ -25,9 +27,8 @@ public class GridCell {
 
 	private String gridCellId = null;
 	public String getGridCellId() {
-		if(gridCellId==null) {
+		if(gridCellId==null)
 			gridCellId = getGridCellId(epsgCode, gridResolution, lowerLeftCornerPosition);
-		}
 		return gridCellId;
 	}
 
@@ -42,6 +43,19 @@ public class GridCell {
 	}
 
 	private Coordinate lowerLeftCornerPosition = null;
+
+	
+
+	public static Polygon getGeometry(String cellCode) {
+		//TODO
+		return null;
+	}
+
+	public static Envelope getEnvelope(String cellCode) {
+		//TODO
+		return null;
+	}
+
 
 
 
@@ -65,6 +79,12 @@ public class GridCell {
 				+"N"+Integer.toString((int)lowerLeftCornerPosition.getX())
 				+"E"+Integer.toString((int)lowerLeftCornerPosition.getY())
 				;
+	}
+
+
+	public static boolean contains(String gridCellId1, String gridCellId2) {
+		//TODO
+		return false;
 	}
 
 }
