@@ -7,6 +7,8 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Polygon;
 
+import eu.europa.ec.eurostat.grid.utils.Feature;
+
 /**
  * @author Julien Gaffuri
  *
@@ -34,29 +36,46 @@ public class GridCell {
 
 	private String epsgCode = null;
 	public String getEpsgCode() {
+		//TODO
 		return epsgCode;
 	}
 
 	private int gridResolution = -1;
 	public int getGridResolution() {
+		//TODO
 		return gridResolution;
 	}
 
 	private Coordinate lowerLeftCornerPosition = null;
+	public int getLowerLeftCornerPositionX() {
+		//TODO
+		return lowerLeftCornerPosition.X;
+	}
+	public int getLowerLeftCornerPositionY() {
+		//TODO
+		return lowerLeftCornerPosition.Y;
+	}
 
-	
 
-	public static Polygon getGeometry(String cellCode) {
+	private void parseGridCellId() {
+		//TODO
+	}
+
+
+	public Envelope getEnvelope() {
 		//TODO
 		return null;
 	}
 
-	public static Envelope getEnvelope(String cellCode) {
+	public Polygon getGeometry() {
 		//TODO
 		return null;
 	}
 
-
+	public Feature toFeature() {
+		//TODO
+		return null;
+	}
 
 
 
