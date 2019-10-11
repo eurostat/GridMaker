@@ -170,26 +170,6 @@ public class StatGrid {
 
 
 
-	/**
-	 * Build a cell code (according to INSPIRE coding system, @see https://inspire.ec.europa.eu/id/document/tg/su).
-	 * This is valid only for a grids in a cartographic projection.
-	 * Examples:
-	 * - CRS3035RES200mN1453400E1452800
-	 * - CRS3035RES100000mN5400000E1200000
-	 * 
-	 * @param epsgCode
-	 * @param gridResolutionM
-	 * @param lowerLeftCornerPosition
-	 * @return
-	 */
-	public static String getGridCellId(String epsgCode, double gridResolutionM, Coordinate lowerLeftCornerPosition) {
-		return 
-				"CRS"+epsgCode
-				+"RES"+Integer.toString((int)gridResolutionM)+"m"
-				+"N"+Integer.toString((int)lowerLeftCornerPosition.getX())
-				+"E"+Integer.toString((int)lowerLeftCornerPosition.getY())
-				;
-	}
 
 	private static Envelope ensureGrid(Envelope env, double res) {
 		double xMin = env.getMinX() - env.getMinX()%res;
