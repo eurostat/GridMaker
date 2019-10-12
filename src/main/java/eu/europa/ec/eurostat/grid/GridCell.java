@@ -52,11 +52,11 @@ public class GridCell {
 	private Coordinate lowerLeftCornerPosition = null;
 	public int getLowerLeftCornerPositionX() {
 		if(lowerLeftCornerPosition == null) parseGridCellId();
-		return lowerLeftCornerPosition.X;
+		return (int) lowerLeftCornerPosition.getX();
 	}
 	public int getLowerLeftCornerPositionY() {
 		if(lowerLeftCornerPosition == null) parseGridCellId();
-		return lowerLeftCornerPosition.Y;
+		return (int) lowerLeftCornerPosition.getY();
 	}
 
 
@@ -107,8 +107,11 @@ public class GridCell {
 	}
 
 	public Feature toFeature() {
-		//TODO
-		return null;
+		Feature f = new Feature();
+		f.setDefaultGeometry(this.getGeometry());
+		f.setID(this.getGridCellId());
+		f.setAttribute("cellId", this.getGridCellId());
+		return f;
 	}
 
 
