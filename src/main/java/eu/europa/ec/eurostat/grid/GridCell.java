@@ -5,6 +5,8 @@ package eu.europa.ec.eurostat.grid;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 
 import eu.europa.ec.eurostat.grid.utils.Feature;
@@ -68,14 +70,20 @@ public class GridCell {
 		return new Envelope(x, x+getGridResolution(), y, y+getGridResolution());
 	}
 
-	public Polygon getPolygonGeometry() {
-		//TODO
-		return null;
+	//build polygon geometry
+	public Polygon getPolygonGeometry(GeometryFactory gf) {
+		int x = getLowerLeftCornerPositionX();
+		int y = getLowerLeftCornerPositionY();
+		int res = getGridResolution();
+		Coordinate[] cs = new Coordinate[]{new Coordinate(x,y), new Coordinate(x+res,y), new Coordinate(x+res,y+res), new Coordinate(x,y+res), new Coordinate(x,y)};
+		return gf.createPolygon(cs);
 	}
 
-	public Polygon getPointGeometry() {
-		//TODO
-		return null;
+	//build point geometry
+	public Point getPointGeometry(GeometryFactory gf) {
+		int x = getLowerLeftCornerPositionX();
+		int y = getLowerLeftCornerPositionY();
+		return gf.createPoint(new Coordinate(x+0.5*getGridResolution(), y+0.5*getGridResolution()));
 	}
 
 	public Feature toFeature() {
