@@ -7,12 +7,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.log4j.Logger;
-import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Polygon;
 
+import eu.europa.ec.eurostat.grid.GridCell.GridCellGeometryType;
 import eu.europa.ec.eurostat.grid.utils.Feature;
 
 /**
@@ -131,30 +130,18 @@ public class StatGrid {
 			for(int y = (int) envCovBuff.getMinY(); y<envCovBuff.getMaxY(); y += resolution) {
 
 				//build grid cell
-				GridCell gc = new GridCell(epsgCode, resolution, x, y);
+				GridCell cell = new GridCell(epsgCode, resolution, x, y);
 
 				//check intersection with envCovBuff
-				if( ! envCovBuff.intersects(gc.getEnvelope()) ) continue;
+				if( ! envCovBuff.intersects(cell.getEnvelope()) ) continue;
 
-				//build cell geometry
-				Geometry gridCellGeom = gc.getPolygonGeometry(gf);
+				//get cell geometry
+				Geometry gridCellGeom = cell.getPolygonGeometry(gf);
 				//check intersection with geometryToCover
 				if( ! geomCovBuff.intersects(gridCellGeom) ) continue;
 
 				//build the cell
-				Feature cell = new Feature();
-
-				//set geometry
-				if(gridCellGeometryType == GridCellGeometryType.CENTER_POINT)
-					gridCellGeom = gc.getPointGeometry(gf);
-				cell.setDefaultGeometry(gridCellGeom);
-
-				//id
-				String id = gc.getGridCellId();
-				cell.setID(id);
-				cell.setAttribute("cellId", id);
-
-				cells.add(cell);
+				cells.add(cell.toFeature());
 			}
 		if(logger.isDebugEnabled()) logger.debug(cells.size() + " cells built");
 		return this;
@@ -166,6 +153,13 @@ public class StatGrid {
 		double yMin = env.getMinY() - env.getMinY()%res;
 		double yMax = (1+(int)(env.getMaxY()/res))*res;
 		return new Envelope(xMin, xMax, yMin, yMax);
+	}
+
+
+
+	private static Geometry getGeometry(Envelope env, GeometryFactory gf) {
+		//TODO
+		return null;
 	}
 
 }
