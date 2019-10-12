@@ -5,6 +5,7 @@ package eu.europa.ec.eurostat.grid;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
@@ -68,6 +69,25 @@ public class GridCell {
 		int x = getLowerLeftCornerPositionX();
 		int y = getLowerLeftCornerPositionY();
 		return new Envelope(x, x+getGridResolution(), y, y+getGridResolution());
+	}
+
+	/**
+	 * The type of grid cell geometry: The surface representation (a square) or its center point.
+	 * 
+	 * @author Julien Gaffuri
+	 */
+	public static enum GridCellGeometryType {SURFACE, CENTER_POINT};
+	private GridCellGeometryType gridCellGeometryType = GridCellGeometryType.SURFACE;
+	public GridCellGeometryType getGridCellGeometryType() { return gridCellGeometryType; }
+
+	public Geometry geometry = null;
+	public Geometry getGeometry() {
+		if(geometry == null) {
+			GridCellGeometryType gt = getGridCellGeometryType();
+			GeometryFactory gf = new GeometryFactory();
+			geometry = gt.equals(GridCellGeometryType.CENTER_POINT)? getPointGeometry(gf ) : getPolygonGeometry(gf);
+		}
+		return geometry;
 	}
 
 	//build polygon geometry

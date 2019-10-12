@@ -83,13 +83,6 @@ public class StatGrid {
 	}
 
 	/**
-	 * The type of grid cell geometry: The surface representation (a square) or its center point.
-	 * 
-	 * @author Julien Gaffuri
-	 */
-	public static enum GridCellGeometryType {SURFACE, CENTER_POINT};
-
-	/**
 	 * The grid cell geometry type.
 	 * @see GridCellGeometryType
 	 */
@@ -134,8 +127,8 @@ public class StatGrid {
 		envCovBuff = ensureGrid(envCovBuff, resolution);
 
 		cells = new ArrayList<Feature>();
-		for(int x=envCovBuff.getMinX(); x<envCovBuff.getMaxX(); x += resolution)
-			for(int y=envCovBuff.getMinY(); y<envCovBuff.getMaxY(); y += resolution) {
+		for(int x = (int) envCovBuff.getMinX(); x<envCovBuff.getMaxX(); x += resolution)
+			for(int y = (int) envCovBuff.getMinY(); y<envCovBuff.getMaxY(); y += resolution) {
 
 				//build grid cell
 				GridCell gc = new GridCell(epsgCode, resolution, x, y);
