@@ -134,16 +134,17 @@ public class StatGrid {
 		envCovBuff = ensureGrid(envCovBuff, resolution);
 
 		cells = new ArrayList<Feature>();
-		for(double x=envCovBuff.getMinX(); x<envCovBuff.getMaxX(); x += resolution)
-			for(double y=envCovBuff.getMinY(); y<envCovBuff.getMaxY(); y += resolution) {
+		for(int x=envCovBuff.getMinX(); x<envCovBuff.getMaxX(); x += resolution)
+			for(int y=envCovBuff.getMinY(); y<envCovBuff.getMaxY(); y += resolution) {
 
-				//build cell envelope
-				Envelope gridCellEnv = new Envelope(x, x+resolution, y, y+resolution);
+				//build grid cell
+				GridCell gc = new GridCell(epsgCode, resolution, x, y);
+
 				//check intersection with envCovBuff
-				if( ! envCovBuff.intersects(gridCellEnv) ) continue;
+				if( ! envCovBuff.intersects(gc.getEnvelope()) ) continue;
 
 				//build cell geometry
-				Geometry gridCellGeom = getGeometry(gridCellEnv, gf);
+				Geometry gridCellGeom = gc.getPolygonGeometry(gf);
 				//check intersection with geometryToCover
 				if( ! geomCovBuff.intersects(gridCellGeom) ) continue;
 
@@ -152,11 +153,11 @@ public class StatGrid {
 
 				//set geometry
 				if(gridCellGeometryType == GridCellGeometryType.CENTER_POINT)
-					gridCellGeom = gridCellGeom.getCentroid();
+					gridCellGeom = gc.getPointGeometry(gf);
 				cell.setDefaultGeometry(gridCellGeom);
 
-				//set id
-				String id = GridCell.getGridCellId(epsgCode, resolution, new Coordinate(x,y));
+				//id
+				String id = gc.getGridCellId();
 				cell.setID(id);
 				cell.setAttribute("cellId", id);
 
@@ -166,23 +167,12 @@ public class StatGrid {
 		return this;
 	}
 
-
-
-
-
-
 	private static Envelope ensureGrid(Envelope env, double res) {
 		double xMin = env.getMinX() - env.getMinX()%res;
 		double xMax = (1+(int)(env.getMaxX()/res))*res;
 		double yMin = env.getMinY() - env.getMinY()%res;
 		double yMax = (1+(int)(env.getMaxY()/res))*res;
 		return new Envelope(xMin, xMax, yMin, yMax);
-	}
-
-	//build geometry from envelope
-	private static Polygon getGeometry(Envelope env, GeometryFactory gf) {
-		Coordinate[] cs = new Coordinate[]{new Coordinate(env.getMinX(),env.getMinY()), new Coordinate(env.getMaxX(),env.getMinY()), new Coordinate(env.getMaxX(),env.getMaxY()), new Coordinate(env.getMinX(),env.getMaxY()), new Coordinate(env.getMinX(),env.getMinY())};
-		return gf.createPolygon(cs);
 	}
 
 }
