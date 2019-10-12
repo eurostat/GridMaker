@@ -63,11 +63,17 @@ public class GridCell {
 
 
 	public Envelope getEnvelope() {
+		int x = getLowerLeftCornerPositionX();
+		int y = getLowerLeftCornerPositionY();
+		return new Envelope(x, x+getGridResolution(), y, y+getGridResolution());
+	}
+
+	public Polygon getPolygonGeometry() {
 		//TODO
 		return null;
 	}
 
-	public Polygon getGeometry() {
+	public Polygon getPointGeometry() {
 		//TODO
 		return null;
 	}
