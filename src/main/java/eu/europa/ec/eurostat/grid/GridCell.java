@@ -36,23 +36,23 @@ public class GridCell {
 
 	private String epsgCode = null;
 	public String getEpsgCode() {
-		//TODO
+		if(epsgCode == null) parseGridCellId();
 		return epsgCode;
 	}
 
 	private int gridResolution = -1;
 	public int getGridResolution() {
-		//TODO
+		if(gridResolution == -1) parseGridCellId();
 		return gridResolution;
 	}
 
 	private Coordinate lowerLeftCornerPosition = null;
 	public int getLowerLeftCornerPositionX() {
-		//TODO
+		if(lowerLeftCornerPosition == null) parseGridCellId();
 		return lowerLeftCornerPosition.X;
 	}
 	public int getLowerLeftCornerPositionY() {
-		//TODO
+		if(lowerLeftCornerPosition == null) parseGridCellId();
 		return lowerLeftCornerPosition.Y;
 	}
 
