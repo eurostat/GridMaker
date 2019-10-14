@@ -101,14 +101,14 @@ public class EurostatGridsProduction {
 
 	private static void make(int resKM, Geometry europeCover, ArrayList<Feature> cnts, double bufferDistance, String path, CoordinateReferenceSystem crs) {
 		StatGrid grid = new StatGrid()
-				.setResolution(resKM*1000.0)
+				.setResolution(resKM*1000)
 				.setEPSGCode("3035")
 				.setGeometryToCover(europeCover)
 				;
 		Collection<Feature> cells = grid.getCells();
 		StatGridCountryUtil.assignCountries(cells, "CNTR_ID", cnts, bufferDistance, "CNTR_ID");
+		//TODO assign also nuts code
 		StatGridCountryUtil.filterCellsWithoutCountry(cells, "CNTR_ID");
-
 		logger.info("Save " + cells.size() + " cells...");
 		SHPUtil.saveSHP(cells, path+resKM+"km/grid_"+resKM+"km.shp", crs);
 	}

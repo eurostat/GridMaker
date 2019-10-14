@@ -34,19 +34,4 @@ public class EurostatPopulationGridMultiResolution {
 		logger.info("End");
 	}
 
-
-	public static boolean contains(String gridCellId1, String gridCellId2) {
-		//TODO
-		return false;
-	}
-
-	public static Polygon getGeometry(String cellCode) {
-		//TODO
-		return null;
-	}
-
-	public static Envelope getEnvelope(String cellCode) {
-		//TODO
-		return null;
-	}
 }

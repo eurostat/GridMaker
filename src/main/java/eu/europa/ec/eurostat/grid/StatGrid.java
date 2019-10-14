@@ -7,12 +7,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.log4j.Logger;
-import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Polygon;
 
+import eu.europa.ec.eurostat.grid.GridCell.GridCellGeometryType;
 import eu.europa.ec.eurostat.grid.utils.Feature;
 
 /**
@@ -30,9 +29,9 @@ public class StatGrid {
 	 * The grid resolution (pixel size).
 	 * NB: The unit of measure should be the same as the one of the Coordinate Reference System.
 	 */
-	private double resolution = 100000.0;
+	private int resolution = 100000;
 	public double getResolution() { return resolution; }
-	public StatGrid setResolution(double resolution) {
+	public StatGrid setResolution(int resolution) {
 		this.resolution = resolution;
 		cells = null;
 		return this;
@@ -83,13 +82,6 @@ public class StatGrid {
 	}
 
 	/**
-	 * The type of grid cell geometry: The surface representation (a square) or its center point.
-	 * 
-	 * @author Julien Gaffuri
-	 */
-	public static enum GridCellGeometryType {SURFACE, CENTER_POINT};
-
-	/**
 	 * The grid cell geometry type.
 	 * @see GridCellGeometryType
 	 */
@@ -134,61 +126,25 @@ public class StatGrid {
 		envCovBuff = ensureGrid(envCovBuff, resolution);
 
 		cells = new ArrayList<Feature>();
-		for(double x=envCovBuff.getMinX(); x<envCovBuff.getMaxX(); x += resolution)
-			for(double y=envCovBuff.getMinY(); y<envCovBuff.getMaxY(); y += resolution) {
+		for(int x = (int) envCovBuff.getMinX(); x<envCovBuff.getMaxX(); x += resolution)
+			for(int y = (int) envCovBuff.getMinY(); y<envCovBuff.getMaxY(); y += resolution) {
 
-				//build cell envelope
-				Envelope gridCellEnv = new Envelope(x, x+resolution, y, y+resolution);
+				//build grid cell
+				GridCell cell = new GridCell(epsgCode, resolution, x, y);
+
 				//check intersection with envCovBuff
-				if( ! envCovBuff.intersects(gridCellEnv) ) continue;
+				if( ! envCovBuff.intersects(cell.getEnvelope()) ) continue;
 
-				//build cell geometry
-				Geometry gridCellGeom = getGeometry(gridCellEnv, gf);
+				//get cell geometry
+				Geometry gridCellGeom = cell.getPolygonGeometry(gf);
 				//check intersection with geometryToCover
 				if( ! geomCovBuff.intersects(gridCellGeom) ) continue;
 
 				//build the cell
-				Feature cell = new Feature();
-
-				//set geometry
-				if(gridCellGeometryType == GridCellGeometryType.CENTER_POINT)
-					gridCellGeom = gridCellGeom.getCentroid();
-				cell.setDefaultGeometry(gridCellGeom);
-
-				//set id
-				String id = getGridCellId(epsgCode, resolution, new Coordinate(x,y));
-				cell.setID(id);
-				cell.setAttribute("cellId", id);
-
-				cells.add(cell);
+				cells.add(cell.toFeature());
 			}
 		if(logger.isDebugEnabled()) logger.debug(cells.size() + " cells built");
 		return this;
-	}
-
-
-
-
-
-	/**
-	 * Build a cell code (according to INSPIRE coding system, @see https://inspire.ec.europa.eu/id/document/tg/su).
-	 * This is valid only for a grids in a cartographic projection.
-	 * Examples:
-	 * - CRS3035RES200mN1453400E1452800
-	 * - CRS3035RES100000mN5400000E1200000
-	 * 
-	 * @param epsgCode
-	 * @param gridResolutionM
-	 * @param lowerLeftCornerPosition
-	 * @return
-	 */
-	public static String getGridCellId(String epsgCode, double gridResolutionM, Coordinate lowerLeftCornerPosition) {
-		return 
-				"CRS"+epsgCode
-				+"RES"+Integer.toString((int)gridResolutionM)+"m"
-				+"N"+Integer.toString((int)lowerLeftCornerPosition.getX())
-				+"E"+Integer.toString((int)lowerLeftCornerPosition.getY())
-				;
 	}
 
 	private static Envelope ensureGrid(Envelope env, double res) {
@@ -199,10 +155,11 @@ public class StatGrid {
 		return new Envelope(xMin, xMax, yMin, yMax);
 	}
 
-	//build geometry from envelope
-	private static Polygon getGeometry(Envelope env, GeometryFactory gf) {
-		Coordinate[] cs = new Coordinate[]{new Coordinate(env.getMinX(),env.getMinY()), new Coordinate(env.getMaxX(),env.getMinY()), new Coordinate(env.getMaxX(),env.getMaxY()), new Coordinate(env.getMinX(),env.getMaxY()), new Coordinate(env.getMinX(),env.getMinY())};
-		return gf.createPolygon(cs);
+
+
+	private static Geometry getGeometry(Envelope env, GeometryFactory gf) {
+		//TODO
+		return null;
 	}
 
 }
