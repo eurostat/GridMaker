@@ -43,7 +43,7 @@ public class EurostatGridsProduction {
 		String outpath = "C:/Users/gaffuju/Desktop/grid/";
 		String path = "C:/Users/gaffuju/Desktop/CNTR_100k/";
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
-		int bufferDistance = 2000; //TODO change to 1500 only?
+		int bufferDistance = 1500;
 
 		//make pan-european grid datasets
 		logger.info("Get Europe cover (buffer)...");
