@@ -5,6 +5,7 @@ package eu.europa.ec.eurostat.grid;
 
 import org.locationtech.jts.geom.Coordinate;
 
+import eu.europa.ec.eurostat.grid.GridCell.GridCellGeometryType;
 import junit.framework.TestCase;
 
 /**
@@ -25,7 +26,7 @@ public class StatGridTest extends TestCase {
 		assertEquals("3035", sg.getEPSGCode());
 		assertEquals(100000.0, sg.getResolution());
 		assertEquals(0.0, sg.getToleranceDistance());
-		assertEquals(StatGrid.GridCellGeometryType.SURFACE, sg.getGridCellGeometryType());
+		assertEquals(GridCellGeometryType.SURFACE, sg.getGridCellGeometryType());
 		assertEquals(10201, sg.getCells().size());
 	}
 
@@ -34,14 +35,14 @@ public class StatGridTest extends TestCase {
 		sg.setEPSGCode("1464412");
 		sg.setResolution(50000);
 		sg.setToleranceDistance(500000.0);
-		sg.setGridCellGeometryType(StatGrid.GridCellGeometryType.CENTER_POINT);
+		sg.setGridCellGeometryType(GridCellGeometryType.CENTER_POINT);
 
 		//SHPUtil.saveSHP(sg.getCells(), "C:/Users/gaffuju/Desktop/test.shp", CRS.decode("EPSG:3035"));
 
 		assertEquals("1464412", sg.getEPSGCode());
 		assertEquals(50000.0, sg.getResolution());
 		assertEquals(500000.0, sg.getToleranceDistance());
-		assertEquals(StatGrid.GridCellGeometryType.CENTER_POINT, sg.getGridCellGeometryType());
+		assertEquals(GridCellGeometryType.CENTER_POINT, sg.getGridCellGeometryType());
 		assertEquals(48748, sg.getCells().size());
 	}
 

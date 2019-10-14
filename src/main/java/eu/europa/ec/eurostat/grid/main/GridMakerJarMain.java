@@ -17,8 +17,8 @@ import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import eu.europa.ec.eurostat.grid.GridCell.GridCellGeometryType;
 import eu.europa.ec.eurostat.grid.StatGrid;
-import eu.europa.ec.eurostat.grid.StatGrid.GridCellGeometryType;
 import eu.europa.ec.eurostat.grid.utils.CountriesUtil;
 import eu.europa.ec.eurostat.grid.utils.Feature;
 import eu.europa.ec.eurostat.grid.utils.GeoJSONUtil;
