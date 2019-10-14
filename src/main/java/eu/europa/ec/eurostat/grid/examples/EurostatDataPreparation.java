@@ -27,21 +27,20 @@ public class EurostatDataPreparation {
 		String path = "C:\\Users\\gaffuju\\Desktop\\CNTR_100k\\";
 
 		//logger.info("Produce country geometry as the union of different versions");
-		//produceCountriesUnionVersions(path);
+		produceCountriesUnionVersions(path);
 
-
-		logger.info("Produce Europe 100k as union of countries");
-		SHPUtil.union(path+"CNTR_RG_100K_union_LAEA.shp", path+"Europe_100K_union_LAEA.shp", 0);
+		//logger.info("Produce Europe 100k as union of countries");
+		//SHPUtil.union(path+"CNTR_RG_100K_union_LAEA.shp", path+"Europe_100K_union_LAEA.shp", 0);
 		//NB: try iterative union directly
 		//TODO try to used cascaded in polyunion...
 		//TODO try mp = mp.buffer(0)
 
 		//buffering
-		int bufferDistance = 2000; //TODO change to 1500 only?
-		//logger.info("Produce buffers (" + bufferDistance + ") of countries");
-		//buffer(path+"CNTR_RG_100K_union_LAEA.shp", path+"CNTR_RG_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 4, BufferParameters.CAP_ROUND);
-		logger.info("Produce Europe (" + bufferDistance + ") buffer");
-		buffer(path+"Europe_100K_union_LAEA.shp", path+"Europe_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 4, BufferParameters.CAP_ROUND);
+		int bufferDistance = 1500;
+		logger.info("Produce buffers (" + bufferDistance + ") of countries");
+		buffer(path+"CNTR_RG_100K_union_LAEA.shp", path+"CNTR_RG_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 4, BufferParameters.CAP_ROUND);
+		//logger.info("Produce Europe (" + bufferDistance + ") buffer");
+		//buffer(path+"Europe_100K_union_LAEA.shp", path+"Europe_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 4, BufferParameters.CAP_ROUND);
 
 		//TODO remove country holes ?
 

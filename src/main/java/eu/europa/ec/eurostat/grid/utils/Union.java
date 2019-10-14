@@ -9,6 +9,7 @@ import java.util.TreeSet;
 import org.apache.log4j.Logger;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
@@ -103,9 +104,15 @@ public class Union {
 				LOGGER.info("Try union with PolygonUnion");
 				union = Union.getPolygonUnion(polys);
 			} catch (Exception e1) {
-				LOGGER.info("Try iterative union");
-				for(Geometry poly : polys)
-					union = union==null? poly : union.union(poly);
+				try {
+					LOGGER.info("Try buffer(0)");
+					GeometryCollection gc = new GeometryFactory().createGeometryCollection(polys.toArray(new Geometry[polys.size()]));
+					union = gc.buffer(0);
+				} catch (Exception e2) {
+					LOGGER.info("Try iterative union");
+					for(Geometry poly : polys)
+						union = union==null? poly : union.union(poly);
+				}
 			}
 		}
 		return union;
