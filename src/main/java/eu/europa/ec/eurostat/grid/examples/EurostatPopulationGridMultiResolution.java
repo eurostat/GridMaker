@@ -4,8 +4,6 @@
 package eu.europa.ec.eurostat.grid.examples;
 
 import org.apache.log4j.Logger;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Polygon;
 
 /**
  * 

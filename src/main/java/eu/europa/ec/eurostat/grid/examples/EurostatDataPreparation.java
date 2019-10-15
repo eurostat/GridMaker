@@ -12,10 +12,10 @@ import org.locationtech.jts.operation.buffer.BufferParameters;
 import org.locationtech.jts.operation.union.CascadedPolygonUnion;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import eu.europa.ec.eurostat.grid.utils.CountriesUtil;
-import eu.europa.ec.eurostat.grid.utils.Feature;
-import eu.europa.ec.eurostat.grid.utils.SHPUtil;
-import eu.europa.ec.eurostat.grid.utils.Union;
+import eu.europa.ec.eurostat.eurogeostat.CountriesUtil;
+import eu.europa.ec.eurostat.eurogeostat.algo.base.Union;
+import eu.europa.ec.eurostat.eurogeostat.datamodel.Feature;
+import eu.europa.ec.eurostat.eurogeostat.io.SHPUtil;
 
 public class EurostatDataPreparation {
 	static Logger logger = Logger.getLogger(EurostatDataPreparation.class.getName());
@@ -27,18 +27,18 @@ public class EurostatDataPreparation {
 		String path = "C:\\Users\\gaffuju\\Desktop\\CNTR_100k\\";
 
 		//logger.info("Produce country geometry as the union of different versions");
-		produceCountriesUnionVersions(path);
+		//produceCountriesUnionVersions(path);
 
-		//logger.info("Produce Europe 100k as union of countries");
-		//SHPUtil.union(path+"CNTR_RG_100K_union_LAEA.shp", path+"Europe_100K_union_LAEA.shp", 0);
-		//NB: try iterative union directly
+		logger.info("Produce Europe 100k as union of countries");
+		SHPUtil.union(path+"CNTR_RG_100K_union_LAEA.shp", path+"Europe_100K_union_LAEA.shp", 0);
+		//NB: try iterative union or buffer(0) directly
 
 		//buffering
 		int bufferDistance = 1500;
-		logger.info("Produce buffers (" + bufferDistance + ") of countries");
-		buffer(path+"CNTR_RG_100K_union_LAEA.shp", path+"CNTR_RG_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 4, BufferParameters.CAP_ROUND);
-		//logger.info("Produce Europe (" + bufferDistance + ") buffer");
-		//buffer(path+"Europe_100K_union_LAEA.shp", path+"Europe_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 4, BufferParameters.CAP_ROUND);
+		//logger.info("Produce buffers (" + bufferDistance + ") of countries");
+		//buffer(path+"CNTR_RG_100K_union_LAEA.shp", path+"CNTR_RG_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 4, BufferParameters.CAP_ROUND);
+		logger.info("Produce Europe (" + bufferDistance + ") buffer");
+		buffer(path+"Europe_100K_union_LAEA.shp", path+"Europe_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 4, BufferParameters.CAP_ROUND);
 
 		//TODO remove country holes ?
 
@@ -54,21 +54,21 @@ public class EurostatDataPreparation {
 		ArrayList<Feature> fs = SHPUtil.loadSHP(inFile).fs;
 
 		for(Feature f : fs) {
-			System.out.println(f.getAttribute("CNTR_ID"));
+			logger.info(f.getAttribute("CNTR_ID"));
 			Geometry geom = (Geometry) f.getDefaultGeometry();
 			Collection<Geometry> geoms = getGeometries(geom);
-			System.out.println(geoms.size() + " components");
-			System.out.println("Compute buffers");
+			logger.info(geoms.size() + " components");
+			logger.info("Compute buffers");
 			Collection<Geometry> buffs = new ArrayList<>();
 			for(Geometry g : geoms)
 				buffs.add(g.buffer(bufferDistance, quadrantSegments, endCapStyle));
-			System.out.println("Compute union of buffers");
+			logger.info("Compute union of buffers");
 			Geometry buff = new CascadedPolygonUnion(buffs ).union();
 			if(buff instanceof Polygon) buff = buff.getFactory().createMultiPolygon(new Polygon[] {(Polygon)buff});
 			f.setDefaultGeometry(buff);
 		}
 
-		System.out.println("Save");
+		logger.info("Save");
 		SHPUtil.saveSHP(fs, outFile, SHPUtil.getCRS(inFile));
 	}
 

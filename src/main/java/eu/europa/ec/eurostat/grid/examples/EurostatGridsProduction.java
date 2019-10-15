@@ -13,10 +13,10 @@ import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import eu.europa.ec.eurostat.eurogeostat.CountriesUtil;
+import eu.europa.ec.eurostat.eurogeostat.datamodel.Feature;
+import eu.europa.ec.eurostat.eurogeostat.io.SHPUtil;
 import eu.europa.ec.eurostat.grid.StatGrid;
-import eu.europa.ec.eurostat.grid.utils.CountriesUtil;
-import eu.europa.ec.eurostat.grid.utils.Feature;
-import eu.europa.ec.eurostat.grid.utils.SHPUtil;
 
 /**
  * Examples to produce European grids based on ETRS89-LAEA coordinate reference system (EPSG:3035)

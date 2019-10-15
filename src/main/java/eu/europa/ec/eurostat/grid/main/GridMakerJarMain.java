@@ -17,13 +17,13 @@ import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import eu.europa.ec.eurostat.eurogeostat.CountriesUtil;
+import eu.europa.ec.eurostat.eurogeostat.datamodel.Feature;
+import eu.europa.ec.eurostat.eurogeostat.io.GeoJSONUtil;
+import eu.europa.ec.eurostat.eurogeostat.io.SHPUtil;
+import eu.europa.ec.eurostat.eurogeostat.io.SHPUtil.SHPData;
 import eu.europa.ec.eurostat.grid.GridCell.GridCellGeometryType;
 import eu.europa.ec.eurostat.grid.StatGrid;
-import eu.europa.ec.eurostat.grid.utils.CountriesUtil;
-import eu.europa.ec.eurostat.grid.utils.Feature;
-import eu.europa.ec.eurostat.grid.utils.GeoJSONUtil;
-import eu.europa.ec.eurostat.grid.utils.SHPUtil;
-import eu.europa.ec.eurostat.grid.utils.SHPUtil.SHPData;
 
 /**
  * 

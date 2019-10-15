@@ -11,8 +11,8 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 
+import eu.europa.ec.eurostat.eurogeostat.datamodel.Feature;
 import eu.europa.ec.eurostat.grid.GridCell.GridCellGeometryType;
-import eu.europa.ec.eurostat.grid.utils.Feature;
 
 /**
  * Build a statistical grid.
