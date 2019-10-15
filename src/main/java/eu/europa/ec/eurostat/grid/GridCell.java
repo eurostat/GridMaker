@@ -59,9 +59,19 @@ public class GridCell {
 		return (int) lowerLeftCornerPosition.getY();
 	}
 
-
 	private void parseGridCellId() {
-		//TODO
+		//CRS3035RES200mN1453400E1452800
+		//CRS3035RES100000mN5400000E1200000
+		String id = gridCellId;
+		id = id.replaceAll("CRS", "");
+		String[] sp = id.split("RES");
+		epsgCode = sp[0];
+		sp = sp[1].split("mN");
+		gridResolution = Integer.parseInt(sp[0]);
+		sp = sp[1].split("E");
+		int n = Integer.parseInt(sp[0]);
+		int e = Integer.parseInt(sp[1]);
+		lowerLeftCornerPosition = new Coordinate(e,n);
 	}
 
 
