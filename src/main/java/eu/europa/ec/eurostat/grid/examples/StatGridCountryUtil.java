@@ -11,7 +11,7 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.index.strtree.STRtree;
 
-import eu.europa.ec.eurostat.eurogeostat.datamodel.Feature;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
 
 /**
  * A number of functions to assign country codes to grid cells.

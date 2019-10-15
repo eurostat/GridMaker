@@ -12,10 +12,10 @@ import org.locationtech.jts.operation.buffer.BufferParameters;
 import org.locationtech.jts.operation.union.CascadedPolygonUnion;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import eu.europa.ec.eurostat.eurogeostat.CountriesUtil;
-import eu.europa.ec.eurostat.eurogeostat.algo.base.Union;
-import eu.europa.ec.eurostat.eurogeostat.datamodel.Feature;
-import eu.europa.ec.eurostat.eurogeostat.io.SHPUtil;
+import eu.europa.ec.eurostat.jgiscotools.CountriesUtil;
+import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
+import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 
 public class EurostatDataPreparation {
 	static Logger logger = Logger.getLogger(EurostatDataPreparation.class.getName());
