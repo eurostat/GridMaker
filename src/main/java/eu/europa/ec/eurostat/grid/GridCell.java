@@ -60,6 +60,7 @@ public class GridCell {
 	}
 
 	private void parseGridCellId() {
+		//examples:
 		//CRS3035RES200mN1453400E1452800
 		//CRS3035RES100000mN5400000E1200000
 		String id = gridCellId;
@@ -145,12 +146,6 @@ public class GridCell {
 				+"N"+Integer.toString((int)lowerLeftCornerPosition.getX())
 				+"E"+Integer.toString((int)lowerLeftCornerPosition.getY())
 				;
-	}
-
-
-	public static boolean contains(String gridCellId1, String gridCellId2) {
-		//TODO
-		return false;
 	}
 
 }
