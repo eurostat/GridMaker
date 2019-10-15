@@ -13,6 +13,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 
 import eu.europa.ec.eurostat.grid.GridCell.GridCellGeometryType;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
+import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
 /**
  * Build a statistical grid.
@@ -56,16 +57,17 @@ public class StatGrid {
 	private Geometry geometryToCover;
 	public Geometry getGeometryToCover() {
 		if(geometryToCover == null)
-			geometryToCover = getGeometry(new Envelope(0.0, 10000000.0, 0.0, 10000000.0), new GeometryFactory());
+			geometryToCover = JTSGeomUtil.getGeometry(new Envelope(0.0, 10000000.0, 0.0, 10000000.0), new GeometryFactory());
 		return geometryToCover;
 	}
+
 	public StatGrid setGeometryToCover(Geometry geometryToCover) {
 		this.geometryToCover = geometryToCover;
 		cells = null;
 		return this;
 	}
 	public StatGrid setGeometryToCover(Envelope envelopeToCover) {
-		return setGeometryToCover(getGeometry(envelopeToCover, new GeometryFactory()));
+		return setGeometryToCover(JTSGeomUtil.getGeometry(envelopeToCover, new GeometryFactory()));
 	}
 
 	/**
@@ -153,13 +155,6 @@ public class StatGrid {
 		double yMin = env.getMinY() - env.getMinY()%res;
 		double yMax = (1+(int)(env.getMaxY()/res))*res;
 		return new Envelope(xMin, xMax, yMin, yMax);
-	}
-
-
-
-	private static Geometry getGeometry(Envelope env, GeometryFactory gf) {
-		//TODO
-		return null;
 	}
 
 }

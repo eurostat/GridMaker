@@ -56,11 +56,20 @@
 	</build>
 
 	<dependencies>
+
 		<dependency>
 			<groupId>eu.ec.eurostat</groupId>
 			<artifactId>JGiscoTools</artifactId>
 			<version>0.2-SNAPSHOT</version>
 		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 
