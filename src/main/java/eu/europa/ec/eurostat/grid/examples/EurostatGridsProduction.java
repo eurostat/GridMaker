@@ -28,6 +28,7 @@ import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 public class EurostatGridsProduction {
 	static Logger logger = Logger.getLogger(EurostatGridsProduction.class.getName());
 
+	//TODO save as geopkg ?
 	//see also:
 	//https://www.eea.europa.eu/data-and-maps/data/eea-reference-grids-2
 	//https://www.efgs.info/data/
@@ -83,8 +84,6 @@ public class EurostatGridsProduction {
 			logger.info("Save " + cells.size() + " cells...");
 			SHPUtil.saveSHP(cells, outpath+"1km/grid_1km_"+countryCode+".shp", crs);
 		}
-
-
 
 		//try to make 2km for whole Europe
 		//logger.info("Make " + 2 + "km grid...");
