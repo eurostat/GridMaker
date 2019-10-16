@@ -120,7 +120,7 @@ public class EurostatGridsProduction {
 			SHPUtil.saveSHP(cells, path+resKM+"km/grid_"+resKM+"km.shp", crs);
 		}*/
 		logger.info("Save " + cells.size() + " cells as GPKG...");
-		GeoPackageUtil.save(cells, path+resKM+"km/grid_"+resKM+"km.gpkg", crs);
+		GeoPackageUtil.save(cells, path+"grid_"+resKM+"km.gpkg", crs);
 	}
 
 }
