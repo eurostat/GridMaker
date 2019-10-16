@@ -13,10 +13,13 @@ import org.locationtech.jts.geom.Polygon;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
 
 /**
+ * A grid cell.
+ * 
  * @author Julien Gaffuri
  *
  */
 public class GridCell {
+	//TODO extends Feature ?
 
 	public GridCell(String gridCellId) {
 		this.gridCellId = gridCellId;
@@ -30,6 +33,12 @@ public class GridCell {
 	}
 
 
+	/**
+	 * The cell id, as defined in INSPIRE coding system, see <a href="https://inspire.ec.europa.eu/id/document/tg/su">here</a>).
+	 * Examples:
+	 * - CRS3035RES200mN1453400E1452800
+	 * - CRS3035RES100000mN5400000E1200000
+	 */
 	private String gridCellId = null;
 	public String getGridCellId() {
 		if(gridCellId==null)
@@ -37,18 +46,28 @@ public class GridCell {
 		return gridCellId;
 	}
 
+	/**
+	 * The EPSG code of the Coordinate Reference System of the grid cell.
+	 * See the <a href="https://spatialreference.org/ref/epsg/">EPSG register.</a>
+	 */
 	private String epsgCode = null;
 	public String getEpsgCode() {
 		if(epsgCode == null) parseGridCellId();
 		return epsgCode;
 	}
 
+	/**
+	 * The grid cell resolution.
+	 */
 	private int gridResolution = -1;
 	public int getGridResolution() {
 		if(gridResolution == -1) parseGridCellId();
 		return gridResolution;
 	}
 
+	/**
+	 * The grid cell lower left position.
+	 */
 	private Coordinate lowerLeftCornerPosition = null;
 	public int getLowerLeftCornerPositionX() {
 		if(lowerLeftCornerPosition == null) parseGridCellId();
@@ -59,10 +78,13 @@ public class GridCell {
 		return (int) lowerLeftCornerPosition.getY();
 	}
 
+	/**
+	 * Parse the grid cell Id to get all information it contains.
+	 * Examples:
+	 * CRS3035RES200mN1453400E1452800
+	 * CRS3035RES100000mN5400000E1200000
+	 */
 	private void parseGridCellId() {
-		//examples:
-		//CRS3035RES200mN1453400E1452800
-		//CRS3035RES100000mN5400000E1200000
 		String id = gridCellId;
 		id = id.replaceAll("CRS", "");
 		String[] sp = id.split("RES");
@@ -76,6 +98,9 @@ public class GridCell {
 	}
 
 
+	/**
+	 * @return The grid cell envelope.
+	 */
 	public Envelope getEnvelope() {
 		int x = getLowerLeftCornerPositionX();
 		int y = getLowerLeftCornerPositionY();
@@ -101,7 +126,12 @@ public class GridCell {
 		return geometry;
 	}
 
-	//build polygon geometry
+	/**
+	 * Build grid cell geometry as a polygon.
+	 * 
+	 * @param gf
+	 * @return
+	 */
 	public Polygon getPolygonGeometry(GeometryFactory gf) {
 		int x = getLowerLeftCornerPositionX();
 		int y = getLowerLeftCornerPositionY();
@@ -110,13 +140,24 @@ public class GridCell {
 		return gf.createPolygon(cs);
 	}
 
-	//build point geometry
+	/**
+	 * Build grid cell geometry as a point (its center point).
+	 * 
+	 * @param gf
+	 * @return
+	 */
 	public Point getPointGeometry(GeometryFactory gf) {
 		int x = getLowerLeftCornerPositionX();
 		int y = getLowerLeftCornerPositionY();
 		return gf.createPoint(new Coordinate(x+0.5*getGridResolution(), y+0.5*getGridResolution()));
 	}
 
+	/**
+	 * Convert the grid cell into a feature.
+	 * TODO: Extend Feature class instead?
+	 * 
+	 * @return
+	 */
 	public Feature toFeature() {
 		Feature f = new Feature();
 		f.setDefaultGeometry(this.getGeometry());
@@ -128,7 +169,7 @@ public class GridCell {
 
 
 	/**
-	 * Build a cell code (according to INSPIRE coding system, @see https://inspire.ec.europa.eu/id/document/tg/su).
+	 * Build a cell code (according to INSPIRE coding system, see <a href="https://inspire.ec.europa.eu/id/document/tg/su">here</a>).
 	 * This is valid only for a grids in a cartographic projection.
 	 * Examples:
 	 * - CRS3035RES200mN1453400E1452800

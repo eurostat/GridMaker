@@ -40,7 +40,7 @@ public class StatGrid {
 
 	/**
 	 * The EPSG code of the Coordinate Reference System of the grid.
-	 * @see https://spatialreference.org/ref/epsg/
+	 * See the <a href="https://spatialreference.org/ref/epsg/">EPSG register.</a>
 	 */
 	private String epsgCode = "3035";
 	public String getEPSGCode() { return epsgCode; }
@@ -96,7 +96,7 @@ public class StatGrid {
 	}
 
 	/**
-	 * The grid cells.
+	 * The grid cells, as features.
 	 */
 	private Collection<Feature> cells = null;
 	public Collection<Feature> getCells() {
