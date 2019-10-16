@@ -28,6 +28,8 @@ import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 public class EurostatGridsProduction {
 	static Logger logger = Logger.getLogger(EurostatGridsProduction.class.getName());
 
+	static int[] resKMs = new int[] {100,50,20,10,5};
+
 	//TODO save as geopkg ?
 	//see also:
 	//https://www.eea.europa.eu/data-and-maps/data/eea-reference-grids-2
@@ -54,7 +56,7 @@ public class EurostatGridsProduction {
 		ArrayList<Feature> cnts = SHPUtil.loadSHP(path+"CNTR_RG_100K_union_buff_"+bufferDistance+"_LAEA.shp").fs;
 
 		//build pan-European grids for various resolutions
-		for(int resKM : new int[] {100,50,20,10,5}) {
+		for(int resKM : resKMs) {
 			logger.info("Make " + resKM + "km grid...");
 			make(resKM, europeCover, cnts, bufferDistance, outpath, crs);
 		}

@@ -20,7 +20,7 @@ public class EurostatPopulationGridMultiResolution {
 
 		//load 1km population
 
-		for(int resKM : new int[] {100,50,20,10,5}) {
+		for(int resKM : EurostatGridsProduction.resKMs) {
 			//TODO
 			//go through 1km population data
 			//get higher resolution grid cell it belong to

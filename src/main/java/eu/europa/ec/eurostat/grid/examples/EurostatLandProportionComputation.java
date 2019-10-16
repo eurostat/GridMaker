@@ -17,7 +17,7 @@ public class EurostatLandProportionComputation {
 
 		//load country dataset (europe?)
 		//TODO
-		for(int resKM : new int[] {100,50,20,10,5}) {
+		for(int resKM : EurostatGridsProduction.resKMs) {
 			//load grid dataset
 			//TODO
 			//compute intersection
