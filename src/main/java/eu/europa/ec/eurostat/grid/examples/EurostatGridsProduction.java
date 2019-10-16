@@ -91,8 +91,8 @@ public class EurostatGridsProduction {
 		//logger.info("Make " + 2 + "km grid...");
 		//make(2, europeCover, cnts, path, crs);
 		//try to make 1km for whole Europe
-		logger.info("Make " + 1 + "km grid...");
-		make(1, europeCover, cnts, bufferDistance, outpath, crs);
+		//logger.info("Make " + 1 + "km grid...");
+		//make(1, europeCover, cnts, bufferDistance, outpath, crs);
 
 		logger.info("End");
 	}
