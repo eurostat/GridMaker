@@ -113,6 +113,5 @@ public class EurostatGridsProduction {
 		logger.info("Save " + cells.size() + " cells...");
 		SHPUtil.saveSHP(cells, path+resKM+"km/grid_"+resKM+"km.shp", crs);
 	}
-
-
+	
 }
