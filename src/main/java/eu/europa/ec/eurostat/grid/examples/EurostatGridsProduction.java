@@ -64,7 +64,7 @@ public class EurostatGridsProduction {
 		//build country 1km grids by country
 		for(String countryCode : CountriesUtil.EuropeanCountryCodes) {
 
-			logger.info("Make 1km grid for "+countryCode+"...");
+			logger.info("Make 1km grid for " + countryCode + "...");
 
 			//get country geometry (buffer)
 			Geometry countryGeom = SHPUtil.loadSHP(path+"CNTR_RG_100K_union_buff_"+bufferDistance+"_LAEA.shp", CQL.toFilter("CNTR_ID = '"+countryCode+"'"))
