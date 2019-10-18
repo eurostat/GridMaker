@@ -50,6 +50,7 @@ public class EurostatPopulationGridMultiResolution {
 			if(year==2011) popData.delete("TOT_P_CON_DT");
 
 			for(int resKM : EurostatGridsProduction.resKMs) {
+				logger.info(resKM);
 
 				//output data, as dictionnary
 				HashMap<String,Double> out = new HashMap<>();
@@ -57,7 +58,7 @@ public class EurostatPopulationGridMultiResolution {
 				//go through 1km population data
 				for(Stat s : popData.stats) {
 					//get higher resolution grid cell it belongs to
-					String newId = new GridCell( s.dims.get("GRD_ID") ).getUpperCellId(resKM*1000);
+					String newId = new GridCell( s.dims.get("GRD_ID") ).getUpperCell(resKM*1000).getId();
 
 					//set or update value
 					Double val = out.get(newId);

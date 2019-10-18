@@ -21,13 +21,13 @@ import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
 public class GridCell {
 	//TODO extends Feature ?
 
-	public GridCell(String gridCellId) {
-		this.gridCellId = gridCellId;
+	public GridCell(String id) {
+		this.id = id;
 	}
 
-	public GridCell(String epsgCode, int gridResolution, int lowerLeftCornerPositionX, int lowerLeftCornerPositionY) {
+	public GridCell(String epsgCode, int resolution, int lowerLeftCornerPositionX, int lowerLeftCornerPositionY) {
 		this.epsgCode = epsgCode;
-		this.gridResolution = gridResolution;
+		this.resolution = resolution;
 		//TODO handle case of geographic coordinates
 		this.lowerLeftCornerPosition = new Coordinate(lowerLeftCornerPositionX, lowerLeftCornerPositionY);
 	}
@@ -39,11 +39,11 @@ public class GridCell {
 	 * - CRS3035RES200mN1453400E1452800
 	 * - CRS3035RES100000mN5400000E1200000
 	 */
-	private String gridCellId = null;
-	public String getGridCellId() {
-		if(gridCellId==null)
-			gridCellId = getGridCellId(epsgCode, gridResolution, lowerLeftCornerPosition);
-		return gridCellId;
+	private String id = null;
+	public String getId() {
+		if(id==null)
+			id = getGridCellId(epsgCode, resolution, lowerLeftCornerPosition);
+		return id;
 	}
 
 	/**
@@ -59,10 +59,10 @@ public class GridCell {
 	/**
 	 * The grid cell resolution.
 	 */
-	private int gridResolution = -1;
-	public int getGridResolution() {
-		if(gridResolution == -1) parseGridCellId();
-		return gridResolution;
+	private int resolution = -1;
+	public int getResolution() {
+		if(resolution == -1) parseGridCellId();
+		return resolution;
 	}
 
 	/**
@@ -85,12 +85,11 @@ public class GridCell {
 	 * CRS3035RES100000mN5400000E1200000
 	 */
 	private void parseGridCellId() {
-		String id = gridCellId;
-		id = id.replaceAll("CRS", "");
-		String[] sp = id.split("RES");
+		String id_ = id.replaceAll("CRS", "");
+		String[] sp = id_.split("RES");
 		epsgCode = sp[0];
 		sp = sp[1].split("mN");
-		gridResolution = Integer.parseInt(sp[0]);
+		resolution = Integer.parseInt(sp[0]);
 		sp = sp[1].split("E");
 		int n = Integer.parseInt(sp[0]);
 		int e = Integer.parseInt(sp[1]);
@@ -104,7 +103,7 @@ public class GridCell {
 	public Envelope getEnvelope() {
 		int x = getLowerLeftCornerPositionX();
 		int y = getLowerLeftCornerPositionY();
-		return new Envelope(x, x+getGridResolution(), y, y+getGridResolution());
+		return new Envelope(x, x+getResolution(), y, y+getResolution());
 	}
 
 	/**
@@ -135,7 +134,7 @@ public class GridCell {
 	public Polygon getPolygonGeometry(GeometryFactory gf) {
 		int x = getLowerLeftCornerPositionX();
 		int y = getLowerLeftCornerPositionY();
-		int res = getGridResolution();
+		int res = getResolution();
 		Coordinate[] cs = new Coordinate[]{new Coordinate(x,y), new Coordinate(x+res,y), new Coordinate(x+res,y+res), new Coordinate(x,y+res), new Coordinate(x,y)};
 		return gf.createPolygon(cs);
 	}
@@ -149,7 +148,7 @@ public class GridCell {
 	public Point getPointGeometry(GeometryFactory gf) {
 		int x = getLowerLeftCornerPositionX();
 		int y = getLowerLeftCornerPositionY();
-		return gf.createPoint(new Coordinate(x+0.5*getGridResolution(), y+0.5*getGridResolution()));
+		return gf.createPoint(new Coordinate(x+0.5*getResolution(), y+0.5*getResolution()));
 	}
 
 	/**
@@ -161,8 +160,8 @@ public class GridCell {
 	public Feature toFeature() {
 		Feature f = new Feature();
 		f.setDefaultGeometry(this.getGeometry());
-		f.setID(this.getGridCellId());
-		f.setAttribute("cellId", this.getGridCellId());
+		f.setID(this.getId());
+		f.setAttribute("cellId", this.getId());
 		return f;
 	}
 
@@ -189,9 +188,17 @@ public class GridCell {
 				;
 	}
 
-	public String getUpperCellId(double resolution) {
-		//TODO
-		return "AAA";
+	/**
+	 * Get the cell of the upper grod cell, whose resolution is the specified one.
+	 * This target resolution is expected to be a multiple of the grid cell resolution.
+	 * 
+	 * @param resolution
+	 * @return
+	 */
+	public GridCell getUpperCell(int resolution) {
+		int x = ((int)(getLowerLeftCornerPositionX() / resolution)) * resolution;
+		int y = ((int)(getLowerLeftCornerPositionY() / resolution)) * resolution;
+		return new GridCell(getEpsgCode(), resolution, x, y);
 	}
 
 }
