@@ -24,7 +24,8 @@ public class EurostatPopulationGridMultiResolution {
 	public static void main(String[] args) {
 		logger.info("Start");
 
-		reFormatGeostatFiles();
+		//reFormatGeostatFiles();
+		produceMultiResolutionPopGrids();
 
 		logger.info("End");
 	}
@@ -35,7 +36,7 @@ public class EurostatPopulationGridMultiResolution {
 			logger.info(year);
 
 			//load 1km data
-			StatsHypercube popData = CSV.load(basePath+"pop_grid_1km/"+year+".csv", "TOT_P");
+			StatsHypercube popData = CSV.load(basePath+"pop_grid/pop_grid_"+year+"_1km_full.csv", "TOT_P");
 
 			//remove unnecessary dimensions
 			popData.delete("YEAR");
@@ -109,7 +110,7 @@ public class EurostatPopulationGridMultiResolution {
 				s.dims.put("GRD_ID", id);
 			}
 
-			CSV.save(popData, "TOT_P", basePath+"pop_grid/", "pop_grid_"+year+"_1km.csv");
+			CSV.save(popData, "TOT_P", basePath+"pop_grid/", "pop_grid_"+year+"_1km_full.csv");
 
 		}
 	}
