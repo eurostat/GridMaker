@@ -23,6 +23,8 @@ import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 public class EurostatPopulationGridMultiResolution {
 	static Logger logger = Logger.getLogger(EurostatPopulationGridMultiResolution.class.getName());
 
+	//TODO: add luxembourg to 2011
+
 	static String basePath = "C:/Users/gaffuju/Desktop/";
 
 	public static void main(String[] args) {

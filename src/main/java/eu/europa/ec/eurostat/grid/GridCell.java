@@ -161,7 +161,7 @@ public class GridCell {
 		Feature f = new Feature();
 		f.setDefaultGeometry(this.getGeometry());
 		f.setID(this.getId());
-		f.setAttribute("cellId", this.getId());
+		f.setAttribute("GRD_ID", this.getId());
 		return f;
 	}
 
