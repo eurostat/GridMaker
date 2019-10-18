@@ -189,4 +189,9 @@ public class GridCell {
 				;
 	}
 
+	public String getUpperCellId(double resolution) {
+		//TODO
+		return "AAA";
+	}
+
 }

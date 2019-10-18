@@ -3,8 +3,12 @@
  */
 package eu.europa.ec.eurostat.grid.examples;
 
+import java.util.HashMap;
+import java.util.Map.Entry;
+
 import org.apache.log4j.Logger;
 
+import eu.europa.ec.eurostat.grid.GridCell;
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
@@ -47,13 +51,26 @@ public class EurostatPopulationGridMultiResolution {
 
 			for(int resKM : EurostatGridsProduction.resKMs) {
 
-				//output data
-				StatsHypercube sh = new StatsHypercube("GRD_ID");
+				//output data, as dictionnary
+				HashMap<String,Double> out = new HashMap<>();
 
-				//TODO
 				//go through 1km population data
-				//get higher resolution grid cell it belong to
-				//increment population value
+				for(Stat s : popData.stats) {
+					//get higher resolution grid cell it belongs to
+					String newId = new GridCell( s.dims.get("GRD_ID") ).getUpperCellId(resKM*1000);
+
+					//set or update value
+					Double val = out.get(newId);
+					if(val == null)
+						out.put(newId, s.value);
+					else
+						out.put(newId, val + s.value);
+				}
+
+				//output data, as stat hypercube
+				StatsHypercube sh = new StatsHypercube("GRD_ID");
+				for(Entry<String,Double> e : out.entrySet())
+					sh.stats.add( new Stat(e.getValue(), "GRD_ID", e.getKey()) );
 
 				//save
 				CSV.save(sh, "TOT_P", basePath+"pop_grid/", "pop_grid_"+year+"_"+resKM+"km.csv");
