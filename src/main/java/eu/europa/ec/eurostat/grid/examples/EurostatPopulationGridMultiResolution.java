@@ -120,17 +120,21 @@ public class EurostatPopulationGridMultiResolution {
 
 			for(Stat s : popData.stats) {
 				//reformat grid cell
-				//in: 1kmN2405E4337 out: CRS3035RES200mN1453400E1452800
 				String id = s.dims.get("GRD_ID");
-				id = id.replace("E", "000E");
-				id = id.replace("1kmN", "CRS3035RES1000mN");
-				id = id+"000";
-				s.dims.put("GRD_ID", id);
+				s.dims.put("GRD_ID", reformatGeostatGridId(id));
 			}
 
 			CSV.save(popData, "TOT_P", basePath+"pop_grid/", "pop_grid_"+year+"_1km_full.csv");
 
 		}
+	}
+
+	//in: 1kmN2405E4337 out: CRS3035RES200mN1453400E1452800
+	static String reformatGeostatGridId(String geostatId) {
+		String id = geostatId.replace("E", "000E");
+		id = id.replace("1kmN", "CRS3035RES1000mN");
+		id = id+"000";
+		return id;
 	}
 
 }
