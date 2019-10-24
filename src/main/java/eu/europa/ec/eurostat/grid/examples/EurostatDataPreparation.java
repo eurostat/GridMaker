@@ -14,7 +14,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.CountriesUtil;
 import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
-import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 
 public class EurostatDataPreparation {
