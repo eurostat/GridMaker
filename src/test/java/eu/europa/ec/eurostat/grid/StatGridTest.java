@@ -3,8 +3,6 @@
  */
 package eu.europa.ec.eurostat.grid;
 
-import org.locationtech.jts.geom.Coordinate;
-
 import eu.europa.ec.eurostat.grid.GridCell.GridCellGeometryType;
 import junit.framework.TestCase;
 

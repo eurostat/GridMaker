@@ -183,8 +183,8 @@ public class GridCell {
 		return 
 				"CRS"+epsgCode
 				+"RES"+Integer.toString((int)gridResolutionM)+"m"
-				+"N"+Integer.toString((int)lowerLeftCornerPosition.getX())
-				+"E"+Integer.toString((int)lowerLeftCornerPosition.getY())
+				+"N"+Integer.toString((int)lowerLeftCornerPosition.getY())
+				+"E"+Integer.toString((int)lowerLeftCornerPosition.getX())
 				;
 	}
 
