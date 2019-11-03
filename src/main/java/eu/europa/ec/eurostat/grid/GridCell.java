@@ -153,7 +153,6 @@ public class GridCell {
 
 	/**
 	 * Convert the grid cell into a feature.
-	 * TODO: Extend Feature class instead?
 	 * 
 	 * @return
 	 */
