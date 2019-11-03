@@ -49,18 +49,45 @@ public class EurostatGridsProduction {
 		int bufferDistance = 1500;
 
 		logger.info("Get Europe cover (buffer)...");
-		Geometry europeCover = SHPUtil.loadSHP(path+"Europe_100K_union_buff_"+bufferDistance+"_LAEA.shp").fs.iterator().next().getDefaultGeometry();
+		Geometry europeCoverBuff = SHPUtil.loadSHP(path+"Europe_100K_union_buff_"+bufferDistance+"_LAEA.shp").fs.iterator().next().getDefaultGeometry();
 
-		logger.info("Get European countries ...");
-		ArrayList<Feature> cnts = SHPUtil.loadSHP(path+"CNTR_RG_100K_union_buff_"+bufferDistance+"_LAEA.shp").fs;
+		logger.info("Get European countries (buffer) ...");
+		ArrayList<Feature> cntsBuff = SHPUtil.loadSHP(path+"CNTR_RG_100K_union_buff_"+bufferDistance+"_LAEA.shp").fs;
+
+		logger.info("Get European countries...");
+		ArrayList<Feature> cnts = SHPUtil.loadSHP(path+"CNTR_RG_100K_union_LAEA.shp").fs;
 
 		//build pan-European grids
 		for(int resKM : resKMs) {
 			logger.info("Make " + resKM + "km grid...");
-			make(resKM, europeCover, cnts, bufferDistance, outpath, crs, resKM>3, true);
+
+			//build grid
+			StatGrid grid = new StatGrid()
+					.setResolution(resKM*1000)
+					.setEPSGCode("3035")
+					.setGeometryToCover(europeCoverBuff)
+					;
+			Collection<Feature> cells = grid.getCells();
+
+			StatGridCountryUtil.assignCountries(cells, "CNTR_ID", cntsBuff, 0, "CNTR_ID");
+			//TODO assign also nuts code ?
+			StatGridCountryUtil.filterCellsWithoutCountry(cells, "CNTR_ID");
+			//TODO assign land area
+
+			//save as GPKG
+			logger.info("Save " + cells.size() + " cells as GPKG...");
+			GeoPackageUtil.save(cells, outpath+"grid_"+resKM+"km.gpkg", crs);
+
+			//save as SHP
+			if(resKM>3) {
+				logger.info("Save " + cells.size() + " cells as SHP...");
+				SHPUtil.saveSHP(cells, outpath + "grid_"+resKM+"km_shp" + "/grid_"+resKM+"km.shp", crs);
+			}
 		}
 
 
+
+		/*
 		//build country 1km grids by country
 		for(String countryCode : CountriesUtil.EuropeanCountryCodes) {
 
@@ -86,35 +113,9 @@ public class EurostatGridsProduction {
 			//logger.info("Save " + cells.size() + " cells as GPKG...");
 			//GeoPackageUtil.save(cells, outpath+"1km/grid_1km_"+countryCode+".gpkg", crs);
 		}
+		 */
 
 		logger.info("End");
-	}
-
-
-
-
-	private static void make(int resKM, Geometry europeCover, ArrayList<Feature> cnts, double bufferDistance, String path, CoordinateReferenceSystem crs, boolean saveSPH, boolean saveGPKG) {
-		//build grid
-		StatGrid grid = new StatGrid()
-				.setResolution(resKM*1000)
-				.setEPSGCode("3035")
-				.setGeometryToCover(europeCover)
-				;
-		Collection<Feature> cells = grid.getCells();
-
-		StatGridCountryUtil.assignCountries(cells, "CNTR_ID", cnts, bufferDistance, "CNTR_ID");
-		//TODO assign also nuts code
-		StatGridCountryUtil.filterCellsWithoutCountry(cells, "CNTR_ID");
-
-		//save
-		if(saveSPH) {
-			logger.info("Save " + cells.size() + " cells as SHP...");
-			SHPUtil.saveSHP(cells, path + "grid_"+resKM+"km_shp" + "/grid_"+resKM+"km.shp", crs);
-		}
-		if(saveGPKG) {
-			logger.info("Save " + cells.size() + " cells as GPKG...");
-			GeoPackageUtil.save(cells, path+"grid_"+resKM+"km.gpkg", crs);
-		}
 	}
 
 }
