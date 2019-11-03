@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.grid.examples;
+package eu.europa.ec.eurostat.grid;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,12 +48,13 @@ public class GridUtil {
 			index.insert(cell.getDefaultGeometry().getEnvelopeInternal(), cell);
 
 		for(Feature reg : regions) {
+
 			//get region cover and code
 			Geometry regCover = reg.getDefaultGeometry();
 			if(toleranceDistance != 0 ) regCover = regCover.buffer(toleranceDistance);
 			String regCode = reg.getAttribute(regionCodeAttribute).toString();
 
-			//get region envelope, expanded by toleranceDistance
+			//get region envelope
 			Envelope regCoverEnv = regCover.getEnvelopeInternal();
 
 			//get grid cells around region envelope
@@ -87,7 +88,8 @@ public class GridUtil {
 		Collection<Feature> cellsToRemove = new ArrayList<Feature>();
 		for(Feature cell : cells) {
 			Object cellReg = cell.getAttribute(cellRegionAttribute);
-			if(cellReg==null || "".equals(cellReg.toString())) cellsToRemove.add(cell);
+			if(cellReg==null || "".equals(cellReg.toString()))
+				cellsToRemove.add(cell);
 		}
 		cells.removeAll(cellsToRemove);
 		if(logger.isDebugEnabled()) logger.debug(cellsToRemove.size() + " cells to remove. " + cells.size() + " cells left");
