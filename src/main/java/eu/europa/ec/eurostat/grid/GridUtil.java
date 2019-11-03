@@ -21,7 +21,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.Util;
  *
  */
 public class GridUtil {
-	static Logger logger = Logger.getLogger(GridUtil.class.getName());
+	public static Logger logger = Logger.getLogger(GridUtil.class.getName());
 
 
 	/**
