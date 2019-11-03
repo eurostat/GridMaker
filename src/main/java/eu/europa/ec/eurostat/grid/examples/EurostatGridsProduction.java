@@ -69,8 +69,8 @@ public class EurostatGridsProduction {
 			Collection<Feature> cells = grid.getCells();
 
 			//assign country codes
-			StatGridUtil.assignCountries(cells, "CNTR_ID", cntsBuff, 0, "CNTR_ID");
-			StatGridUtil.filterCellsWithoutCountry(cells, "CNTR_ID");
+			StatGridUtil.assignRegionCode(cells, "CNTR_ID", cntsBuff, 0, "CNTR_ID");
+			StatGridUtil.filterCellsWithoutRegion(cells, "CNTR_ID");
 
 			//TODO assign also nuts code ?
 
