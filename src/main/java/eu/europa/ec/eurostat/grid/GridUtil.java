@@ -6,7 +6,6 @@ package eu.europa.ec.eurostat.grid;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.log4j.Logger;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.index.strtree.STRtree;
@@ -21,11 +20,9 @@ import eu.europa.ec.eurostat.jgiscotools.util.Util;
  *
  */
 public class GridUtil {
-	public static Logger logger = Logger.getLogger(GridUtil.class.getName());
-
 
 	/**
-	 * Assign region codes to grid cells.
+	 * Assign region codes to grid cells. These regions could be countries or NUTS regions.
 	 * If a grid cell intersects or is nearby the geometry of a region, then an attribute of the cell is assigned with this region code.
 	 * For cells that are to be assigned to several regions, several region codes are assigned.
 	 * 
@@ -36,7 +33,6 @@ public class GridUtil {
 	 * @param regionCodeAttribute
 	 */
 	public static void assignRegionCode(Collection<Feature> cells, String cellRegionAttribute, Collection<Feature> regions, double toleranceDistance, String regionCodeAttribute) {
-		if(logger.isDebugEnabled()) logger.debug("Assign regions...");
 
 		//initialise cell region attribute
 		for(Feature cell : cells)
@@ -84,7 +80,6 @@ public class GridUtil {
 	 * @param cellRegionAttribute
 	 */
 	public static void filterCellsWithoutRegion(Collection<Feature> cells, String cellRegionAttribute) {
-		if(logger.isDebugEnabled()) logger.debug("Filtering " + cells.size() + " cells...");
 		Collection<Feature> cellsToRemove = new ArrayList<Feature>();
 		for(Feature cell : cells) {
 			Object cellReg = cell.getAttribute(cellRegionAttribute);
@@ -92,7 +87,6 @@ public class GridUtil {
 				cellsToRemove.add(cell);
 		}
 		cells.removeAll(cellsToRemove);
-		if(logger.isDebugEnabled()) logger.debug(cellsToRemove.size() + " cells to remove. " + cells.size() + " cells left");
 	}
 
 
@@ -106,8 +100,6 @@ public class GridUtil {
 	 * @param decimalNB The number of decimal places to keep for the percentage
 	 */
 	public static void assignLandProportion(Collection<Feature> cells, String cellLandPropAttribute, Geometry landGeometry, int decimalNB) {
-		if(logger.isDebugEnabled()) logger.debug("Assign land proportion...");
-
 		//compute cell area once
 		double cellArea = cells.iterator().next().getDefaultGeometry().getArea();
 

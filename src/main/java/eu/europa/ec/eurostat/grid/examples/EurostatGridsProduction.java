@@ -28,20 +28,19 @@ import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 public class EurostatGridsProduction {
 	static Logger logger = Logger.getLogger(EurostatGridsProduction.class.getName());
 
-	//the different resolutions, in KM
-	static int[] resKMs = new int[] {100,50,20,10,5,2,1};
-
 	//see also:
 	//https://www.eea.europa.eu/data-and-maps/data/eea-reference-grids-2
 	//https://www.efgs.info/data/
 	//https://esdac.jrc.ec.europa.eu/content/european-reference-grids
+
+	//the different resolutions, in KM
+	static int[] resKMs = new int[] {100,50,20,10,5,2,1};
 
 	public static void main(String[] args) throws Exception {
 		logger.info("Start");
 
 		logger.setLevel(Level.ALL);
 		Grid.logger.setLevel(Level.ALL);
-		GridUtil.logger.setLevel(Level.ALL);
 
 		String outpath = "C:/Users/gaffuju/Desktop/grid/";
 		String path = "C:/Users/gaffuju/Desktop/CNTR_100k/";
@@ -69,13 +68,16 @@ public class EurostatGridsProduction {
 					;
 			Collection<Feature> cells = grid.getCells();
 
-			//assign country codes
+			logger.info("Assign country codes...");
 			GridUtil.assignRegionCode(cells, "CNTR_ID", cntsBuff, 0, "CNTR_ID");
+
+			logger.info("Filtering " + cells.size() + " cells...");
 			GridUtil.filterCellsWithoutRegion(cells, "CNTR_ID");
+			logger.info(cells.size() + " cells left");
 
-			//TODO assign also nuts code ?
+			//TODO assign also nuts code? for each level?
 
-			//assign land area
+			logger.info("Assign land proportion...");
 			GridUtil.assignLandProportion(cells, "LAND_PC", landGeometry, 2);
 
 			//save as GPKG
