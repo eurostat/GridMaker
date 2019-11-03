@@ -104,7 +104,7 @@ public class GridUtil {
 		double cellArea = cells.iterator().next().getDefaultGeometry().getArea();
 
 		for(Feature cell : cells) {
-			Geometry inter = cell.getDefaultGeometry().intersection(landGeometry); //TODO test if other way around is quicker
+			Geometry inter = landGeometry.intersection(cell.getDefaultGeometry()); //TODO test if other way around is quicker
 			double prop = 100.0 * inter.getArea() / cellArea;
 			prop = Util.round(prop, decimalNB);
 			cell.setAttribute(cellLandPropAttribute, prop);
