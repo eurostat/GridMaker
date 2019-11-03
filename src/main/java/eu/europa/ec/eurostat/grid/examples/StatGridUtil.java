@@ -12,6 +12,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.index.strtree.STRtree;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
 /**
  * A number of functions to assign country codes to grid cells.
@@ -19,8 +20,8 @@ import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
  * @author julien Gaffuri
  *
  */
-public class StatGridCountryUtil {
-	static Logger logger = Logger.getLogger(StatGridCountryUtil.class.getName());
+public class StatGridUtil {
+	static Logger logger = Logger.getLogger(StatGridUtil.class.getName());
 
 
 	/**
@@ -90,6 +91,31 @@ public class StatGridCountryUtil {
 		}
 		cells.removeAll(cellsToRemove);
 		if(logger.isDebugEnabled()) logger.debug(cellsToRemove.size() + " cells to remove. " + cells.size() + " cells left");
+	}
+
+
+	/**
+	 * Compute for each cell the proportion of its area which is land area.
+	 * The value is stored as a new attribute for each cell. This value is a percentage.
+	 * 
+	 * @param cells
+	 * @param cellLandPropAttribute
+	 * @param landGeometry
+	 * @param decimalNB The number of decimal places to keep for the percentage
+	 */
+	public static void assignLandProportion(Collection<Feature> cells, String cellLandPropAttribute, Geometry landGeometry, int decimalNB) {
+		if(logger.isDebugEnabled()) logger.debug("Assign land proportion...");
+
+		//compute cell area once
+		double cellArea = cells.iterator().next().getDefaultGeometry().getArea();
+
+		for(Feature cell : cells) {
+			Geometry inter = cell.getDefaultGeometry().intersection(landGeometry); //TODO test if other way around is quicker
+			double prop = 100.0 * inter.getArea() / cellArea;
+			prop = Util.round(prop, decimalNB);
+			cell.setAttribute(cellLandPropAttribute, prop);
+		}
+
 	}
 
 }

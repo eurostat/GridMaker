@@ -8,13 +8,11 @@ import java.util.Collection;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.geotools.filter.text.cql2.CQL;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.grid.StatGrid;
-import eu.europa.ec.eurostat.jgiscotools.CountriesUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
@@ -29,6 +27,7 @@ import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 public class EurostatGridsProduction {
 	static Logger logger = Logger.getLogger(EurostatGridsProduction.class.getName());
 
+	//the different resolutions, in KM
 	static int[] resKMs = new int[] {100,50,20,10,5,2,1};
 
 	//see also:
@@ -41,7 +40,7 @@ public class EurostatGridsProduction {
 
 		logger.setLevel(Level.ALL);
 		StatGrid.logger.setLevel(Level.ALL);
-		StatGridCountryUtil.logger.setLevel(Level.ALL);
+		StatGridUtil.logger.setLevel(Level.ALL);
 
 		String outpath = "C:/Users/gaffuju/Desktop/grid/";
 		String path = "C:/Users/gaffuju/Desktop/CNTR_100k/";
@@ -54,8 +53,8 @@ public class EurostatGridsProduction {
 		logger.info("Get European countries (buffer) ...");
 		ArrayList<Feature> cntsBuff = SHPUtil.loadSHP(path+"CNTR_RG_100K_union_buff_"+bufferDistance+"_LAEA.shp").fs;
 
-		logger.info("Get European countries...");
-		ArrayList<Feature> cnts = SHPUtil.loadSHP(path+"CNTR_RG_100K_union_LAEA.shp").fs;
+		logger.info("Get land area...");
+		Geometry landGeometry = SHPUtil.loadSHP(path+"Europe_100K_union_LAEA.shp").fs.iterator().next().getDefaultGeometry();
 
 		//build pan-European grids
 		for(int resKM : resKMs) {
@@ -69,10 +68,14 @@ public class EurostatGridsProduction {
 					;
 			Collection<Feature> cells = grid.getCells();
 
-			StatGridCountryUtil.assignCountries(cells, "CNTR_ID", cntsBuff, 0, "CNTR_ID");
+			//assign country codes
+			StatGridUtil.assignCountries(cells, "CNTR_ID", cntsBuff, 0, "CNTR_ID");
+			StatGridUtil.filterCellsWithoutCountry(cells, "CNTR_ID");
+
 			//TODO assign also nuts code ?
-			StatGridCountryUtil.filterCellsWithoutCountry(cells, "CNTR_ID");
-			//TODO assign land area
+
+			//assign land area
+			StatGridUtil.assignLandProportion(cells, "LAND_PC", landGeometry, 2);
 
 			//save as GPKG
 			logger.info("Save " + cells.size() + " cells as GPKG...");
