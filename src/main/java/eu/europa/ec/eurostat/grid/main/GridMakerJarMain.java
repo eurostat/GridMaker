@@ -18,7 +18,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.grid.GridCell.GridCellGeometryType;
-import eu.europa.ec.eurostat.grid.StatGrid;
+import eu.europa.ec.eurostat.grid.Grid;
 import eu.europa.ec.eurostat.jgiscotools.CountriesUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoJSONUtil;
@@ -77,7 +77,7 @@ public class GridMakerJarMain {
 		System.out.println("Read parameters...");
 		String param;
 
-		StatGrid sg = new StatGrid();
+		Grid sg = new Grid();
 
 		//res
 		param = cmd.getOptionValue("res");

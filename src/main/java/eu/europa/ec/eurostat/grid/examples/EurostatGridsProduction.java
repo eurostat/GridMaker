@@ -12,7 +12,7 @@ import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import eu.europa.ec.eurostat.grid.StatGrid;
+import eu.europa.ec.eurostat.grid.Grid;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
@@ -39,8 +39,8 @@ public class EurostatGridsProduction {
 		logger.info("Start");
 
 		logger.setLevel(Level.ALL);
-		StatGrid.logger.setLevel(Level.ALL);
-		StatGridUtil.logger.setLevel(Level.ALL);
+		Grid.logger.setLevel(Level.ALL);
+		GridUtil.logger.setLevel(Level.ALL);
 
 		String outpath = "C:/Users/gaffuju/Desktop/grid/";
 		String path = "C:/Users/gaffuju/Desktop/CNTR_100k/";
@@ -61,7 +61,7 @@ public class EurostatGridsProduction {
 			logger.info("Make " + resKM + "km grid...");
 
 			//build grid
-			StatGrid grid = new StatGrid()
+			Grid grid = new Grid()
 					.setResolution(resKM*1000)
 					.setEPSGCode("3035")
 					.setGeometryToCover(europeCoverBuff)
@@ -69,13 +69,13 @@ public class EurostatGridsProduction {
 			Collection<Feature> cells = grid.getCells();
 
 			//assign country codes
-			StatGridUtil.assignRegionCode(cells, "CNTR_ID", cntsBuff, 0, "CNTR_ID");
-			StatGridUtil.filterCellsWithoutRegion(cells, "CNTR_ID");
+			GridUtil.assignRegionCode(cells, "CNTR_ID", cntsBuff, 0, "CNTR_ID");
+			GridUtil.filterCellsWithoutRegion(cells, "CNTR_ID");
 
 			//TODO assign also nuts code ?
 
 			//assign land area
-			StatGridUtil.assignLandProportion(cells, "LAND_PC", landGeometry, 2);
+			GridUtil.assignLandProportion(cells, "LAND_PC", landGeometry, 2);
 
 			//save as GPKG
 			logger.info("Save " + cells.size() + " cells as GPKG...");

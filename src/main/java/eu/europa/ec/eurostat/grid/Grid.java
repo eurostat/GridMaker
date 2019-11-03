@@ -16,15 +16,15 @@ import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
 /**
- * Build a statistical grid.
+ * Build a grid.
  * The resolution, coordinate reference system, extent and cell geometry types can be defined by th users.
  * Both cartographic and geographical grids are supported.
  * 
  * @author julien Gaffuri
  *
  */
-public class StatGrid {
-	public static Logger logger = Logger.getLogger(StatGrid.class.getName());
+public class Grid {
+	public static Logger logger = Logger.getLogger(Grid.class.getName());
 
 	/**
 	 * The grid resolution (pixel size).
@@ -32,7 +32,7 @@ public class StatGrid {
 	 */
 	private int resolution = 100000;
 	public double getResolution() { return resolution; }
-	public StatGrid setResolution(int resolution) {
+	public Grid setResolution(int resolution) {
 		this.resolution = resolution;
 		cells = null;
 		return this;
@@ -44,7 +44,7 @@ public class StatGrid {
 	 */
 	private String epsgCode = "3035";
 	public String getEPSGCode() { return epsgCode; }
-	public StatGrid setEPSGCode(String epsgCode) {
+	public Grid setEPSGCode(String epsgCode) {
 		this.epsgCode = epsgCode;
 		cells = null;
 		return this;
@@ -61,12 +61,12 @@ public class StatGrid {
 		return geometryToCover;
 	}
 
-	public StatGrid setGeometryToCover(Geometry geometryToCover) {
+	public Grid setGeometryToCover(Geometry geometryToCover) {
 		this.geometryToCover = geometryToCover;
 		cells = null;
 		return this;
 	}
-	public StatGrid setGeometryToCover(Envelope envelopeToCover) {
+	public Grid setGeometryToCover(Envelope envelopeToCover) {
 		return setGeometryToCover(JTSGeomUtil.getGeometry(envelopeToCover, new GeometryFactory()));
 	}
 
@@ -77,7 +77,7 @@ public class StatGrid {
 	 */
 	private double toleranceDistance = 0.0;
 	public double getToleranceDistance() { return toleranceDistance; }
-	public StatGrid setToleranceDistance(double toleranceDistance) {
+	public Grid setToleranceDistance(double toleranceDistance) {
 		this.toleranceDistance = toleranceDistance;
 		cells = null;
 		return this;
@@ -89,7 +89,7 @@ public class StatGrid {
 	 */
 	private GridCellGeometryType gridCellGeometryType = GridCellGeometryType.SURFACE;
 	public GridCellGeometryType getGridCellGeometryType() { return gridCellGeometryType; }
-	public StatGrid setGridCellGeometryType(GridCellGeometryType geomType) {
+	public Grid setGridCellGeometryType(GridCellGeometryType geomType) {
 		this.gridCellGeometryType = geomType;
 		cells = null;
 		return this;
@@ -111,7 +111,7 @@ public class StatGrid {
 	 * 
 	 * @return this object
 	 */
-	private StatGrid buildCells() {
+	private Grid buildCells() {
 		if(logger.isDebugEnabled()) logger.debug("Build grid cells...");
 		GeometryFactory gf = getGeometryToCover().getFactory();
 

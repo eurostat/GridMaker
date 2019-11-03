@@ -17,7 +17,7 @@ public class StatGridTest extends TestCase {
 	}
 
 	public void test1() throws Exception {
-		StatGrid sg = new StatGrid();
+		Grid sg = new Grid();
 
 		//SHPUtil.saveSHP(sg.getCells(), "C:/Users/gaffuju/Desktop/test.shp", CRS.decode("EPSG:3035"));
 
@@ -29,7 +29,7 @@ public class StatGridTest extends TestCase {
 	}
 
 	public void test2() throws Exception {
-		StatGrid sg = new StatGrid();
+		Grid sg = new Grid();
 		sg.setEPSGCode("1464412");
 		sg.setResolution(50000);
 		sg.setToleranceDistance(500000.0);

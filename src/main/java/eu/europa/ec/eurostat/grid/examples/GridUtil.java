@@ -20,8 +20,8 @@ import eu.europa.ec.eurostat.jgiscotools.util.Util;
  * @author julien Gaffuri
  *
  */
-public class StatGridUtil {
-	static Logger logger = Logger.getLogger(StatGridUtil.class.getName());
+public class GridUtil {
+	static Logger logger = Logger.getLogger(GridUtil.class.getName());
 
 
 	/**
