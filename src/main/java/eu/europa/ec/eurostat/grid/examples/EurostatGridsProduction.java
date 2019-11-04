@@ -53,8 +53,9 @@ public class EurostatGridsProduction {
 		logger.info("Get European countries (buffer) ...");
 		ArrayList<Feature> cntsBuff = SHPUtil.loadSHP(path+"CNTR_RG_100K_union_buff_"+bufferDistance+"_LAEA.shp").fs;
 
-		logger.info("Get land area...");
-		Geometry landGeometry = SHPUtil.loadSHP(path+"Europe_100K_union_LAEA.shp").fs.iterator().next().getDefaultGeometry();
+		//TODO
+		//logger.info("Get land area...");
+		//Geometry landGeometry = SHPUtil.loadSHP(path+"Europe_100K_union_LAEA.shp").fs.iterator().next().getDefaultGeometry();
 
 		//build pan-European grids
 		for(int resKM : resKMs) {
@@ -77,8 +78,9 @@ public class EurostatGridsProduction {
 
 			//TODO assign also nuts code? for each level?
 
-			logger.info("Assign land proportion...");
-			GridUtil.assignLandProportion(cells, "LAND_PC", landGeometry, 2);
+			//TODO
+			//logger.info("Assign land proportion...");
+			//GridUtil.assignLandProportion(cells, "LAND_PC", landGeometry, 2);
 
 			//save as GPKG
 			logger.info("Save " + cells.size() + " cells as GPKG...");
