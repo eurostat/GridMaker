@@ -25,7 +25,7 @@ public class EurostatPopulationGridMultiResolution {
 
 	//TODO: add luxembourg to 2011
 
-	static String basePath = "C:/Users/gaffuju/Desktop/";
+	static String basePath = "E:/jg/";
 
 	public static void main(String[] args) {
 		logger.info("Start");
