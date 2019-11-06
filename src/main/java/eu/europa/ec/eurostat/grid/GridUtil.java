@@ -8,6 +8,7 @@ import java.util.Collection;
 
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.index.SpatialIndex;
 import org.locationtech.jts.index.strtree.STRtree;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -99,19 +100,42 @@ public class GridUtil {
 	 * @param landGeometry
 	 * @param decimalNB The number of decimal places to keep for the percentage
 	 */
-	public static void assignLandProportion(Collection<Feature> cells, String cellLandPropAttribute, Geometry landGeometry, int decimalNB) {
+	public static void assignLandProportion(Collection<Feature> cells, String cellLandPropAttribute, SpatialIndex landGeometries, int decimalNB) {
 		//compute cell area once
 		double cellArea = cells.iterator().next().getDefaultGeometry().getArea();
 
 		for(Feature cell : cells) {
-			//TODO make it quicker
-			//TODO test if other way around is quicker
-			Geometry inter = landGeometry.intersection(cell.getDefaultGeometry());
-			double prop = 100.0 * inter.getArea() / cellArea;
+
+			//compute land part
+			Geometry landCellGeom = getLandCellGeometry(cell, landGeometries);
+
+			//compute land proportion
+			double prop = 100.0 * landCellGeom.getArea() / cellArea;
 			prop = Util.round(prop, decimalNB);
 			cell.setAttribute(cellLandPropAttribute, prop);
 		}
 
 	}
+
+	
+	/**
+	 * Compute land geometry of a grid cell
+	 * 
+	 * @param cell
+	 * @param landGeometries
+	 * @return
+	 */
+	public static Geometry getLandCellGeometry(Feature cell, SpatialIndex landGeometries) {
+		Geometry cellGeom = cell.getDefaultGeometry();
+		Geometry landCellGeom = cellGeom.getFactory().createPolygon();
+		for(Object g_ : landGeometries.query(cellGeom.getEnvelopeInternal())) {
+			Geometry g = (Geometry) g_;
+			if(!g.intersects(cellGeom)) continue;
+			Geometry inter = g.intersection(cellGeom);
+			landCellGeom = landCellGeom.union(inter);
+		}
+		return landCellGeom;
+	}
+
 
 }

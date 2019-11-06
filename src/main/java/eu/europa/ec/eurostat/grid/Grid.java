@@ -142,17 +142,18 @@ public class Grid {
 				geometriesToCoverBuff.add(g.buffer(toleranceDistance));
 		}
 
-		//get envelope to cover
-		Envelope envCovBuff = JTSGeomUtil.getEnvelopeInternal( geometriesToCoverBuff );
-		envCovBuff = ensureGrid(envCovBuff, resolution);
-
 		//TODO tile geometriesToCoverBuff ?
 
-		//make spatial index from geometriesToCoverBuff
+		if(logger.isDebugEnabled()) logger.debug("   Make spatial index from geometriesToCoverBuff...");
 		SpatialIndex index = new STRtree();
 		for(Geometry g : geometriesToCoverBuff) index.insert(g.getEnvelopeInternal(), g);
+
+		if(logger.isDebugEnabled()) logger.debug("   Get envelope to cover...");
+		Envelope envCovBuff = JTSGeomUtil.getEnvelopeInternal( geometriesToCoverBuff );
+		envCovBuff = ensureGrid(envCovBuff, resolution);
 		geometriesToCoverBuff = null;
 
+		if(logger.isDebugEnabled()) logger.debug("   Build grid cells...");
 		cells = new ArrayList<Feature>();
 		for(int x = (int) envCovBuff.getMinX(); x<envCovBuff.getMaxX(); x += resolution)
 			for(int y = (int) envCovBuff.getMinY(); y<envCovBuff.getMaxY(); y += resolution) {
