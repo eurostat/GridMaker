@@ -10,6 +10,8 @@ import org.apache.log4j.Logger;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.index.SpatialIndex;
+import org.locationtech.jts.index.strtree.STRtree;
 
 import eu.europa.ec.eurostat.grid.GridCell.GridCellGeometryType;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -51,23 +53,37 @@ public class Grid {
 	}
 
 	/**
-	 * The geometry the grid should cover, taking into account also the 'toleranceDistance' parameter.
+	 * The geometries the grid should cover, taking into account also the 'toleranceDistance' parameter.
 	 * NB: Of course, the geometry should be defined in the Coordinate Reference System of the grid.
 	 */
-	private Geometry geometryToCover;
-	public Geometry getGeometryToCover() {
-		if(geometryToCover == null)
-			geometryToCover = JTSGeomUtil.getGeometry(new Envelope(0.0, 10000000.0, 0.0, 10000000.0), new GeometryFactory());
-		return geometryToCover;
+	private Collection<Geometry> geometriesToCover;
+	public Collection<Geometry> getGeometriesToCover() {
+		if(geometriesToCover == null) {
+			geometriesToCover = new ArrayList<Geometry>();
+			geometriesToCover.add( JTSGeomUtil.getGeometry(new Envelope(0.0, 10000000.0, 0.0, 10000000.0), new GeometryFactory()) );
+		}
+		return geometriesToCover;
 	}
 
 	public Grid setGeometryToCover(Geometry geometryToCover) {
-		this.geometryToCover = geometryToCover;
+		geometriesToCover = new ArrayList<Geometry>();
+		geometriesToCover.addAll( JTSGeomUtil.getGeometries(geometryToCover) );
 		cells = null;
 		return this;
 	}
 	public Grid setGeometryToCover(Envelope envelopeToCover) {
 		return setGeometryToCover(JTSGeomUtil.getGeometry(envelopeToCover, new GeometryFactory()));
+	}
+	public Grid addGeometryToCover(Geometry geometryToCover) {
+		if(geometriesToCover == null) geometriesToCover = new ArrayList<Geometry>();
+		geometriesToCover.addAll( JTSGeomUtil.getGeometries(geometryToCover) );
+		cells = null;
+		return this;
+	}
+	public Grid addGeometryToCover(Collection<Geometry> gs) {
+		for(Geometry g : gs)
+			addGeometryToCover(g);
+		return this;
 	}
 
 	/**
@@ -113,19 +129,29 @@ public class Grid {
 	 */
 	private Grid buildCells() {
 		if(logger.isDebugEnabled()) logger.debug("Build grid cells...");
-		GeometryFactory gf = getGeometryToCover().getFactory();
+		GeometryFactory gf = getGeometriesToCover().iterator().next().getFactory();
 
-		//get geometry to cover
-		Geometry geomCovBuff = getGeometryToCover();
-
-		if( toleranceDistance != 0 ) {
+		//get geometries to cover
+		Collection<Geometry> geometriesToCoverBuff;
+		if( toleranceDistance == 0 ) {
+			geometriesToCoverBuff = getGeometriesToCover();
+		} else {
 			if(logger.isDebugEnabled()) logger.debug("   (make buffer...)");
-			geomCovBuff = getGeometryToCover().buffer(toleranceDistance);
+			geometriesToCoverBuff = new ArrayList<>();
+			for(Geometry g : getGeometriesToCover())
+				geometriesToCoverBuff.add(g.buffer(toleranceDistance));
 		}
 
 		//get envelope to cover
-		Envelope envCovBuff = geomCovBuff.getEnvelopeInternal();
+		Envelope envCovBuff = JTSGeomUtil.getEnvelopeInternal( geometriesToCoverBuff );
 		envCovBuff = ensureGrid(envCovBuff, resolution);
+
+		//TODO tile geometriesToCoverBuff ?
+
+		//make spatial index from geometriesToCoverBuff
+		SpatialIndex index = new STRtree();
+		for(Geometry g : geometriesToCoverBuff) index.insert(g.getEnvelopeInternal(), g);
+		geometriesToCoverBuff = null;
 
 		cells = new ArrayList<Feature>();
 		for(int x = (int) envCovBuff.getMinX(); x<envCovBuff.getMaxX(); x += resolution)
@@ -140,7 +166,7 @@ public class Grid {
 				//get cell geometry
 				Geometry gridCellGeom = cell.getPolygonGeometry(gf);
 				//check intersection with geometryToCover
-				if( ! geomCovBuff.intersects(gridCellGeom) ) continue;
+				if( ! JTSGeomUtil.intersects(index, gridCellGeom) ) continue;
 
 				//build the cell
 				cells.add(cell.toFeature());

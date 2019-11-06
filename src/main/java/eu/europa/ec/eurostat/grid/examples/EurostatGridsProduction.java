@@ -9,12 +9,12 @@ import java.util.Collection;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.geotools.referencing.CRS;
-import org.locationtech.jts.geom.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.grid.Grid;
 import eu.europa.ec.eurostat.grid.GridUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 
@@ -47,9 +47,6 @@ public class EurostatGridsProduction {
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 		int bufferDistance = 1500;
 
-		logger.info("Get Europe cover (buffer)...");
-		Geometry europeCoverBuff = SHPUtil.loadSHP(path+"Europe_100K_union_buff_"+bufferDistance+"_LAEA.shp").fs.iterator().next().getDefaultGeometry();
-
 		logger.info("Get European countries (buffer) ...");
 		ArrayList<Feature> cntsBuff = SHPUtil.loadSHP(path+"CNTR_RG_100K_union_buff_"+bufferDistance+"_LAEA.shp").fs;
 
@@ -65,7 +62,7 @@ public class EurostatGridsProduction {
 			Grid grid = new Grid()
 					.setResolution(resKM*1000)
 					.setEPSGCode("3035")
-					.setGeometryToCover(europeCoverBuff)
+					.addGeometryToCover( FeatureUtil.getGeometries(cntsBuff) )
 					;
 			Collection<Feature> cells = grid.getCells();
 
