@@ -5,6 +5,7 @@ package eu.europa.ec.eurostat.grid;
 
 import org.locationtech.jts.geom.Coordinate;
 
+import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
 import junit.framework.TestCase;
 
 /**

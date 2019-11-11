@@ -3,7 +3,8 @@
  */
 package eu.europa.ec.eurostat.grid;
 
-import eu.europa.ec.eurostat.grid.GridCell.GridCellGeometryType;
+import eu.europa.ec.eurostat.jgiscotools.grid.Grid;
+import eu.europa.ec.eurostat.jgiscotools.grid.GridCell.GridCellGeometryType;
 import junit.framework.TestCase;
 
 /**
