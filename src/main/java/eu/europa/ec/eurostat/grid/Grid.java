@@ -142,7 +142,7 @@ public class Grid {
 				geometriesToCoverBuff.add(g.buffer(toleranceDistance));
 		}
 
-		//TODO tile geometriesToCoverBuff ?
+		//TODO tile geometriesToCoverBuff to improve efficientcy ?
 
 		if(logger.isDebugEnabled()) logger.debug("   Make spatial index from geometriesToCoverBuff...");
 		SpatialIndex index = new STRtree();
