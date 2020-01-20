@@ -58,7 +58,7 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>eu.ec.eurostat</groupId>
+			<groupId>eu.europa.ec.eurostat</groupId>
 			<artifactId>JGiscoTools</artifactId>
 			<version>0.2-SNAPSHOT</version>
 		</dependency>

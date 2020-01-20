@@ -17,13 +17,12 @@ import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import eu.europa.ec.eurostat.jgiscotools.CountriesUtil;
+import eu.europa.ec.eurostat.jgiscotools.deprecated.CountriesUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.grid.Grid;
 import eu.europa.ec.eurostat.jgiscotools.grid.GridCell.GridCellGeometryType;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoJSONUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil.SHPData;
 
 /**
  * 
@@ -115,9 +114,8 @@ public class GridMakerJarMain {
 
 			ArrayList<Feature> fs = null;
 			if("shp".equals(inputFileFormat)) {
-				SHPData sh = SHPUtil.loadSHP(param);
-				fs = sh.fs;
-				crs = sh.ft.getCoordinateReferenceSystem();
+				fs = SHPUtil.getFeatures(param);
+				crs = SHPUtil.getCRS(param);
 				System.out.println(crs);
 				System.out.println(SHPUtil.getCRS(param));
 			} else {
