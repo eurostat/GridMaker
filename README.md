@@ -14,7 +14,7 @@
 
 ### For coders
 
-TODO: add link to JGISCO tools page
+Install [JGiscoTools](https://github.com/eurostat/JGiscoTools/) and see the instructions [here](https://github.com/eurostat/JGiscoTools/tree/master/src/site/gridmaker)
 
 ## Support and contribution
 
