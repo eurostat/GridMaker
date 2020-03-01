@@ -13,6 +13,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.io.FilenameUtils;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -21,6 +22,7 @@ import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.grid.Grid;
 import eu.europa.ec.eurostat.jgiscotools.grid.GridCell.GridCellGeometryType;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoJSONUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 
 /**
@@ -80,17 +82,24 @@ public class GridMakerJarMain {
 
 		//i
 		param = cmd.getOptionValue("i");
-		String inputFileFormat = "shp"; //TODO
 		try { if(param != null) {
 			ArrayList<Feature> fs = null;
-			if("shp".equals(inputFileFormat)) {
+			String inputFileFormat = FilenameUtils.getExtension(param).toLowerCase();
+			switch(inputFileFormat) {
+			case "shp":
 				fs = SHPUtil.getFeatures(param);
 				crs = SHPUtil.getCRS(param);
-				System.out.println(crs);
-				System.out.println(SHPUtil.getCRS(param));
-			} else {
+				break;
+			case "geojson":
 				fs = GeoJSONUtil.load(param);
 				crs = GeoJSONUtil.loadCRS(param);
+				break;
+			case "gpkg":
+				fs = GeoPackageUtil.getFeatures(param);
+				crs = GeoPackageUtil.getCRS(param);
+				break;
+			default:
+				System.out.println("Unsuported input format: " + inputFileFormat);
 			}
 
 			if(fs.size() == 0)
@@ -120,9 +129,7 @@ public class GridMakerJarMain {
 
 		//output file
 		String outFile = cmd.getOptionValue("o");
-		String outputFileFormat = "shp"; //TODO
 		if(outFile == null) outFile = Paths.get("").toAbsolutePath().toString() + "/out.gpkg";
-
 
 		System.out.println("Build grid...");
 		Collection<Feature> cells = sg.getCells();
@@ -130,11 +137,20 @@ public class GridMakerJarMain {
 
 		System.out.println("Save as " + outFile + "...");
 		//save
-		if("shp".equals(outputFileFormat))
+		String outputFileFormat = FilenameUtils.getExtension(outFile).toLowerCase();
+		switch(outputFileFormat) {
+		case "shp":
 			SHPUtil.save(cells, outFile, crs);
-		else
+			break;
+		case "geojson":
 			GeoJSONUtil.save(cells, outFile, crs);
-
+			break;
+		case "gpkg":
+			GeoPackageUtil.save(cells, outFile, crs, true);
+			break;
+		default:
+			System.out.println("Unsuported output format: " + outputFileFormat);
+		}
 	}
 
 
