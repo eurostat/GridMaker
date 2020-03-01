@@ -94,7 +94,7 @@ public class GridMakerJarMain {
 		param = cmd.getOptionValue("cnt");
 		try { if(param != null) {
 			Feature cnt = CountriesUtil.getEuropeanCountry(param, true);
-			Geometry geomToCover = cnt.getDefaultGeometry();
+			Geometry geomToCover = cnt.getGeometry();
 			sg.setGeometryToCover(geomToCover);
 		}
 		} catch (Exception e) { System.err.println("Failed finding country with parameter 'cnt': " + param); }
@@ -128,7 +128,7 @@ public class GridMakerJarMain {
 			else {
 				if(fs.size() > 1)
 					System.err.println("Input file contains more than one geometry (nb="+fs.size()+"): " + param);
-				Geometry geomToCover = fs.iterator().next().getDefaultGeometry();
+				Geometry geomToCover = fs.iterator().next().getGeometry();
 				sg.setGeometryToCover(geomToCover);
 			}
 		}
@@ -169,7 +169,7 @@ public class GridMakerJarMain {
 		System.out.println("Save as " + outFile + "...");
 		//save
 		if("shp".equals(inputFileFormat))
-			SHPUtil.saveSHP(cells, outFile, crs);
+			SHPUtil.save(cells, outFile, crs);
 		else
 			GeoJSONUtil.save(cells, outFile, crs);
 
