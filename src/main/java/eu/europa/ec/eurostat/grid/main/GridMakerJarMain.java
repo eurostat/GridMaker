@@ -40,23 +40,13 @@ public class GridMakerJarMain {
 				.hasArg().argName("value").build());
 		options.addOption(Option.builder("epsg").longOpt("epsgCode").desc("Optional. The EPSG code of the grid coordinate reference system. Default: '3035', corresponding to ETRS89-LAEA coordinate reference system.")
 				.hasArg().argName("code").build());
-
-		options.addOption(Option.builder("cnt").longOpt("countryCode").desc("The 2 letters code of the country to build the grid accross.")
-				.hasArg().argName("code").build());
-		//TODO envelope
-		options.addOption(Option.builder("if").longOpt("inputFileFormat").desc("Optional. Input file format. Default: 'geojson'.")
-				.hasArg().argName("shp or geojson").build());
-		options.addOption(Option.builder("i").longOpt("inputFile").desc("Input file containing the geometry of the region to build the grid accross.")
+		options.addOption(Option.builder("i").longOpt("inputFile").desc("Input file containing the geometry of the region to build the grid accross. Supported format: GeoJSON, SHP, GeoPackage.")
 				.hasArg().argName("file path").build());
-
 		options.addOption(Option.builder("tol").longOpt("toleranceDistance").desc("Optional. A tolerance distance to keep the cells that are not too far from the specified region. Default: '0'.")
 				.hasArg().argName("value").build());
 		options.addOption(Option.builder("gt").longOpt("gridCellGeometryType").desc("Optional. The type of grid cell geometry: The surface representation (a square) or its center point. Default: 'SURFACE'.")
 				.hasArg().argName("SURFACE or CENTER_POINT").build());
-
-		options.addOption(Option.builder("of").longOpt("outputFileFormat").desc("Optional. Output file format. Default: 'geojson'.")
-				.hasArg().argName("shp or geojson").build());
-		options.addOption(Option.builder("o").longOpt("outputFile").desc("Optional. Output file (SHP format). Default: 'out.shp'.")
+		options.addOption(Option.builder("o").longOpt("outputFile").desc("Optional. Output file. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension). Default: 'out.gpkg'.")
 				.hasArg().argName("file path").build());
 
 		options.addOption(Option.builder("h").desc("Show this help message").build());
@@ -90,28 +80,10 @@ public class GridMakerJarMain {
 		} catch (Exception e) { System.err.println("Failed reading parameter 'epsg'. The default value will be used."); }
 		crs = CRS.parseWKT(WKT_3035);
 
-		//cnt
-		param = cmd.getOptionValue("cnt");
-		try { if(param != null) {
-			Feature cnt = CountriesUtil.getEuropeanCountry(param, true);
-			Geometry geomToCover = cnt.getGeometry();
-			sg.setGeometryToCover(geomToCover);
-		}
-		} catch (Exception e) { System.err.println("Failed finding country with parameter 'cnt': " + param); }
-
-		//if
-		String inputFileFormat = cmd.getOptionValue("if");
-		if(inputFileFormat == null)
-			inputFileFormat = "geojson";
-		else if(!"geojson".equals(inputFileFormat) && !"shp".equals(inputFileFormat)) {
-			System.out.println("Unexpected input file format: "+inputFileFormat+". 'geojson' will be used.");
-			inputFileFormat = "geojson";
-		}
-
 		//i
 		param = cmd.getOptionValue("i");
+		String inputFileFormat = "shp"; //TODO
 		try { if(param != null) {
-
 			ArrayList<Feature> fs = null;
 			if("shp".equals(inputFileFormat)) {
 				fs = SHPUtil.getFeatures(param);
@@ -148,18 +120,10 @@ public class GridMakerJarMain {
 		}
 		} catch (Exception e) { System.err.println("Failed reading parameter 'gt'. The default value will be used."); }
 
-		//of
-		String outputFileFormat = cmd.getOptionValue("of");
-		if(outputFileFormat == null)
-			outputFileFormat = "geojson";
-		else if(!"geojson".equals(outputFileFormat) && !"shp".equals(outputFileFormat)) {
-			System.out.println("Unexpected output file format: "+outputFileFormat+". 'geojson' will be used.");
-			outputFileFormat = "geojson";
-		}
-
 		//output file
 		String outFile = cmd.getOptionValue("o");
-		if(outFile == null) outFile = Paths.get("").toAbsolutePath().toString() + "/out."+outputFileFormat;
+		String outputFileFormat = "shp"; //TODO
+		if(outFile == null) outFile = Paths.get("").toAbsolutePath().toString() + "/out.gpkg";
 
 
 		System.out.println("Build grid...");
@@ -168,7 +132,7 @@ public class GridMakerJarMain {
 
 		System.out.println("Save as " + outFile + "...");
 		//save
-		if("shp".equals(inputFileFormat))
+		if("shp".equals(outputFileFormat))
 			SHPUtil.save(cells, outFile, crs);
 		else
 			GeoJSONUtil.save(cells, outFile, crs);
