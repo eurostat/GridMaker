@@ -17,7 +17,6 @@ import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import eu.europa.ec.eurostat.jgiscotools.deprecated.CountriesUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.grid.Grid;
 import eu.europa.ec.eurostat.jgiscotools.grid.GridCell.GridCellGeometryType;
@@ -72,7 +71,6 @@ public class GridMakerJarMain {
 		param = cmd.getOptionValue("res");
 		try { if(param != null) sg.setResolution(Integer.parseInt(param));
 		} catch (Exception e) { System.err.println("Failed reading parameter 'res'. The default value will be used."); }
-
 		//epsg
 		CoordinateReferenceSystem crs = null;
 		param = cmd.getOptionValue("epsg");
