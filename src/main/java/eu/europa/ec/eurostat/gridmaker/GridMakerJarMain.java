@@ -50,6 +50,7 @@ public class GridMakerJarMain {
 				.hasArg().argName("SURFACE or CENTER_POINT").build());
 		options.addOption(Option.builder("o").longOpt("outputFile").desc("Optional. Output file. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension). Default: 'out.gpkg'.")
 				.hasArg().argName("file path").build());
+		//TODO: add parameters: envelope dimensions
 
 		options.addOption(Option.builder("h").desc("Show this help message").build());
 
@@ -82,18 +83,13 @@ public class GridMakerJarMain {
 			} catch (Exception e) { System.err.println("Failed reading parameter 'res'. The default value will be used."); }
 
 		//epsg
-		CoordinateReferenceSystem crs = null;
 		param = cmd.getOptionValue("epsg");
 		if(param != null)
 			try {
 				sg.setEPSGCode(param);
-				crs = CRS.decode("EPSG:"+sg.getEPSGCode());
 			} catch (Exception e) {
 				System.err.println("Failed reading parameter 'epsg'. The default value will be used.");
 				System.err.println(param);
-				//TODO fix that
-				//crs = CRS.decode("EPSG:"+sg.getEPSGCode());
-				crs = CRS.parseWKT(WKT_3035);
 			}
 
 		//i
@@ -105,15 +101,12 @@ public class GridMakerJarMain {
 				switch(inputFileFormat) {
 				case "shp":
 					fs = SHPUtil.getFeatures(param);
-					crs = SHPUtil.getCRS(param);
 					break;
 				case "geojson":
 					fs = GeoJSONUtil.load(param);
-					crs = GeoJSONUtil.loadCRS(param);
 					break;
 				case "gpkg":
 					fs = GeoPackageUtil.getFeatures(param);
-					crs = GeoPackageUtil.getCRS(param);
 					break;
 				default:
 					System.out.println("Unsuported input format: " + inputFileFormat);
@@ -165,6 +158,7 @@ public class GridMakerJarMain {
 		//save
 		System.out.println("Save as " + outFile + "...");
 		String outputFileFormat = FilenameUtils.getExtension(outFile).toLowerCase();
+		CoordinateReferenceSystem crs = CRS.decode("EPSG:"+sg.getEPSGCode());
 		switch(outputFileFormat) {
 		case "shp":
 			SHPUtil.save(cells, outFile, crs);
@@ -181,7 +175,7 @@ public class GridMakerJarMain {
 
 	}
 
-
+/*
 	private static final String WKT_3035 = "PROJCS[\"ETRS89 / ETRS-LAEA\",\r\n" + 
 			"    GEOGCS[\"ETRS89\",\r\n" + 
 			"        DATUM[\"European_Terrestrial_Reference_System_1989\",\r\n" + 
@@ -203,5 +197,5 @@ public class GridMakerJarMain {
 			"    AUTHORITY[\"EPSG\",\"3035\"],\r\n" + 
 			"    AXIS[\"X\",EAST],\r\n" + 
 			"    AXIS[\"Y\",NORTH]]";
-
+*/
 }
