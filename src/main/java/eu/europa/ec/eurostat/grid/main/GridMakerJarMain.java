@@ -18,6 +18,7 @@ import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import eu.europa.ec.eurostat.java4eurostat.util.Util;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.grid.Grid;
 import eu.europa.ec.eurostat.jgiscotools.grid.GridCell.GridCellGeometryType;
@@ -36,6 +37,7 @@ public class GridMakerJarMain {
 
 	public static void main(String[] args) throws Exception {
 
+		//define options
 		Options options = new Options();
 		options.addOption(Option.builder("res").longOpt("resolution").desc("Optional. The grid resolution (pixel size). Note that the unit of measure is expected to be the same as the one of the coordinate reference system. Default: '100 000'.")
 				.hasArg().argName("value").build());
@@ -52,9 +54,11 @@ public class GridMakerJarMain {
 
 		options.addOption(Option.builder("h").desc("Show this help message").build());
 
+		//read options
 		CommandLine cmd = null;
 		try { cmd = new DefaultParser().parse( options, args); } catch (ParseException e) {
-			System.err.println( "Parsing failed.  Reason: " + e.getMessage() );
+			System.err.println("Error when reading parameters.");
+			System.err.println(" Reason: " + e.getMessage() );
 			return;
 		}
 
@@ -67,17 +71,29 @@ public class GridMakerJarMain {
 		System.out.println("Read parameters...");
 		String param;
 
+		//create grid object
 		Grid sg = new Grid();
 
 		//res
 		param = cmd.getOptionValue("res");
-		try { if(param != null) sg.setResolution(Integer.parseInt(param));
-		} catch (Exception e) { System.err.println("Failed reading parameter 'res'. The default value will be used."); }
+		if(param != null)
+			try {
+				if( !Util.isNumeric(param) ) {
+					System.out.println("Unexpected 'res' parameter: " + param);
+				} else {
+					//TODO allow non integer, for geographical grids for example?
+					sg.setResolution((int) Double.parseDouble(param));
+				}
+			} catch (Exception e) { System.err.println("Failed reading parameter 'res'. The default value will be used."); }
+
 		//epsg
 		CoordinateReferenceSystem crs = null;
 		param = cmd.getOptionValue("epsg");
-		try { if(param != null) sg.setEPSGCode(param);
-		} catch (Exception e) { System.err.println("Failed reading parameter 'epsg'. The default value will be used."); }
+		if(param != null)
+			try {
+				crs = CRS.decode("EPSG:"+param);
+				sg.setEPSGCode(param);
+			} catch (Exception e) { System.err.println("Failed reading parameter 'epsg'. The default value will be used."); }
 		crs = CRS.parseWKT(WKT_3035);
 
 		//i
