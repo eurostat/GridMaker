@@ -78,12 +78,8 @@ public class GridMakerJarMain {
 		param = cmd.getOptionValue("res");
 		if(param != null)
 			try {
-				if( !Util.isNumeric(param) ) {
-					System.out.println("Unexpected 'res' parameter: " + param);
-				} else {
-					//TODO allow non integer, for geographical grids for example?
-					sg.setResolution((int) Double.parseDouble(param));
-				}
+				//TODO allow double values, for geographical grids for example?
+				sg.setResolution(Integer.parseInt(param));
 			} catch (Exception e) { System.err.println("Failed reading parameter 'res'. The default value will be used."); }
 
 		//epsg
@@ -91,57 +87,68 @@ public class GridMakerJarMain {
 		param = cmd.getOptionValue("epsg");
 		if(param != null)
 			try {
-				crs = CRS.decode("EPSG:"+param);
 				sg.setEPSGCode(param);
-			} catch (Exception e) { System.err.println("Failed reading parameter 'epsg'. The default value will be used."); }
-		crs = CRS.parseWKT(WKT_3035);
+				crs = CRS.decode("EPSG:"+sg.getEPSGCode());
+			} catch (Exception e) {
+				System.err.println("Failed reading parameter 'epsg'. The default value will be used.");
+				System.err.println(param);
+				//TODO fix that
+				//crs = CRS.decode("EPSG:"+sg.getEPSGCode());
+				crs = CRS.parseWKT(WKT_3035);
+			}
 
 		//i
 		param = cmd.getOptionValue("i");
-		try { if(param != null) {
-			ArrayList<Feature> fs = null;
-			String inputFileFormat = FilenameUtils.getExtension(param).toLowerCase();
-			switch(inputFileFormat) {
-			case "shp":
-				fs = SHPUtil.getFeatures(param);
-				crs = SHPUtil.getCRS(param);
-				break;
-			case "geojson":
-				fs = GeoJSONUtil.load(param);
-				crs = GeoJSONUtil.loadCRS(param);
-				break;
-			case "gpkg":
-				fs = GeoPackageUtil.getFeatures(param);
-				crs = GeoPackageUtil.getCRS(param);
-				break;
-			default:
-				System.out.println("Unsuported input format: " + inputFileFormat);
-			}
+		if(param != null) 
+			try { 
+				ArrayList<Feature> fs = null;
+				String inputFileFormat = FilenameUtils.getExtension(param).toLowerCase();
+				switch(inputFileFormat) {
+				case "shp":
+					fs = SHPUtil.getFeatures(param);
+					crs = SHPUtil.getCRS(param);
+					break;
+				case "geojson":
+					fs = GeoJSONUtil.load(param);
+					crs = GeoJSONUtil.loadCRS(param);
+					break;
+				case "gpkg":
+					fs = GeoPackageUtil.getFeatures(param);
+					crs = GeoPackageUtil.getCRS(param);
+					break;
+				default:
+					System.out.println("Unsuported input format: " + inputFileFormat);
+				}
 
-			if(fs.size() == 0)
-				System.err.println("Input file is empty: " + param);
-			else {
-				if(fs.size() > 1)
-					System.err.println("Input file contains more than one geometry (nb="+fs.size()+"): " + param);
-				Geometry geomToCover = fs.iterator().next().getGeometry();
-				sg.setGeometryToCover(geomToCover);
-			}
-		}
-		} catch (Exception e) { System.err.println("Failed reading input geometry from file: " + param); }
+				if(fs.size() == 0)
+					System.err.println("Input file is empty: " + param);
+				else {
+					if(fs.size() > 1)
+						System.err.println("Input file contains more than one geometry (nb="+fs.size()+"): " + param);
+					Geometry geomToCover = fs.iterator().next().getGeometry();
+					sg.setGeometryToCover(geomToCover);
+				}
+
+			} catch (Exception e) { System.err.println("Failed reading input geometry from file: " + param); }
 
 		//tol
 		param = cmd.getOptionValue("tol");
-		try { if(param != null) sg.setToleranceDistance(Double.parseDouble(param));
-		} catch (Exception e) { System.err.println("Failed reading parameter 'tol'. The default value will be used."); }
+		if(param != null) 
+			try {
+				sg.setToleranceDistance(Double.parseDouble(param));
+			} catch (Exception e) { System.err.println("Failed reading parameter 'tol'. The default value will be used."); }
 
 		//gt
 		param = cmd.getOptionValue("gt");
-		try { if(param != null) {
-			if(param == GridCellGeometryType.SURFACE.toString()) sg.setGridCellGeometryType(GridCellGeometryType.SURFACE);
-			if(param == GridCellGeometryType.CENTER_POINT.toString()) sg.setGridCellGeometryType(GridCellGeometryType.CENTER_POINT);
-			else throw new Exception();
-		}
-		} catch (Exception e) { System.err.println("Failed reading parameter 'gt'. The default value will be used."); }
+		if(param != null)
+			try { 
+				if(param == GridCellGeometryType.SURFACE.toString()) sg.setGridCellGeometryType(GridCellGeometryType.SURFACE);
+				if(param == GridCellGeometryType.CENTER_POINT.toString()) sg.setGridCellGeometryType(GridCellGeometryType.CENTER_POINT);
+				else throw new Exception();
+			} catch (Exception e) {
+				System.err.println("Failed reading parameter 'gt'. The default value will be used.");
+				System.err.println(param);
+			}
 
 		//output file
 		String outFile = cmd.getOptionValue("o");
