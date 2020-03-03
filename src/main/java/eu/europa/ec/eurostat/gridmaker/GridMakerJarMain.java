@@ -3,11 +3,6 @@
  */
 package eu.europa.ec.eurostat.gridmaker;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,7 +17,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -167,8 +161,25 @@ public class GridMakerJarMain {
 		System.out.println("Save as " + outFile + "...");
 
 		//prepare schema
-		//CoordinateReferenceSystem crs = CRS.decode("EPSG:"+sg.getEPSGCode());
-		CoordinateReferenceSystem crs = getFromWKT( sg.getEPSGCode() );
+		System.out.println();
+		System.out.println(CRS.getSupportedAuthorities(true));
+		System.out.println();
+		System.out.println(CRS.getSupportedCodes("EPSG"));
+		System.out.println();
+
+		CoordinateReferenceSystem crs = CRS.decode("EPSG:"+sg.getEPSGCode());
+
+		/*
+		Object authority;
+		CRSAuthorityFactory factory = FactoryFinder.getCRSAuthorityFactory(authority, null);
+		Set<String> codes = factory.getAuthorityCodes(CoordinateReferenceSystem.class);
+		String code = sg.getEPSGCode();
+		CoordinateReferenceSystem crs2 = factory.createCoordinateReferenceSystem(code);
+		 */
+
+
+
+		//CoordinateReferenceSystem crs = getFromWKT( sg.getEPSGCode() );
 		String gt = sg.getGridCellGeometryType()==GridCellGeometryType.SURFACE? "Polygon" : "Point";
 		SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType(gt, crs, new String[] { "GRD_ID:String", "X_LLC:int", "Y_LLC:int" } );
 
@@ -183,12 +194,15 @@ public class GridMakerJarMain {
 			break;
 		case "gpkg":
 			GeoPackageUtil.save(cells, outFile, ft, true);
+			//saveGPKG(cells, outFile, ft, true);
 			break;
 		default:
 			System.out.println("Unsuported output format: " + outputFileFormat);
 		}
 
 	}
+
+
 
 	/*
 	private static final String WKT_3035 = "PROJCS[\"ETRS89 / ETRS-LAEA\",\r\n" + 
@@ -218,7 +232,7 @@ public class GridMakerJarMain {
 	//http://epsg.io/3035.wkt
 	//https://epsg.io/3035.wkt
 	//TODO move to jgiscotools
-	private static CoordinateReferenceSystem getFromWKT(String epsgCode) {
+	/*private static CoordinateReferenceSystem getFromWKT(String epsgCode) {
 
 		//get wkt
 		//String url_ = "https://epsg.io/"+epsgCode+".wkt";
@@ -245,6 +259,53 @@ public class GridMakerJarMain {
 			return null;
 		}
 		return crs;
-	}
+	}*/
 
+
+
+	/*
+	public static void saveGPKG(Collection<? extends Feature> fs, String outFile, SimpleFeatureType ft, boolean withSpatialIndex) {
+		try {
+			if(fs.size() == 0) return;
+
+			SimpleFeatureCollection sfc = SimpleFeatureUtil.get(fs, ft);
+
+			//create output file
+			File fi = FileUtil.getFile(outFile, true, true);
+
+			//create feature store
+			HashMap<String, Serializable> params = new HashMap<String, Serializable>();
+			params.put("url", fi.toURI().toURL());
+			params.put(GeoPkgDataStoreFactory.DBTYPE.key, "geopkg");
+			params.put(GeoPkgDataStoreFactory.DATABASE.key, outFile);
+			params.put("create spatial index", Boolean.TRUE);
+
+			//DataStore ds = DataStoreFinder.getDataStore(params);
+			GeoPkgDataStoreFactory ds_ = new GeoPkgDataStoreFactory();
+			DataStore ds = ds_.createDataStore(params);
+
+			System.out.println(params);
+			System.out.println(ds);
+			System.out.println(sfc);
+			System.out.println(sfc.getSchema());
+
+			ds.createSchema(sfc.getSchema());
+			SimpleFeatureStore fst = (SimpleFeatureStore)ds.getFeatureSource(ds.getTypeNames()[0]);
+
+			//creation transaction
+			Transaction tr = new DefaultTransaction("create");
+			fst.setTransaction(tr);
+			try {
+				fst.addFeatures(sfc);
+				tr.commit();
+			} catch (Exception e) {
+				e.printStackTrace();
+				tr.rollback();
+			} finally {
+				tr.close();
+				ds.dispose();
+			}
+		} catch (IOException e) { e.printStackTrace(); }
+	}
+	 */
 }
