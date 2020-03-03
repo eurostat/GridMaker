@@ -2,6 +2,12 @@ package eu.europa.ec.eurostat.gridmaker;
 
 import junit.framework.TestCase;
 
+/**
+ * Tests of different cases, for each possible parameter.
+ * 
+ * @author julien Gaffuri
+ *
+ */
 public class GridMakerJarMainTest extends TestCase {
 
 	public static void main(String[] args) {
@@ -37,6 +43,10 @@ public class GridMakerJarMainTest extends TestCase {
 			GridMakerJarMain.main(new String[] {"-tol", tol, "-o", "target/test/tol_"+tol+".gpkg"});
 	}
 
-	//TODO test inputs + formats
+	public void testInputFormatResolution() throws Exception {
+		for(String res : new String[] {"100000","200000","500000","1000000"})
+			for(String format : new String[] {"shp","gpkg","geojson"})
+				GridMakerJarMain.main(new String[] {"-i", "src/test/resources/test_grid_area."+format,"-res", res,"-o", "target/test/in_"+format+"_"+res+"."+format});
+	}
 
 }
