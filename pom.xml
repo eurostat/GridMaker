@@ -72,7 +72,7 @@
 							<archive>
 								<manifest>
 									<mainClass>
-										eu.europa.ec.eurostat.grid.GridMakerJarMain
+										eu.europa.ec.eurostat.gridmaker.GridMakerJarMain
 									</mainClass>
 								</manifest>
 							</archive>
