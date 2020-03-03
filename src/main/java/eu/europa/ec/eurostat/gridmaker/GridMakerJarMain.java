@@ -3,6 +3,11 @@
  */
 package eu.europa.ec.eurostat.gridmaker;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,6 +22,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -159,13 +165,15 @@ public class GridMakerJarMain {
 
 		//save
 		System.out.println("Save as " + outFile + "...");
-		String outputFileFormat = FilenameUtils.getExtension(outFile).toLowerCase();
 
 		//prepare schema
-		CoordinateReferenceSystem crs = CRS.decode("EPSG:"+sg.getEPSGCode());
+		//CoordinateReferenceSystem crs = CRS.decode("EPSG:"+sg.getEPSGCode());
+		CoordinateReferenceSystem crs = getFromWKT( sg.getEPSGCode() );
 		String gt = sg.getGridCellGeometryType()==GridCellGeometryType.SURFACE? "Polygon" : "Point";
 		SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType(gt, crs, new String[] { "GRD_ID:String", "X_LLC:int", "Y_LLC:int" } );
 
+		//save according to output format
+		String outputFileFormat = FilenameUtils.getExtension(outFile).toLowerCase();
 		switch(outputFileFormat) {
 		case "shp":
 			SHPUtil.save(cells, outFile, ft);
@@ -205,4 +213,38 @@ public class GridMakerJarMain {
 			"    AXIS[\"X\",EAST],\r\n" + 
 			"    AXIS[\"Y\",NORTH]]";
 	 */
+
+
+	//http://epsg.io/3035.wkt
+	//https://epsg.io/3035.wkt
+	//TODO move to jgiscotools
+	private static CoordinateReferenceSystem getFromWKT(String epsgCode) {
+
+		//get wkt
+		//String url_ = "https://epsg.io/"+epsgCode+".wkt";
+		String url_ = "https://epsg.io/"+epsgCode+".esriwkt";
+		String wkt = null;
+		try {
+			BufferedReader in = new BufferedReader(new InputStreamReader(new URL(url_).openStream()));
+			wkt = in.readLine();
+		} catch (MalformedURLException e) {
+			System.err.println("Could not parse URL " + url_);
+			return null;
+		} catch (IOException e) {
+			System.err.println("Could not get WKT for CRS " + epsgCode + " from URL " + url_);
+			return null;
+		}
+
+		//parse
+		CoordinateReferenceSystem crs = null;
+		try {
+			crs = CRS.parseWKT(wkt);
+		} catch (FactoryException e) {
+			System.err.println("Could not parse WKT for CRS " + epsgCode);
+			System.err.println(wkt);
+			return null;
+		}
+		return crs;
+	}
+
 }
