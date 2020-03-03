@@ -14,11 +14,11 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FilenameUtils;
-import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.SimpleFeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.grid.Grid;
 import eu.europa.ec.eurostat.jgiscotools.grid.GridCell.GridCellGeometryType;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoJSONUtil;
@@ -135,7 +135,7 @@ public class GridMakerJarMain {
 		//gt
 		param = cmd.getOptionValue("gt");
 		if(param != null)
-			try { 
+			try {
 				if(param == GridCellGeometryType.SURFACE.toString()) sg.setGridCellGeometryType(GridCellGeometryType.SURFACE);
 				if(param == GridCellGeometryType.CENTER_POINT.toString()) sg.setGridCellGeometryType(GridCellGeometryType.CENTER_POINT);
 				else throw new Exception();
@@ -158,16 +158,20 @@ public class GridMakerJarMain {
 		//save
 		System.out.println("Save as " + outFile + "...");
 		String outputFileFormat = FilenameUtils.getExtension(outFile).toLowerCase();
-		CoordinateReferenceSystem crs = CRS.decode("EPSG:"+sg.getEPSGCode());
+
+		int epsgInt = Integer.parseInt(sg.getEPSGCode());
+		String gt = sg.getGridCellGeometryType()==GridCellGeometryType.SURFACE? "Polygon" : "Point";
+		SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType(gt, epsgInt , "GRD_ID:String,X_LLC:int,Y_LLC:int");
+
 		switch(outputFileFormat) {
 		case "shp":
-			SHPUtil.save(cells, outFile, crs);
+			SHPUtil.save(cells, outFile, ft);
 			break;
 		case "geojson":
-			GeoJSONUtil.save(cells, outFile, crs);
+			GeoJSONUtil.save(cells, outFile, ft.getCoordinateReferenceSystem());
 			break;
 		case "gpkg":
-			GeoPackageUtil.save(cells, outFile, crs, true);
+			GeoPackageUtil.save(cells, outFile, ft, true);
 			break;
 		default:
 			System.out.println("Unsuported output format: " + outputFileFormat);
@@ -175,7 +179,7 @@ public class GridMakerJarMain {
 
 	}
 
-/*
+	/*
 	private static final String WKT_3035 = "PROJCS[\"ETRS89 / ETRS-LAEA\",\r\n" + 
 			"    GEOGCS[\"ETRS89\",\r\n" + 
 			"        DATUM[\"European_Terrestrial_Reference_System_1989\",\r\n" + 
@@ -197,5 +201,5 @@ public class GridMakerJarMain {
 			"    AUTHORITY[\"EPSG\",\"3035\"],\r\n" + 
 			"    AXIS[\"X\",EAST],\r\n" + 
 			"    AXIS[\"Y\",NORTH]]";
-*/
+	 */
 }
