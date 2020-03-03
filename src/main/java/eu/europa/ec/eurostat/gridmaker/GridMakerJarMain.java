@@ -14,8 +14,10 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FilenameUtils;
+import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.SimpleFeatureUtil;
@@ -159,9 +161,10 @@ public class GridMakerJarMain {
 		System.out.println("Save as " + outFile + "...");
 		String outputFileFormat = FilenameUtils.getExtension(outFile).toLowerCase();
 
-		int epsgInt = Integer.parseInt(sg.getEPSGCode());
+		//prepare schema
+		CoordinateReferenceSystem crs = CRS.decode("EPSG:"+sg.getEPSGCode());
 		String gt = sg.getGridCellGeometryType()==GridCellGeometryType.SURFACE? "Polygon" : "Point";
-		SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType(gt, epsgInt , "GRD_ID:String,X_LLC:int,Y_LLC:int");
+		SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType(gt, crs, new String[] { "GRD_ID:String", "X_LLC:int", "Y_LLC:int" } );
 
 		switch(outputFileFormat) {
 		case "shp":
