@@ -22,14 +22,21 @@ public class GridMakerJarMainTest extends TestCase {
 			GridMakerJarMain.main(new String[] {"-epsg", epsg, "-o", "target/test/epsg_"+epsg+".gpkg"});
 	}
 
-	public void testParams() throws Exception {
+	public void testOutput() throws Exception {
 		for(String format : new String[] {"shp","gpkg","geojson"})
-			GridMakerJarMain.main(new String[] {"-o", "target/test/outformat"+"."+format});
+			GridMakerJarMain.main(new String[] {"-o", "target/test/outformat_"+format+"."+format});
 	}
 
-	//TODO test gt
-	//TODO test tol
+	public void testGeomTypes() throws Exception {
+		for(String gt : new String[] {"SURFACE","CENTER_POINT"})
+			GridMakerJarMain.main(new String[] {"-gt", gt, "-o", "target/test/gt_"+gt+".gpkg"});
+	}
+
+	public void testTol() throws Exception {
+		for(String tol : new String[] {"0","10000","100000","500000","1000000"})
+			GridMakerJarMain.main(new String[] {"-tol", tol, "-o", "target/test/tol_"+tol+".gpkg"});
+	}
+
 	//TODO test inputs + formats
-	//TODO test output formats
 
 }
