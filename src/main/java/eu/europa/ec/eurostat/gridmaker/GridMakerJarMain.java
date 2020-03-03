@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.grid.main;
+package eu.europa.ec.eurostat.gridmaker;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -128,7 +128,9 @@ public class GridMakerJarMain {
 					sg.setGeometryToCover(geomToCover);
 				}
 
-			} catch (Exception e) { System.err.println("Failed reading input geometry from file: " + param); }
+			} catch (Exception e) {
+				System.err.println("Failed reading input geometry from file: " + param);
+			}
 
 		//tol
 		param = cmd.getOptionValue("tol");
