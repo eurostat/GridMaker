@@ -10,9 +10,10 @@ import junit.framework.TestCase;
  */
 public class GridMakerJarMainTest extends TestCase {
 
+	/*
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(GridMakerJarMainTest.class);
-	}
+	}*/
 
 	public void testDefault() throws Exception {
 		GridMakerJarMain.main(new String[] {"-o", "target/test/out.gpkg"});
