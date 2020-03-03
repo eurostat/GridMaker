@@ -154,12 +154,15 @@ public class GridMakerJarMain {
 		String outFile = cmd.getOptionValue("o");
 		if(outFile == null) outFile = Paths.get("").toAbsolutePath().toString() + "/out.gpkg";
 
+
+		//build grid
 		System.out.println("Build grid...");
 		Collection<Feature> cells = sg.getCells();
 		System.out.println(cells.size() + " grid cells built.");
 
-		System.out.println("Save as " + outFile + "...");
+
 		//save
+		System.out.println("Save as " + outFile + "...");
 		String outputFileFormat = FilenameUtils.getExtension(outFile).toLowerCase();
 		switch(outputFileFormat) {
 		case "shp":
@@ -174,6 +177,7 @@ public class GridMakerJarMain {
 		default:
 			System.out.println("Unsuported output format: " + outputFileFormat);
 		}
+
 	}
 
 
