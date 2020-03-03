@@ -137,7 +137,7 @@ public class GridMakerJarMain {
 		if(param != null)
 			try {
 				if(param == GridCellGeometryType.SURFACE.toString()) sg.setGridCellGeometryType(GridCellGeometryType.SURFACE);
-				if(param == GridCellGeometryType.CENTER_POINT.toString()) sg.setGridCellGeometryType(GridCellGeometryType.CENTER_POINT);
+				else if(param == GridCellGeometryType.CENTER_POINT.toString()) sg.setGridCellGeometryType(GridCellGeometryType.CENTER_POINT);
 				else throw new Exception();
 			} catch (Exception e) {
 				System.err.println("Failed reading parameter 'gt'. The default value will be used.");
