@@ -36,7 +36,12 @@ import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
  */
 public class GridMakerJarMain {
 
-	public static void main(String[] args) throws Exception {
+	//TODO see https://docs.geotools.org/stable/userguide/build/faq.html#how-do-i-create-an-executable-jar-for-my-geotools-app
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
 
 		//define options
 		Options options = new Options();
@@ -151,23 +156,23 @@ public class GridMakerJarMain {
 		if(outFile == null) outFile = Paths.get("").toAbsolutePath().toString() + "/out.gpkg";
 
 
+
 		//build grid
 		System.out.println("Build grid...");
 		Collection<Feature> cells = sg.getCells();
 		System.out.println(cells.size() + " grid cells built.");
 
 
-		//save
+
 		System.out.println("Save as " + outFile + "...");
 
-		//prepare schema
-		System.out.println();
-		System.out.println(CRS.getSupportedAuthorities(true));
-		System.out.println();
-		System.out.println(CRS.getSupportedCodes("EPSG"));
-		System.out.println();
 
-		CoordinateReferenceSystem crs = CRS.decode("EPSG:"+sg.getEPSGCode());
+		//prepare schema
+		//System.out.println();
+		//System.out.println(CRS.getSupportedAuthorities(true));
+		//System.out.println();
+		//System.out.println(CRS.getSupportedCodes("EPSG"));
+		//System.out.println();
 
 		/*
 		Object authority;
@@ -178,8 +183,17 @@ public class GridMakerJarMain {
 		 */
 
 
+		//get output CRS
+		CoordinateReferenceSystem crs = null;
+		try {
+			crs = CRS.decode("EPSG:" + sg.getEPSGCode());
+		} catch (Exception e) {
+			System.err.println("Could not find CRS with EPSG code: "+sg.getEPSGCode());
+			System.err.println(e.getMessage());
+			crs = null;
+		}
 
-		//CoordinateReferenceSystem crs = getFromWKT( sg.getEPSGCode() );
+		//make output feature type
 		String gt = sg.getGridCellGeometryType()==GridCellGeometryType.SURFACE? "Polygon" : "Point";
 		SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType(gt, crs, new String[] { "GRD_ID:String", "X_LLC:int", "Y_LLC:int" } );
 
