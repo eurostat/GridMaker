@@ -36,8 +36,6 @@ import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
  */
 public class GridMakerJarMain {
 
-	//TODO see https://docs.geotools.org/stable/userguide/build/faq.html#how-do-i-create-an-executable-jar-for-my-geotools-app
-
 	/**
 	 * @param args
 	 */
@@ -216,110 +214,4 @@ public class GridMakerJarMain {
 
 	}
 
-
-
-	/*
-	private static final String WKT_3035 = "PROJCS[\"ETRS89 / ETRS-LAEA\",\r\n" + 
-			"    GEOGCS[\"ETRS89\",\r\n" + 
-			"        DATUM[\"European_Terrestrial_Reference_System_1989\",\r\n" + 
-			"            SPHEROID[\"GRS 1980\",6378137,298.257222101,\r\n" + 
-			"                AUTHORITY[\"EPSG\",\"7019\"]],\r\n" + 
-			"            AUTHORITY[\"EPSG\",\"6258\"]],\r\n" + 
-			"        PRIMEM[\"Greenwich\",0,\r\n" + 
-			"            AUTHORITY[\"EPSG\",\"8901\"]],\r\n" + 
-			"        UNIT[\"degree\",0.01745329251994328,\r\n" + 
-			"            AUTHORITY[\"EPSG\",\"9122\"]],\r\n" + 
-			"        AUTHORITY[\"EPSG\",\"4258\"]],\r\n" + 
-			"    UNIT[\"metre\",1,\r\n" + 
-			"        AUTHORITY[\"EPSG\",\"9001\"]],\r\n" + 
-			"    PROJECTION[\"Lambert_Azimuthal_Equal_Area\"],\r\n" + 
-			"    PARAMETER[\"latitude_of_center\",52],\r\n" + 
-			"    PARAMETER[\"longitude_of_center\",10],\r\n" + 
-			"    PARAMETER[\"false_easting\",4321000],\r\n" + 
-			"    PARAMETER[\"false_northing\",3210000],\r\n" + 
-			"    AUTHORITY[\"EPSG\",\"3035\"],\r\n" + 
-			"    AXIS[\"X\",EAST],\r\n" + 
-			"    AXIS[\"Y\",NORTH]]";
-	 */
-
-
-	//http://epsg.io/3035.wkt
-	//https://epsg.io/3035.wkt
-	//TODO move to jgiscotools
-	/*private static CoordinateReferenceSystem getFromWKT(String epsgCode) {
-
-		//get wkt
-		//String url_ = "https://epsg.io/"+epsgCode+".wkt";
-		String url_ = "https://epsg.io/"+epsgCode+".esriwkt";
-		String wkt = null;
-		try {
-			BufferedReader in = new BufferedReader(new InputStreamReader(new URL(url_).openStream()));
-			wkt = in.readLine();
-		} catch (MalformedURLException e) {
-			System.err.println("Could not parse URL " + url_);
-			return null;
-		} catch (IOException e) {
-			System.err.println("Could not get WKT for CRS " + epsgCode + " from URL " + url_);
-			return null;
-		}
-
-		//parse
-		CoordinateReferenceSystem crs = null;
-		try {
-			crs = CRS.parseWKT(wkt);
-		} catch (FactoryException e) {
-			System.err.println("Could not parse WKT for CRS " + epsgCode);
-			System.err.println(wkt);
-			return null;
-		}
-		return crs;
-	}*/
-
-
-
-	/*
-	public static void saveGPKG(Collection<? extends Feature> fs, String outFile, SimpleFeatureType ft, boolean withSpatialIndex) {
-		try {
-			if(fs.size() == 0) return;
-
-			SimpleFeatureCollection sfc = SimpleFeatureUtil.get(fs, ft);
-
-			//create output file
-			File fi = FileUtil.getFile(outFile, true, true);
-
-			//create feature store
-			HashMap<String, Serializable> params = new HashMap<String, Serializable>();
-			params.put("url", fi.toURI().toURL());
-			params.put(GeoPkgDataStoreFactory.DBTYPE.key, "geopkg");
-			params.put(GeoPkgDataStoreFactory.DATABASE.key, outFile);
-			params.put("create spatial index", Boolean.TRUE);
-
-			//DataStore ds = DataStoreFinder.getDataStore(params);
-			GeoPkgDataStoreFactory ds_ = new GeoPkgDataStoreFactory();
-			DataStore ds = ds_.createDataStore(params);
-
-			System.out.println(params);
-			System.out.println(ds);
-			System.out.println(sfc);
-			System.out.println(sfc.getSchema());
-
-			ds.createSchema(sfc.getSchema());
-			SimpleFeatureStore fst = (SimpleFeatureStore)ds.getFeatureSource(ds.getTypeNames()[0]);
-
-			//creation transaction
-			Transaction tr = new DefaultTransaction("create");
-			fst.setTransaction(tr);
-			try {
-				fst.addFeatures(sfc);
-				tr.commit();
-			} catch (Exception e) {
-				e.printStackTrace();
-				tr.rollback();
-			} finally {
-				tr.close();
-				ds.dispose();
-			}
-		} catch (IOException e) { e.printStackTrace(); }
-	}
-	 */
 }
