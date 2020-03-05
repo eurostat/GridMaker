@@ -1,1 +1,1 @@
-java -jar GridMaker.jar -i test_grid_area.geojson
+java -jar GridMaker.jar -i test/test_grid_area.geojson
