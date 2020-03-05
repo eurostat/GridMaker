@@ -206,7 +206,6 @@ public class GridMakerJarMain {
 			break;
 		case "gpkg":
 			GeoPackageUtil.save(cells, outFile, ft, true);
-			//saveGPKG(cells, outFile, ft, true);
 			break;
 		default:
 			System.out.println("Unsuported output format: " + outputFileFormat);
