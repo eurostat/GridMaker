@@ -27,8 +27,12 @@ The help is displayed with `java -jar GridMaker.jar -h` command.
 | Parameter | Required | Description | Default value |
 | ------------- | ------------- |-------------| ------|
 | -h | | Show the help message |  |
-
-TODO
+| -res |  | The grid resolution (pixel size). Note that the unit of measure is expected to be the same as the one of the coordinate reference system. | 100 000 |
+| -epsg |  | The EPSG code of the grid coordinate reference system. | '3035', corresponding to [ETRS89-LAEA](https://spatialreference.org/ref/epsg/etrs89-etrs-laea/). |
+| -i |  | Input file containing the geometry of the region to be covered by the grid. Supported formats and file extensions: GeoJSON (*.geojson), SHP (*.shp), GeoPackage (*.gpkg). |  |
+| -tol |  | A tolerance distance to keep the cells that are not too far from the specified region. | 0 |
+| -gt |  | The type of grid cell geometry: The squared surface representation ('SURF') or its center point ('CPT'). | 'SURF' |
+| -o |  | Output file. The supported formats and file extensions are GeoJSON (*.geojson), SHP (*.shp) and GeoPackage (*.gpkg) | 'out.gpkg' |
 
 ### For coders
 
