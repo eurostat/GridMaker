@@ -51,8 +51,8 @@ public class GridMakerJarMain {
 				.hasArg().argName("file path").build());
 		options.addOption(Option.builder("tol").longOpt("toleranceDistance").desc("Optional. A tolerance distance to keep the cells that are not too far from the specified region. Default: '0'.")
 				.hasArg().argName("value").build());
-		options.addOption(Option.builder("gt").longOpt("gridCellGeometryType").desc("Optional. The type of grid cell geometry: The surface representation (a square) or its center point. Default: 'SURFACE'.")
-				.hasArg().argName("SURFACE or CENTER_POINT").build());
+		options.addOption(Option.builder("gt").longOpt("gridCellGeometryType").desc("Optional. The type of grid cell geometry: The squared surface representation ('SURF') or its center point ('CPT'). Default: 'SURF'.")
+				.hasArg().argName("SURF or CPT").build());
 		options.addOption(Option.builder("o").longOpt("outputFile").desc("Optional. Output file. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension). Default: 'out.gpkg'.")
 				.hasArg().argName("file path").build());
 		//TODO: add parameters: envelope dimensions
@@ -141,8 +141,8 @@ public class GridMakerJarMain {
 		param = cmd.getOptionValue("gt");
 		if(param != null)
 			try {
-				if(param == GridCellGeometryType.SURFACE.toString()) sg.setGridCellGeometryType(GridCellGeometryType.SURFACE);
-				else if(param == GridCellGeometryType.CENTER_POINT.toString()) sg.setGridCellGeometryType(GridCellGeometryType.CENTER_POINT);
+				if("SURF".equals(param)) sg.setGridCellGeometryType(GridCellGeometryType.SURFACE);
+				else if("CPT".equals(param)) sg.setGridCellGeometryType(GridCellGeometryType.CENTER_POINT);
 				else throw new Exception();
 			} catch (Exception e) {
 				System.err.println("Failed reading parameter 'gt'. The default value will be used.");

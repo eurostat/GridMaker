@@ -35,7 +35,7 @@ public class GridMakerJarMainTest extends TestCase {
 	}
 
 	public void testGeomTypes() throws Exception {
-		for(String gt : new String[] {"SURFACE","CENTER_POINT"})
+		for(String gt : new String[] {"SURF","CPT"})
 			GridMakerJarMain.main(new String[] {"-gt", gt, "-o", "target/test/gt_"+gt+".gpkg"});
 	}
 
