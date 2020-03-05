@@ -37,9 +37,7 @@ Install [JGiscoTools](https://github.com/eurostat/JGiscoTools/) and see the inst
 
 ## Showcase
 
-[GridMaker](https://github.com/eurostat/GridMaker) is used at [Eurostat-GISCO](http://ec.europa.eu/eurostat/web/gisco) for the production of [gridded datasets](https://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/grids).
-
-[GridMaker](https://github.com/eurostat/GridMaker) supports the creation of GIS datasets representing statistical grids based on the European ETRS89-LAEA coordinate reference system ([EPSG:3035](https://spatialreference.org/ref/epsg/etrs89-etrs-laea/)), which are compliant with the [Census 2021 regulation](https://ec.europa.eu/eurostat/web/population-and-housing-census/background), [the INSPIRE regulation](https://inspire.ec.europa.eu/id/document/tg/su) and the [GEOSTAT initiative](https://www.efgs.info/geostat/).
+[GridMaker](https://github.com/eurostat/GridMaker) is used at [Eurostat-GISCO](http://ec.europa.eu/eurostat/web/gisco) for the production of [gridded datasets](https://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/grids). It supports the creation of GIS datasets representing statistical grids based on the European ETRS89-LAEA coordinate reference system ([EPSG:3035](https://spatialreference.org/ref/epsg/etrs89-etrs-laea/)), which are compliant with the [Census 2021 regulation](https://ec.europa.eu/eurostat/web/population-and-housing-census/background), [the INSPIRE regulation](https://inspire.ec.europa.eu/id/document/tg/su) and the [GEOSTAT initiative](https://www.efgs.info/geostat/).
 
 ## Support and contribution
 
