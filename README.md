@@ -36,8 +36,12 @@ The help is displayed with `java -jar GridMaker.jar -h` command.
 
 ### For coders
 
-Install [JGiscoTools](https://github.com/eurostat/JGiscoTools/) and see the instructions [here](https://github.com/eurostat/JGiscoTools/tree/master/src/site/gridmaker)
+Install [JGiscoTools](https://github.com/eurostat/JGiscoTools/) and see the instructions [here](https://github.com/eurostat/JGiscoTools/tree/master/src/site/gridmaker).
+
+## Showcase
+
+[GridMaker](https://github.com/eurostat/GridMaker) is used at [Eurostat-GISCO](http://ec.europa.eu/eurostat/web/gisco) for the production of [gridded datasets](https://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/grids).
 
 ## Support and contribution
 
-Feel free to [ask support](https://github.com/eurostat/GridMaker/issues/new) or even contribute to the development of new features by [forking](https://help.github.com/en/articles/fork-a-repo) and pulling your modifications !
+Feel free to [ask support](https://github.com/eurostat/GridMaker/issues/new), fork the project or simply star it (it's always a pleasure). The source code is currently stored as part of [JGiscoTools](https://github.com/eurostat/JGiscoTools) repository. It is mainly based on [GeoTools](http://www.geotools.org/) and [JTS Topology Suite](https://locationtech.github.io/jts/).
