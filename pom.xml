@@ -40,8 +40,8 @@
 	</developers>
 
 	<properties>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.9</maven.compiler.target>
+		<maven.compiler.source>1.9</maven.compiler.source>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
@@ -54,8 +54,8 @@
 				<version>3.8.1</version>
 				<configuration>
 					<encoding>UTF-8</encoding>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>1.9</source>
+					<target>1.9</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -106,7 +106,7 @@
 		<dependency>
 			<groupId>eu.europa.ec.eurostat</groupId>
 			<artifactId>JGiscoTools</artifactId>
-			<version>0.7</version>
+			<version>0.8.9</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-cli</groupId>
