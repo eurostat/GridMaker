@@ -13,19 +13,14 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.FilenameUtils;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.feature.SimpleFeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.grid.Grid;
 import eu.europa.ec.eurostat.jgiscotools.grid.GridCell.GridCellGeometryType;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoJSONUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 
 /**
  * 
@@ -101,21 +96,7 @@ public class GridMakerJarMain {
 		param = cmd.getOptionValue("i");
 		if(param != null) 
 			try { 
-				ArrayList<Feature> fs = null;
-				String inputFileFormat = FilenameUtils.getExtension(param).toLowerCase();
-				switch(inputFileFormat) {
-				case "shp":
-					fs = SHPUtil.getFeatures(param);
-					break;
-				case "geojson":
-					fs = GeoJSONUtil.load(param);
-					break;
-				case "gpkg":
-					fs = GeoPackageUtil.getFeatures(param);
-					break;
-				default:
-					System.out.println("Unsuported input format: " + inputFileFormat);
-				}
+				ArrayList<Feature> fs = GeoData.getFeatures(param);
 
 				if(fs.size() == 0)
 					System.err.println("Input file is empty: " + param);
@@ -164,23 +145,6 @@ public class GridMakerJarMain {
 
 		System.out.println("Save as " + outFile + "...");
 
-
-		//prepare schema
-		//System.out.println();
-		//System.out.println(CRS.getSupportedAuthorities(true));
-		//System.out.println();
-		//System.out.println(CRS.getSupportedCodes("EPSG"));
-		//System.out.println();
-
-		/*
-		Object authority;
-		CRSAuthorityFactory factory = FactoryFinder.getCRSAuthorityFactory(authority, null);
-		Set<String> codes = factory.getAuthorityCodes(CoordinateReferenceSystem.class);
-		String code = sg.getEPSGCode();
-		CoordinateReferenceSystem crs2 = factory.createCoordinateReferenceSystem(code);
-		 */
-
-
 		//get output CRS
 		CoordinateReferenceSystem crs = null;
 		try {
@@ -192,25 +156,11 @@ public class GridMakerJarMain {
 		}
 
 		//make output feature type
-		String gt = sg.getGridCellGeometryType()==GridCellGeometryType.SURFACE? "Polygon" : "Point";
-		SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType(gt, crs, new String[] { "GRD_ID:String", "X_LLC:int", "Y_LLC:int" } );
+		//String gt = sg.getGridCellGeometryType() == GridCellGeometryType.SURFACE? "Polygon" : "Point";
+		//SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType(gt, crs, new String[] { "GRD_ID:String", "X_LLC:int", "Y_LLC:int" } );
 
 		//save according to output format
-		String outputFileFormat = FilenameUtils.getExtension(outFile).toLowerCase();
-		switch(outputFileFormat) {
-		case "shp":
-			SHPUtil.save(cells, outFile, ft);
-			break;
-		case "geojson":
-			GeoJSONUtil.save(cells, outFile, ft.getCoordinateReferenceSystem());
-			break;
-		case "gpkg":
-			GeoPackageUtil.save(cells, outFile, ft, true);
-			break;
-		default:
-			System.out.println("Unsuported output format: " + outputFileFormat);
-		}
-
+		GeoData.save(cells, outFile, crs);
 	}
 
 }
