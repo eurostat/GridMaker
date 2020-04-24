@@ -6,7 +6,7 @@
 
 ## Quick start
 
-1. Download [gridmaker-1.1.zip](releases/gridmaker-1.1.zip?raw=true) and unzip somewhere.
+1. Download [gridmaker-1.2.zip](releases/gridmaker-1.2.zip?raw=true) and unzip somewhere.
 2. Run: `java -jar GridMaker.jar -res 200 -epsg 2169 -i pathTo/myRegions.geojson` to make a grid of resolution 200m for the Coordinate Reference System [EPSG:2169](https://spatialreference.org/ref/epsg/luxembourg-1930-gauss/) where `pathTo/myRegions.geojson` is the input area to be covered by the grid. You can alternativelly edit and execute *gridmaker.bat* (or *gridmaker.sh* for Linux users).
 
 To capture the input geometry to be covered by the grid and store it as a *.geojson file, you can use [http://geojson.io/](http://geojson.io/) or any GIS software.
@@ -15,7 +15,7 @@ To capture the input geometry to be covered by the grid and store it as a *.geoj
 
 ### Requirements
 
-Java 1.8 or higher is required. The java version installed, if any, can be found with `java --version` command. Recent versions of Java can be installed from [here](https://www.java.com/).
+Java 1.9 or higher is required. The java version installed, if any, can be found with `java --version` command. Recent versions of Java can be installed from [here](https://www.java.com/).
 
 ### Input parameters
 
