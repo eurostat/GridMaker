@@ -106,7 +106,7 @@
 		<dependency>
 			<groupId>eu.europa.ec.eurostat</groupId>
 			<artifactId>JGiscoTools</artifactId>
-			<version>0.8.9</version>
+			<version>0.8.10</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-cli</groupId>
