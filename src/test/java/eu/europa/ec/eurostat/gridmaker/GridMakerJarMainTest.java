@@ -14,7 +14,7 @@ public class GridMakerJarMainTest extends TestCase {
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(GridMakerJarMainTest.class);
 	}
-/*
+
 	public void testDefault() throws Exception {
 		GridMakerJarMain.main(new String[] {"-o", "target/test/out.gpkg"});
 	}
@@ -33,12 +33,12 @@ public class GridMakerJarMainTest extends TestCase {
 		for(String format : new String[] {"shp","gpkg","geojson"})
 			GridMakerJarMain.main(new String[] {"-o", "target/test/outformat_"+format+"."+format});
 	}
-*/
+
 	public void testGeomTypes() throws Exception {
 		for(String gt : new String[] {"SURF","CPT"})
 			GridMakerJarMain.main(new String[] {"-gt", gt, "-o", "target/test/gt_"+gt+".gpkg"});
 	}
-/*
+
 	public void testTol() throws Exception {
 		for(String tol : new String[] {"0","10000","100000","500000","1000000"})
 			GridMakerJarMain.main(new String[] {"-tol", tol, "-o", "target/test/tol_"+tol+".gpkg"});
@@ -49,5 +49,5 @@ public class GridMakerJarMainTest extends TestCase {
 			for(String format : new String[] {"shp","gpkg","geojson"})
 				GridMakerJarMain.main(new String[] {"-i", "src/test/resources/test_grid_area."+format,"-res", res,"-o", "target/test/in_"+format+"_"+res+"."+format});
 	}
-*/
+
 }
