@@ -39,7 +39,7 @@ public class GridMakerJarMain {
 		//define options
 		Options options = new Options();
 		options.addOption(Option.builder("res").longOpt("resolution").desc("Optional. The grid resolution (pixel size). Note that the unit of measure is expected to be the same as the one of the coordinate reference system. Default: '100 000'.")
-				.hasArg().argName("value").build());
+				.hasArg().argName("integer value").build());
 		options.addOption(Option.builder("epsg").longOpt("epsgCode").desc("Optional. The EPSG code of the grid coordinate reference system. Default: '3035', corresponding to ETRS89-LAEA coordinate reference system.")
 				.hasArg().argName("code").build());
 		options.addOption(Option.builder("i").longOpt("inputFile").desc("Input file containing the geometry of the region to build the grid accross. Supported format: GeoJSON, SHP, GeoPackage.")
