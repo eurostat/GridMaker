@@ -33,7 +33,7 @@ The help is displayed with `java -jar GridMaker.jar -h` command.
 
 ### For coders
 
-Install [JGiscoTools](https://github.com/eurostat/JGiscoTools/) and see the instructions [here](https://github.com/eurostat/JGiscoTools/tree/master/src/site/gridmaker).
+Install [JGiscoTools](https://github.com/eurostat/JGiscoTools/) and see the instructions [here](https://github.com/eurostat/JGiscoTools/tree/master/doc/gridmaker).
 
 ## Showcase
 
