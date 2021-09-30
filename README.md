@@ -29,7 +29,7 @@ The help is displayed with `java -jar GridMaker.jar -h` command.
 | -i |  | Input file containing the geometry of the region to be covered by the grid. Supported formats and file extensions: GeoJSON \(\*.geojson), SHP (\*.shp), GeoPackage (\*.gpkg). |  |
 | -tol |  | A tolerance distance to keep the cells that are not too far from the specified region. | 0 |
 | -gt |  | The type of grid cell geometry: The squared surface representation ('SURF') or its center point ('CPT'). | 'SURF' |
-| -o |  | Output file. The supported formats and file extensions are GeoJSON (\*.geojson), SHP (\*.shp) and GeoPackage (\*.gpkg) | 'out.gpkg' |
+| -o |  | Output file. The supported formats and file extensions are GeoPackage (\*.gpkg), GeoJSON (\*.geojson) and SHP (\*.shp) | 'out.gpkg' |
 
 ### For coders
 
